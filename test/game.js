@@ -7,8 +7,8 @@ var game = new Phaser.Game(1200,800, Phaser.CANVAS,'', {
 var grid = {
 		
 		settings : {
-			tilewidth : 64,
-			tileheight : 64,
+			tilewidth : 32,
+			tileheight : 32,
 			tilesx : 12,
 			tilesy : 10,
 			startLoc : [30,30],
@@ -17,11 +17,13 @@ var grid = {
 				fill : 0x9C9C9c
 			}
 		},
-		tiles : {}
+		tiles : {},
+		activeTileOp : 0
 };
 
 function preload(){
 	game.load.image('block','item.png');
+	game.load.spritesheet('tiles','tileset.png',32,32);
 	maketiles();
 	makegrid();
 }
@@ -84,7 +86,8 @@ function create(){
 					if(t.sprite){
 						t.sprite.destroy();
 					}
-					t.sprite = game.add.sprite(t.x,t.y,'block');
+				//	t.sprite = game.add.sprite(t.x,t.y,'block');
+				   t.sprite = game.add.sprite(t.x,t.y,'tiles',grid.activeTileOp*1);
 					//TODO add the code here too
 				}
 			}
@@ -99,7 +102,7 @@ function create(){
 				if(t.sprite){
 					t.sprite.destroy();
 				}
-				t.sprite = game.add.sprite(t.x,t.y,'block');
+				t.sprite = game.add.sprite(t.x,t.y,'tiles',grid.activeTileOp*1);
 			} else if(c.which === 3){
 				if(t.sprite){
 					t.sprite.destroy();
@@ -108,7 +111,38 @@ function create(){
 		}
 	}
 	
+  grid.tileOps = {
+    0 : game.add.button(840, 32*1+4, 'tiles', selectTile, this),
+    1 : game.add.button(840, 32*2+4, 'tiles', selectTile, this),
+    2 : game.add.button(840, 32*3+4, 'tiles', selectTile, this),
+    3 : game.add.button(840, 32*4+4, 'tiles', selectTile, this),
+    4 : game.add.button(840, 32*5+4, 'tiles', selectTile, this),
+    5 : game.add.button(840, 32*6+4, 'tiles', selectTile, this),
+    6 : game.add.button(840, 32*7+4, 'tiles', selectTile, this),
+    7 : game.add.button(840, 32*8+4, 'tiles', selectTile, this),
+    8 : game.add.button(840, 32*9+4, 'tiles', selectTile, this),
+    9 : game.add.button(840, 32*10+4, 'tiles', selectTile, this),
+    10 : game.add.button(840, 32*11+4, 'tiles', selectTile, this),
+    11 : game.add.button(840, 32*12+4, 'tiles', selectTile, this),
+    12 : game.add.button(840, 32*13+4, 'tiles', selectTile, this),
+    13 : game.add.button(840, 32*14+4, 'tiles', selectTile, this),
+    14 : game.add.button(840, 32*15+4, 'tiles', selectTile, this),
+    15 : game.add.button(840, 32*16+4, 'tiles', selectTile, this)
 
+  }
+
+  for(var t in grid.tileOps){
+    grid.tileOps[t].id = t; 
+    grid.tileOps[t].frame = t;
+  }
+}
+
+
+function selectTile(item){
+  console.log(item.id);
+  grid.activeTileOp = item.id;
+  grid.marker.destroy();
+  grid.marker = game.add.sprite(0,0,'tiles',item.id*1);
 }
 
 function testme(p,s){
