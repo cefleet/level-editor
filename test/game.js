@@ -3,7 +3,7 @@ var game = new Phaser.Game(window.innerWidth,window.innerHeight, Phaser.CANVAS,'
 	preload:preload,
 	update : update
 });
-<<<<<<< HEAD
+
 
 //There may be some confusion because sometimes the first tile is 1 and sometimes it is 0
 var tileset = {
@@ -29,6 +29,10 @@ var grid = {
 		},
 		startLoc  : [30,60],
 		settings : tileset
+};
+
+menu = {
+  file : {}
 };
 
 function preload(){
@@ -82,14 +86,22 @@ function makeMenuBar(){
 
 //Menu button class needed for real deal
 function toggleFile(){
-	console.log('Toggle this thing');
-	var m = game.add.graphics(0, 0);
-	
-	m.lineStyle(1, grid.color.line, 1); 
-	m.beginFill(grid.color.fill, 1);	
 
-	//title bar bg
-	m.drawRect(0,40, 160, 120);
+  if(!menu.file.open){
+  
+    menu.file.bg = game.add.graphics(0,0);
+	  menu.file.bg.lineStyle(1, grid.color.line, 1); 
+	  menu.file.bg.beginFill(grid.color.fill, 1);	
+	  menu.file.bg.drawRect(0,40, 160, 120);
+	  menu.file.bg.endFill();    
+	  menu.file.open = true;  
+	  
+  } else {
+  
+    menu.file.bg.destroy();
+    menu.file.open = false;
+  
+  }
 }
 
 function makegrid(){
@@ -97,9 +109,6 @@ function makegrid(){
 	grid.gridImage = game.add.graphics(0, 0);  //init rect
 	grid.gridImage.lineStyle(1, grid.color.line, 1); // width, color (0x0000FF), alpha (0 -> 1) // required settings
 	grid.gridImage.beginFill(grid.color.fill, 1);
-	
-	//title bar bg
-//	l.drawRect(0,0, window.innerWidth, 40);
 	
 	//grid bg
 	grid.gridImage.drawRect(grid.startLoc[0],grid.startLoc[1], grid.settings.tilesx*grid.settings.tilewidth, grid.settings.tilesy*grid.settings.tileheight);
@@ -127,12 +136,7 @@ function makeSelectTiles(){
 	
 	game.selectionGroup.graphic.lineStyle(1, grid.color.line, 1); // width, color (0x0000FF), alpha (0 -> 1) // required settings
 	game.selectionGroup.graphic.beginFill(grid.color.fill, 1);
-	
-	//title bar bg
-//	l.drawRect(0,0, window.innerWidth, 40);
-
-	
-	
+		
 	var cols = tileset.tilesetHeight/tileset.tileheight;
 	var rows = tileset.tilesetWidth/tileset.tilewidth;  
   
@@ -186,18 +190,21 @@ function create(){
 				grid.marker.y = t.y;
 				grid.activeTile = t;
 				if(game.input.activePointer.isDown){
+				  if(!menu.file.open){
 					if(t.sprite){
 						t.sprite.destroy();
 						t.tileId = 0;
 					}
-				   t.sprite = game.add.sprite(t.x,t.y,'tiles',grid.activeTileOp*1);
-				   t.tileId = grid.activeTileOp*1+1
+				  t.sprite = game.add.sprite(t.x,t.y,'tiles',grid.activeTileOp*1);
+				  t.tileId = grid.activeTileOp*1+1;
+				  }
 				}
 			}
 		}
 	}
 	
 	game.input.mouse.mouseDownCallback = function(c){
+	  if(!menu.file.open){
 		if(grid.activeTile){
 			var t = grid.activeTile;
 			if(c.which === 1){				
@@ -213,19 +220,15 @@ function create(){
 				}
 			}
 		}
+		}
 	}
 	
 };
-
 
 function selectTile(item){
 	grid.activeTileOp = item.id;
 	grid.marker.destroy();
 	grid.marker = game.add.sprite(0,0,'tiles',item.id*1);
-};
-
-function testme(p,s){	
-	console.log(this);
 };
 
 function load(data){
@@ -283,22 +286,5 @@ function save(){
 };
 
 function update(){
-		
-=======
-var game = new Phaser.Game(1200,800, Phaser.CANVAS,'', {
-	create:create,
-	preload:preload,
-	update : update
-});
-function preload(){
-  game.plugins.add(new Phaser.Plugin.LevelEditor(game));
-}
-
-function create(){
-  game.le.create();
-}
-
-function update(){
-
->>>>>>> b0764fc635c398a44ca06970c36e8ec46fda9b57
+	
 }
