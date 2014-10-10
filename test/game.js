@@ -36,6 +36,7 @@ menu = {
 };
 
 function preload(){
+  game.plugins.add(new Phaser.Plugin.LevelEditor(game));
 	game.load.spritesheet(tileset.name,grid.settings.tilesetImage,grid.settings.tilewidth,grid.settings.tileheight);
 
 };
@@ -173,8 +174,9 @@ function makeSelectTiles(){
 };
 
 function create(){
-	maketiles();
-	makegrid();
+	//maketiles();
+//	makegrid();
+  game.le.create('My Level', {loc : [300,100]});
 	makeSelectTiles();
 	makeMenuBar();
 	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
