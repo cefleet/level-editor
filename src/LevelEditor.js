@@ -14,7 +14,9 @@ Phaser.Plugin.LevelEditor = function (game) {
 			}
 		}
 	}
- // return this;
+	//It may be best to not make this a part of the editor
+	this.eventEmiter = MasterEmitter;
+
 }
 
 Phaser.Plugin.LevelEditor.prototype = Object.create(Phaser.Plugin.prototype);
@@ -35,7 +37,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	this.setupMouseForGrid();
 
   //This recives information from the nav bar
-  UI.events.addListener('navLinkClicked', navClicked.bind(this));
+  this.eventEmiter.addListener('navLinkClicked', navClicked.bind(this));
   //if the id of an event that has been emmited is the name of a function
   //(minus Link) run that function
   function navClicked(e){

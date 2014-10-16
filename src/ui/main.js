@@ -47,7 +47,7 @@ var UI = {
   
   setupEvents : function(){
 
-    this.events = new EventEmitter();
+    this.events = MasterEmitter;
   
     //This stays here
     var links = $gBT('a', $g('navigation'));
