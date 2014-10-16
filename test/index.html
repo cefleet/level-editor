@@ -9,14 +9,15 @@
 <script src="../src/LevelEditor.js"></script>
 <script src="../src/Grid.js"></script>
 <script src="../src/Tileset.js"></script>
-<script src = "../src/Menu.js"></script>
-<script src = "../src/Popup.js"></script>
 <script src="game.js"></script>
 
 <!-- Bootstrap stuff -->
 <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- Event Emmiter to keep the bootstrap stuff and game stuff sperated -->
+<script src = "../node_modules/wolfy87-eventemitter/EventEmitter.min.js"></script>
 <style>
   a {
     cursor : pointer;
@@ -27,7 +28,7 @@
 </title>
 </head>
 <body>
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="navigation">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
@@ -54,8 +55,15 @@
 
 </body>
 <script>
-  $g('saveMapLink').addEventListener('click', function(){
-    game.le.saveMap();
-  });
+  var ee = new EventEmitter();
+  
+  //This stays here
+  var links = $gBT('a', $g('navigation'));
+  for(var i = 0; i < links.length; i++){
+    links[i].addEventListener('click', function(){
+      ee.emitEvent('navLinkClicked', [this.id]);
+    }.bind(links[i]));   
+  } 
+  
 </script>
 </html>

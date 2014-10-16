@@ -35,16 +35,15 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	//Mouse movements
 	this.setupMouseForGrid();
 
-/*
-	//adds menus for level editor   
-	this.menu.makeMenuButton('New Map',null,{x : 20,y: 10}, 100,40,this.newMap,null,this);
-    this.menu.makeMenuButton('Load Map',null,{x : 140,y: 10}, 100,40,this.loadMap,null,this);
-    this.menu.makeMenuButton('Import Map', null, {x: 260, y: 10}, 100, 40, this.importMap,null,this);
-    this.menu.makeMenuButton('Save Map',null, {x:380,y:10},100,40, this.saveMap,null,this);
-    this.menu.makeMenuButton('Export Map',null, {x:500,y:10},100,40,this.exportMap,null,this);
-    this.menu.makeMenuButton('Settings', null, {x:620,y:10},100,40,this.changeSettings,null,this);    
-*/
-
+  //This recives information from the nav bar
+  ee.addListener('navLinkClicked', navClicked.bind(this));
+  //if the id of an event that has been emmited is the name of a function
+  //(minus Link) run that function
+  function navClicked(e){
+    if(this[e.replace('Link','')]){
+      this[e.replace('Link','')]();
+    }
+  }; 
 }
 
 
@@ -145,7 +144,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	 */
 	 _loadMap : function(uuid){
 		 var data = this.storedData.Maps[uuid].tilemap.layers[0].data;
-		console.log(data);
+
 		for(var i = 0; i < data.length; i++){
 			var id = data[i];
 			var t = this.grid.tiles[i];
