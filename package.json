@@ -6,6 +6,7 @@
     "grunt": "*",
     "grunt-contrib-uglify":"*",
     "phaser":"*",
-    "bootstrap":"*"
+    "bootstrap":"*",
+    "jquery": "*"
    }
 }

@@ -27,14 +27,15 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	//Mkaes the componants
 	this.grid = this.game.add.leGrid(grid);
 	this.tileset = this.game.add.leTileset(tileset);
-	this.menu = this.game.add.leMenu(menu);
+	//this.menu = this.game.add.leMenu(menu);
 	
 	//listeners for cross object communication
 	this.tileset.events.tileSelected.add(this.setMarker, this);
   
 	//Mouse movements
 	this.setupMouseForGrid();
-  
+
+/*
 	//adds menus for level editor   
 	this.menu.makeMenuButton('New Map',null,{x : 20,y: 10}, 100,40,this.newMap,null,this);
     this.menu.makeMenuButton('Load Map',null,{x : 140,y: 10}, 100,40,this.loadMap,null,this);
@@ -42,6 +43,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
     this.menu.makeMenuButton('Save Map',null, {x:380,y:10},100,40, this.saveMap,null,this);
     this.menu.makeMenuButton('Export Map',null, {x:500,y:10},100,40,this.exportMap,null,this);
     this.menu.makeMenuButton('Settings', null, {x:620,y:10},100,40,this.changeSettings,null,this);    
+*/
 
 }
 

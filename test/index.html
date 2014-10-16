@@ -3,16 +3,59 @@
 <head>
 <title>Level Editor</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
- <style type="text/css">body { margin: 0px; }</style>
-<script src="../lib/phaser.min.js"></script>
+<style type="text/css">body { margin: 0px; }</style>
+<script src ="../src/util/mcor-util.js"></script>
+<script src="../node_modules/phaser/build/phaser.min.js"></script>
 <script src="../src/LevelEditor.js"></script>
 <script src="../src/Grid.js"></script>
 <script src="../src/Tileset.js"></script>
 <script src = "../src/Menu.js"></script>
 <script src = "../src/Popup.js"></script>
 <script src="game.js"></script>
+
+<!-- Bootstrap stuff -->
+<link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<style>
+  a {
+    cursor : pointer;
+  }
+</style>
+
+
 </title>
 </head>
 <body>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown">File <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a id='newMapLink'>New Map</a></li>
+            <li><a id='loadMapLink'>Load Map</a></li>
+            <li class="divider"></li>
+            <li><a id='saveMapLink'>Save Map</a></li>
+            <li class="divider"></li>
+            <li><a id='saveMapLink'>Settings</a></li>
+          </ul>
+        </li>
+        <form class="navbar-form navbar-left">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Map Name" id='mapNameForm'>
+          </div>
+        </form>
+      </ul>
+    </div> 
+  </div>
+</nav>
+
 </body>
+<script>
+  $g('saveMapLink').addEventListener('click', function(){
+    game.le.saveMap();
+  });
+</script>
 </html>
