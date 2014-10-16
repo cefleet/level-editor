@@ -1,0 +1,11 @@
+{
+  "name": "LevelEditor",
+  "description": "Create Levels For video games",
+  "version": "0.0.1",
+  "dependencies": {
+    "grunt": "*",
+    "grunt-contrib-uglify":"*",
+    "phaser":"*",
+    "bootstrap":"*"
+   }
+}
