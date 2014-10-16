@@ -27,7 +27,6 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	//Mkaes the componants
 	this.grid = this.game.add.leGrid(grid);
 	this.tileset = this.game.add.leTileset(tileset);
-	//this.menu = this.game.add.leMenu(menu);
 	
 	//listeners for cross object communication
 	this.tileset.events.tileSelected.add(this.setMarker, this);
@@ -36,7 +35,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	this.setupMouseForGrid();
 
   //This recives information from the nav bar
-  ee.addListener('navLinkClicked', navClicked.bind(this));
+  UI.events.addListener('navLinkClicked', navClicked.bind(this));
   //if the id of an event that has been emmited is the name of a function
   //(minus Link) run that function
   function navClicked(e){

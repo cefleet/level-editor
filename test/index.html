@@ -4,7 +4,8 @@
 <title>Level Editor</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <style type="text/css">body { margin: 0px; }</style>
-<script src ="../src/util/mcor-util.js"></script>
+<script src ="../src/ui/util/mcor-util.js"></script>
+<script src ="../src/ui/main.js"></script>
 <script src="../node_modules/phaser/build/phaser.min.js"></script>
 <script src="../src/LevelEditor.js"></script>
 <script src="../src/Grid.js"></script>
@@ -28,6 +29,7 @@
 </title>
 </head>
 <body>
+<!--
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="navigation">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -40,7 +42,7 @@
             <li class="divider"></li>
             <li><a id='saveMapLink'>Save Map</a></li>
             <li class="divider"></li>
-            <li><a id='saveMapLink'>Settings</a></li>
+            <li><a id='settingsLink'>Settings</a></li>
           </ul>
         </li>
         <form class="navbar-form navbar-left">
@@ -52,18 +54,14 @@
     </div> 
   </div>
 </nav>
-
+-->
 </body>
 <script>
-  var ee = new EventEmitter();
-  
-  //This stays here
-  var links = $gBT('a', $g('navigation'));
-  for(var i = 0; i < links.length; i++){
-    links[i].addEventListener('click', function(){
-      ee.emitEvent('navLinkClicked', [this.id]);
-    }.bind(links[i]));   
-  } 
-  
+ document.addEventListener( "DOMContentLoaded", function(){
+  UI.create();
+  UI.setupEvents();
+ }, false );
+
+  //UI.create();
 </script>
 </html>
