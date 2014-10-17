@@ -2,6 +2,8 @@ Phaser.Plugin.LevelEditor = function (game) {
   this.game = game;
   Phaser.Plugin.call(this, game);
 	this.game.le = this;
+	this.map = {};
+	/*
 	this.storedData = JSON.parse(localStorage.getItem('LevelEditor'));
 	if(!this.storedData){
 		this.storedData ={
@@ -14,9 +16,8 @@ Phaser.Plugin.LevelEditor = function (game) {
 			}
 		}
 	}
-	//It may be best to not make this a part of the editor
-	this.eventEmiter = MasterEmitter;
-
+	*/
+	
 }
 
 Phaser.Plugin.LevelEditor.prototype = Object.create(Phaser.Plugin.prototype);
@@ -24,8 +25,7 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 
 Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 	
-	this.name = name || this.storedData.DefaultSettings.name;
-	this.uuid = game.rnd.uuid();
+
 	//Mkaes the componants
 	this.grid = this.game.add.leGrid(grid);
 	this.tileset = this.game.add.leTileset(tileset);
@@ -35,18 +35,11 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
   
 	//Mouse movements
 	this.setupMouseForGrid();
-
-  //This recives information from the nav bar
-  this.eventEmiter.addListener('navLinkClicked', navClicked.bind(this));
-  //if the id of an event that has been emmited is the name of a function
-  //(minus Link) run that function
-  function navClicked(e){
-    if(this[e.replace('Link','')]){
-      this[e.replace('Link','')]();
-    }
-  }; 
+ 
+	//ads in some settings
+	this.map.name =  name || 'My Map';
+	this.map.id = game.rnd.uuid();
 }
-
 
  Phaser.Plugin.LevelEditor.funcs = {
 	/*
@@ -131,21 +124,17 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 			version :1		
 		}
 		
-		//TODO save it 
-		this.storedData.Maps[this.uuid] = {
-			settings : {},			
-			tilemap : json
-		}
-		localStorage.setItem('LevelEditor', JSON.stringify(this.storedData));
-		return json;
+		
+		
+		this.map.tilemap = json;
+		return this.map;
 	},
 	
-	/*
-	 * Loads a map
-	 */
-	 _loadMap : function(uuid){
-		 var data = this.storedData.Maps[uuid].tilemap.layers[0].data;
-
+	//For now this just loads a single layer
+	load : function(map){	
+		
+		var data = map.tilemap.layers[0].data;
+		
 		for(var i = 0; i < data.length; i++){
 			var id = data[i];
 			var t = this.grid.tiles[i];
@@ -155,24 +144,15 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 				t.sprite = game.add.sprite(t.x,t.y,this.tileset.name, this.tileset.tiles[id-1].frame);
 			}
 		}
-	},
-	
-	loadMap : function(uuid){
 		
-		//needs to bring up map selection
-		this._loadMap('a86d54e4-7313-4df3-b15f-7d009c708957');	
+		this.map.id = map.id;
+		this.map.name = map.name;
+		//add more settings later		
 	},
-	
-	newMap : function(){		
-	},
+		
 	changeSettings : function(){
-		var test = new Phaser.Plugin.LevelEditor.Popup();
-		console.log(test);
-	},
-	import : function(){		
-	},
-	export : function(){		
-	}
+				
+	}	
 }
 
 Phaser.Utils.extend( Phaser.Plugin.LevelEditor.prototype ,  Phaser.Plugin.LevelEditor.funcs );

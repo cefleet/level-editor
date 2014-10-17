@@ -1,7 +1,7 @@
 Phaser.Plugin.LevelEditor.Tileset = function (game, options) {
 	this.game = game;	  
 	options = options || {};
-	this.image  = options.image || 'tileset.png';
+	this.image  = options.image || 'sampletileset.png';
 	this.name = options.name || 'tiles';
 	this.imageheight = options.imageheight || 265;
 	this.imagewidth = options.imagewidth || 256;
