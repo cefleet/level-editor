@@ -29,8 +29,6 @@ UI.Actions = {
 		var createButton = $g('createMapButton');
 		
 		var collectData = function(){
-			console.log(this);
-			console.log($g('tilesetFormItem').value);
 			var t = UI.data.Tilesets[$g('tilesetFormItem').value]; //the tilesets
 			tileset = {
 				image : t.image,
