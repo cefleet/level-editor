@@ -23,25 +23,29 @@ Phaser.Plugin.LevelEditor = function (game) {
 Phaser.Plugin.LevelEditor.prototype = Object.create(Phaser.Plugin.prototype);
 Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 
-Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
-	
-
-	//Mkaes the componants
-	this.grid = this.game.add.leGrid(grid);
-	this.tileset = this.game.add.leTileset(tileset);
-	
-	//listeners for cross object communication
-	this.tileset.events.tileSelected.add(this.setMarker, this);
-  
-	//Mouse movements
-	this.setupMouseForGrid();
- 
-	//ads in some settings
-	this.map.name =  name || 'My Map';
-	this.map.id = game.rnd.uuid();
-}
-
  Phaser.Plugin.LevelEditor.funcs = {
+		create : function(name,grid,tileset, id){	
+
+		//Mkaes the componants
+			this.grid = this.game.add.leGrid(grid);
+			this.tileset = this.game.add.leTileset(tileset);
+	
+			//listeners for cross object communication
+			this.tileset.events.tileSelected.add(this.setMarker, this);
+  
+			//Mouse movements
+			this.setupMouseForGrid();
+ 
+			//ads in some settings
+			this.map.name =  name || 'My Map';
+			this.map.id = id || game.rnd.uuid();
+		},
+	
+		destroy : function(){
+			this.map = {};
+			this.grid.gridImage.destroy();
+			this.tileset.bg.destroy();
+		},
 	/*
 	* Sets the marker from the signal given from the tileset
 	*/
@@ -122,9 +126,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 			tileheight : this.tileset.tileheight,
 			tilewidth:this.tileset.tilewidth,
 			version :1		
-		}
-		
-		
+		}		
 		
 		this.map.tilemap = json;
 		return this.map;
@@ -150,9 +152,7 @@ Phaser.Plugin.LevelEditor.prototype.create = function(name,grid,tileset,menu){
 		//add more settings later		
 	},
 		
-	changeSettings : function(){
-				
-	}	
+	changeSettings : function(){}	
 }
 
 Phaser.Utils.extend( Phaser.Plugin.LevelEditor.prototype ,  Phaser.Plugin.LevelEditor.funcs );

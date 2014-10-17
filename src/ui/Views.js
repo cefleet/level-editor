@@ -1,4 +1,9 @@
 UI.Views = {
+	/*
+	 * navbar
+	 * Simply makes the navbar
+	 */
+	 
 	navbar : function(){
 		var navbar = $nE('nav', {"class":"navbar navbar-default navbar-fixed-top", "role":"navigation","id":"navigation"},
 			$nE('div', {"class":"container-fluid"},
@@ -44,5 +49,88 @@ UI.Views = {
 			) 
 		);   
 		return navbar;
+	},
+	/*
+	 *Generic Modal Base  
+	 */
+	 
+	modal : function(){
+		var modal = $nE('div',{"class": "modal fade", "id":"mainModal"},
+			$nE('div', {"class":"modal-dialog"},
+				$nE("div",{"class":"modal-content"},
+					[
+						$nE("div",{"class":"modal-header"},
+							$nE("h4", {"class":"modal-title", "id":"modalTitle"})
+						),
+						$nE("div", {"class":"modal-body", "id":"modalBody"}),
+						$nE("div", {"class":"modal-footer", "id":"modalFooter"},
+							[
+								$nE("button", {"type":"button", "class":"btn btn-default", "data-dismiss":"modal"},
+									$cTN("Close")
+								)
+							]
+						)
+					]
+				)
+			)
+		);
+		return modal;	 
+	},
+	
+	/*
+	 * View sections
+	 */
+	 
+	 /*
+	  * New Map Form
+	  */
+	newMapForm : function(){
+		var form = $nE('form', {"class":"form-horizontal", "role":"form"},
+			[
+				$nE('div', {"class":"form-group"},
+					[
+						$nE('div', {"class":"col-sm-12"},
+						[
+							$nE('label', {"for":"mapNameFormItem","class":"col-sm-4 control-label"}, $cTN('Map Name')),
+							$nE('div', {"class":"col-sm-6"},	
+								$nE('input', {"type":"text", "class":"form-control", "id":"mapNameFormItem", "placeholder":"Map Name", "value":"My Map"})
+							)
+						]
+						),
+						$nE('div', {"class":"col-sm-12"},
+						[
+							$nE('label', {"for":"heightFormItem","class":"col-sm-4 control-label"}, $cTN('Height (in Tiles)')),
+							$nE('div', {"class":"col-sm-2"},	
+								$nE('input', {"type":"text", "class":"form-control", "id":"heightFormItem", "placeholder":"Y", "value":"16"})
+							)
+						]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"widthFormItem","class":"col-sm-4 control-label"}, $cTN('Width (in Tiles)')),
+								$nE('div', {"class":"col-sm-2"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"widthFormItem", "placeholder":"X", "value":"16"})
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"tilesetFormItem","class":"col-sm-4 control-label"}, $cTN('Tileset')),
+								$nE('div', {"class":"col-sm-4"},
+									[
+										$nE('select', {"class":"form-control", "id":"tilesetFormItem"}),//options needs to be added from the view
+										$nE('button', {"class":"btn btn-info btn-sm", "type":"button", "id":"createTileset", "disabled":"disabled"},$cTN('Create TIleset'))
+									]
+								)
+							]
+						)
+					]
+				)
+			]
+		);
+		
+		return form;
 	}
+	
+	  	 
 }
