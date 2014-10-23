@@ -24,6 +24,7 @@ UI = {
 	
 	////Here I can have an array telling which function to run based on options
 	navLinkToFunc : {
-		newMapNavLink : 'createNewPopup'
+		newMapNavLink : 'createNewMapPopup',
+		saveMapNavLink : 'saveMap'
 	}
 }

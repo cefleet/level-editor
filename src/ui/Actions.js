@@ -1,5 +1,10 @@
 UI.Actions = {
-	createNewPopup : function(){
+
+/*
+  Makes a popup to create a new map  
+*/
+
+	createNewMapPopup : function(){
 		//sets the title
 		$rAC($g('modalTitle'));
 		$aC($g('modalTitle'), [$cTN('New Map')]);
@@ -52,7 +57,14 @@ UI.Actions = {
 			$('#mainModal').modal('hide');
 		}
 		
-		createButton.addEventListener('click', collectData,this);
-		
+		createButton.addEventListener('click', collectData,this);		
+	},
+	
+	/* 
+	   Saves the current map
+	*/
+	saveMap : function(){
+	  var map = game.le.saveMap();
+	  console.log(map);
 	}
 }
