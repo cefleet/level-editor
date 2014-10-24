@@ -7,8 +7,8 @@ UI.Views = {
 	navbar : function(){
 		var navbar = $nE('nav', {"class":"navbar navbar-default navbar-fixed-top", "role":"navigation","id":"navigation"},
 			$nE('div', {"class":"container-fluid"},
-				$nE('div', {"class":"collapse navbar-collapse"},
-					$nE('ul',{"class":"nav navbar-nav"},
+				$nE('div', {"class":"collapse navbar-collapse"},[
+					$nE('ul',{"class":"nav navbar-nav navbar-left"},
 						[
 							$nE('li',{"class":"dropdown"},
 								[
@@ -37,14 +37,17 @@ UI.Views = {
 										] 
 									)
 								]
-							),
-							$nE('form',{"class":"navbar-form navbar-left"},
-								$nE('div', {"class":"form-group"},
-									$nE('input', {"type":"text","class":"form-control", "placeholder":"Map Name", "id":"mapNameNavForm"})
-								)
-							)
+							)//Other items can go below here
+						]
+					),
+					$nE('ul',{"class":"nav navbar-nav navbar-right"},
+						[
+						  $nE('li',{}, 
+						    $nE('p', {"class":"navbar-text", "id":"navbarMapName"}, $cTN('No Map Selected'))
+						  )
 						]
 					)
+					]
 				)
 			) 
 		);   
@@ -138,16 +141,51 @@ UI.Views = {
 	 loadMapSelection : function(){
 		//TODO can add a little bit of information if needed here like a screenshot of the map
 		var form = $nE('form',{"class":"form-horizontal", "role":"form"},
-			$nE('div', {"class":"col-sm-12"},
-				[
-					$nE('label', {"for":"mapsFormItem","class":"col-sm-4 control-label"}, $cTN('Maps')),
-					$nE('div', {"class":"col-sm-4"},
-							$nE('select', {"class":"form-control", "id":"mapsFormItem"})					
-					)
-				]
-			)
+		  $nE('div', {"class":"form-group"},
+			  $nE('div', {"class":"col-sm-12"},
+			  	[
+			  		$nE('label', {"for":"mapsFormItem","class":"col-sm-4 control-label"}, $cTN('Maps')),
+				  	$nE('div', {"class":"col-sm-4"},
+				  			$nE('select', {"class":"form-control", "id":"mapsFormItem"})					
+					  )
+				  ]
+			  )
+		  )
 		);		
 		return form;
+	},
+	
+	/*
+	* Settings Modal
+	*/
+	settingsForm : function(){
+	  var form = $nE('form',{"class":"form-horizontal", "role":"form"},
+	    $nE('div', {"class":"form-group"},
+	      [
+	        $nE('div', {"class":"col-sm-12"},
+						[
+							$nE('label', {"for":"mapNameFormItem","class":"col-sm-4 control-label"}, $cTN('Map Name')),
+							$nE('div', {"class":"col-sm-6"},	
+								$nE('input', {"type":"text", "class":"form-control", "id":"mapNameFormItem", "placeholder":"Map Name"})
+							)
+						]
+					),
+					$nE('div', {"class":"col-sm-12"},
+						[
+							$nE('label', {"for":"tilesetFormItem","class":"col-sm-4 control-label"}, $cTN('Tileset')),
+							$nE('div', {"class":"col-sm-4"},
+								[
+									$nE('select', {"class":"form-control", "id":"tilesetFormItem"}),//options needs to be added from the view
+									$nE('button', {"class":"btn btn-info btn-sm", "type":"button", "id":"createTileset", "disabled":"disabled"},$cTN('Create TIleset'))
+								]
+							)
+						]
+					)
+	      ]
+	    ) 
+	  );
+	  
+	  return form; 
 	}
 	  	 
 }

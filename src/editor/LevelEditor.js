@@ -134,6 +134,7 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 	
 	//For now this just loads a single layer
 	load : function(map){	
+
 		var tileset = map.tilemap.tilesets[0];
 		var grid = {
 			tilewidth : map.tilemap.tilewidth,
@@ -142,12 +143,11 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 			tilesy : map.tilemap.height
 		}
 		
-		this.create(map.name,tileset,grid, map.id);
+		this.create(map.name,grid,tileset,map.id);
 		
 		this.loadMapData = map;
 		
 		if(this.tileset.loaded === false	){
-			console.log('not loaded');
 			this.tileset.onLoad = this._load.bind(this);
 		} else {
 			this._load();
@@ -157,7 +157,6 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 	_load : function() {
 		var map = this.loadMapData;
 		var data = map.tilemap.layers[0].data;
-		console.log(this.grid);
 		for(var i = 0; i < data.length; i++){
 			var id = data[i];
 			var t = this.grid.tiles[i];

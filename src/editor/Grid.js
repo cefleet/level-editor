@@ -1,6 +1,7 @@
 Phaser.Plugin.LevelEditor.Grid = function (game, options) {
 	this.game = game;	  
 	options = options || {};
+	console.log(options);
 	this.linecolor = options.line || 0x000000;
 	this.fillcolor = options.fill || 0x545454;
 	this.loc = options.loc || [10,60];
@@ -124,7 +125,9 @@ Phaser.Plugin.LevelEditor.Grid.prototype = {
 			if(this.activeTile.sprite){
 				this.activeTile.sprite.destroy();
 			}
-		}		
+		}	
+		
+		this.activeTile.tilesetId = 0;	
 	},
 	
 	/*

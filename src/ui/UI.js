@@ -26,6 +26,7 @@ UI = {
 	navLinkToFunc : {
 		newMapNavLink : 'createNewMapPopup',
 		saveMapNavLink : 'saveMap',
-		loadMapNavLink :'loadMapSelection'
+		loadMapNavLink :'loadMapSelection',
+		settingsNavLink : 'settingsPopup'
 	}
 }
