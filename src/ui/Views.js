@@ -130,7 +130,24 @@ UI.Views = {
 		);
 		
 		return form;
-	}
+	},
 	
+	/*
+	 * The inside part of the modal for loading the selection
+	 */
+	 loadMapSelection : function(){
+		//TODO can add a little bit of information if needed here like a screenshot of the map
+		var form = $nE('form',{"class":"form-horizontal", "role":"form"},
+			$nE('div', {"class":"col-sm-12"},
+				[
+					$nE('label', {"for":"mapsFormItem","class":"col-sm-4 control-label"}, $cTN('Maps')),
+					$nE('div', {"class":"col-sm-4"},
+							$nE('select', {"class":"form-control", "id":"mapsFormItem"})					
+					)
+				]
+			)
+		);		
+		return form;
+	}
 	  	 
 }

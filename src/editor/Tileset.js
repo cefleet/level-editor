@@ -13,7 +13,7 @@ Phaser.Plugin.LevelEditor.Tileset = function (game, options) {
 		line : 0x2F2F2F,
 		fill : 0x9C9C9C
 	};
-	
+	this.loaded = false;
 	this.events = {
 		tileSelected : new Phaser.Signal()
 	}
@@ -77,7 +77,9 @@ Phaser.Plugin.LevelEditor.Tileset.prototype = {
 				i++;
 			}
 			c++;
-		}	
+		}
+		this.loaded = true;	
+		this.onLoad();
 	},
 	
 	/*
@@ -86,6 +88,14 @@ Phaser.Plugin.LevelEditor.Tileset.prototype = {
 	selectTile : function(item){
 		this.selectedTile = item;
 		this.events.tileSelected.dispatch(this);
+	},
+	
+	/*
+	 * run once loaded. Should be overwritten
+	 * kinda gheto hqackish
+	 */
+	onLoad : function(){
+		 console.log('Tileset Loaded');
 	}
 }
 
@@ -109,6 +119,5 @@ Phaser.GameObjectFactory.prototype.leTileset = function (options) {
 	}, t);
 	//start the upload
     t.spritesheet.start();
-	return t;
- 
+	return t; 
 };

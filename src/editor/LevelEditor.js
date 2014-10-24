@@ -134,9 +134,30 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 	
 	//For now this just loads a single layer
 	load : function(map){	
+		var tileset = map.tilemap.tilesets[0];
+		var grid = {
+			tilewidth : map.tilemap.tilewidth,
+			tileheight : map.tilemap.tileheight,
+			tilesx : map.tilemap.width,
+			tilesy : map.tilemap.height
+		}
 		
+		this.create(map.name,tileset,grid, map.id);
+		
+		this.loadMapData = map;
+		
+		if(this.tileset.loaded === false	){
+			console.log('not loaded');
+			this.tileset.onLoad = this._load.bind(this);
+		} else {
+			this._load();
+		}
+	},
+	
+	_load : function() {
+		var map = this.loadMapData;
 		var data = map.tilemap.layers[0].data;
-		
+		console.log(this.grid);
 		for(var i = 0; i < data.length; i++){
 			var id = data[i];
 			var t = this.grid.tiles[i];
@@ -146,10 +167,6 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 				t.sprite = game.add.sprite(t.x,t.y,this.tileset.name, this.tileset.tiles[id-1].frame);
 			}
 		}
-		
-		this.map.id = map.id;
-		this.map.name = map.name;
-		//add more settings later		
 	},
 		
 	changeSettings : function(){}	
