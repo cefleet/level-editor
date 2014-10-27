@@ -1,89 +1,56 @@
-Phaser.Plugin.LevelEditor = function (game) {
-  this.game = game;
-  Phaser.Plugin.call(this, game);
-	this.game.le = this;
+LevelEditor = function (containers) {
+	containers = containers || {};
+	this.mainContainer = containers.main || '';
+	this.gridContainer = containers.grid ||'';
+	this.tilesetContainer = containers.tileset ||'';
 	this.map = {};
-	/*
-	this.storedData = JSON.parse(localStorage.getItem('LevelEditor'));
-	if(!this.storedData){
-		this.storedData ={
-			Maps : {},
-			DefaultSettings : {
-				name : 'My Map',
-				height : '16',
-				width : '16',
-				tileset : 'tileset.png'
-			}
-		}
-	}
-	*/
-	
+	/*this.game = new Phaser.Game(window.innerWidth,window.innerHeight, Phaser.CANVAS,this.mainContainer, {
+		create:function(){	
+			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+			this.game.stage.backgroundColor ='#3F5465';		
+		}.bind(this)
+	})	*/
 }
 
-Phaser.Plugin.LevelEditor.prototype = Object.create(Phaser.Plugin.prototype);
-Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
+LevelEditor.prototype.constructor = LevelEditor;
 
- Phaser.Plugin.LevelEditor.funcs = {
+LevelEditor.funcs = {
 		create : function(name,grid,tileset, id){	
-
-		//Mkaes the componants
-			this.grid = this.game.add.leGrid(grid);
-			this.tileset = this.game.add.leTileset(tileset);
-	
+			this.destroy();
+			this.map = {};
+			//Mkaes the componants
+			grid = grid || {};
+			grid.container = grid.container || this.gridContainer;			
+			this.grid = new LevelEditor.Grid(grid);
+			
+			tileset = tileset || {};
+			tileset.container = tileset.container || this.tilesetContainer;
+			this.tileset = new LevelEditor.Tileset(tileset);
+			
 			//listeners for cross object communication
-			this.tileset.events.tileSelected.add(this.setMarker, this);
-  
-			//Mouse movements
-			this.setupMouseForGrid();
- 
+			//This is correct because Level Editor should be the 'glue' between the two
+			this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);  
+			this.tileset.events.tilesetImageLoaded.add(this.grid.loadTileset, this.grid); 
+			 
 			//ads in some settings
 			this.map.name =  name || 'My Map';
-			this.map.id = id || game.rnd.uuid();
+			this.map.id = id || $uid();
 		},
 	
 		destroy : function(){
-			this.map = {};
-			this.grid.gridImage.destroy();
-			this.tileset.bg.destroy();
+			delete this.map;
+			
+			if(this.grid) {
+				this.grid.destroy();	
+				delete this.grid;
+			}
+			
+			if(this.tileset){
+				this.tileset.destroy();
+				delete this.tileset;
+			}			
 		},
-	/*
-	* Sets the marker from the signal given from the tileset
-	*/
-	setMarker : function(t){
-		this.grid.marker.destroy();	
-		this.grid.marker = this.game.add.sprite(0,0, t.name, t.selectedTile.frame*1);
-		this.grid.marker.tilesetId = t.selectedTile.id;
-	},
-	
-	/*
-	* Sets up Mouse actions
-	*/
-	setupMouseForGrid : function(){
-		this.game.input.mouse.mouseMoveCallback = function(c){
-			if(this.grid.inGrid(c)){
-				this.grid.setActiveTileFromPoint(c);
-				if(this.game.input.activePointer.isDown){
-					if(c.which === 3){
-						this.grid.unsetActiveTile();
-					} else if(c.which === 1) {
-						this.grid.setActiveTileFromMarker();
-					}
-				}
-			}
-		}.bind(this);
-	
-		this.game.input.mouse.mouseDownCallback = function(c){
-			if(this.grid.inGrid(c)){
-				this.grid.setActiveTileFromPoint(c);
-				if(c.which === 3){
-					this.grid.unsetActiveTile();
-				} else if(c.which === 1){
-					this.grid.setActiveTileFromMarker();
-				}
-			}
-		}.bind(this);
-	},
-	
+		
 	/*
 	 * Saves the Map
 	 */
@@ -93,17 +60,17 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 			ar.push(this.grid.tiles[t].tilesetId);
 		}
 		var json = {
-			height : this.grid.tilesy,
-			width: this.grid.tilesx,
+			height : Number(this.grid.tilesy),
+			width: Number(this.grid.tilesx),
 			layers  : [
 				{
 					data : ar,
-					height : this.grid.tilesy,
-					name : this.name,
+					height : Number(this.grid.tilesy),
+					name : 'layer',//TODO this is bad
 					opacity : 1,
 					type : 'tilelayer',
 					visible : true,
-					width: this.grid.tilesx,
+					width: Number(this.grid.tilesx),
 					x : 0,
 					y: 0
 				}
@@ -113,18 +80,18 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 				{
 					firstgid : 1,
 					image : this.tileset.image,
-					imageheight : this.tileset.imageheight,
-					imagewidth : this.tileset.imagewidth,
+					imageheight : Number(this.tileset.imageheight),
+					imagewidth : Number(this.tileset.imagewidth),
 					margin : 0,
 					name : this.tileset.name,
 					spacing : 0,
-					tileheight: this.tileset.tileheight,
-					tilewidth : this.tileset.tilewidth				
+					tileheight: Number(this.tileset.tileheight),
+					tilewidth : Number(this.tileset.tilewidth)				
 				}
 			],
 			orientation:"orthogonal",
-			tileheight : this.tileset.tileheight,
-			tilewidth:this.tileset.tilewidth,
+			tileheight : Number(this.tileset.tileheight),
+			tilewidth:Number(this.tileset.tilewidth),
 			version :1		
 		}		
 		
@@ -133,16 +100,16 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 	},
 	
 	//For now this just loads a single layer
-	load : function(map){	
-
-		var tileset = map.tilemap.tilesets[0];
+	load : function(map){
+		
+		var tileset = map.tilemap.tilesets[0];		
 		var grid = {
 			tilewidth : map.tilemap.tilewidth,
 			tileheight : map.tilemap.tileheight,
 			tilesx : map.tilemap.width,
 			tilesy : map.tilemap.height
 		}
-		
+
 		this.create(map.name,grid,tileset,map.id);
 		
 		this.loadMapData = map;
@@ -155,6 +122,7 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 	},
 	
 	_load : function() {
+		//TODO this may need to seperate into tileset and grid
 		var map = this.loadMapData;
 		var data = map.tilemap.layers[0].data;
 		for(var i = 0; i < data.length; i++){
@@ -163,12 +131,14 @@ Phaser.Plugin.LevelEditor.prototype.constructor = Phaser.Plugin.LevelEditor;
 			t.tilesetId = id;
 			if(id != 0){
 				//frame starts with 0 first item
-				t.sprite = game.add.sprite(t.x,t.y,this.tileset.name, this.tileset.tiles[id-1].frame);
+				if(this.tileset.tiles[id-1]){
+					t.sprite = this.grid.game.add.sprite(t.x,t.y,this.tileset.name, this.tileset.tiles[id-1].frame);
+				}
 			}
 		}
 	},
 		
-	changeSettings : function(){}	
+	changeSettings : function(){},
 }
 
-Phaser.Utils.extend( Phaser.Plugin.LevelEditor.prototype ,  Phaser.Plugin.LevelEditor.funcs );
+Phaser.Utils.extend( LevelEditor.prototype ,  LevelEditor.funcs );

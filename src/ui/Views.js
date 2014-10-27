@@ -53,6 +53,40 @@ UI.Views = {
 		);   
 		return navbar;
 	},
+	
+	/*
+	 * This is the main panel that will hold the editor and the grid
+	 */
+	mainPanel : function(){
+		var panel = $nE('div', {"class":"col-md-8"},
+			$nE('div', {"class":"panel panel-default"},
+				[
+					$nE('div', {"class":"panel-heading"}, 
+						$nE('h3', {"class":"panel-title"}, $cTN('Grid'))
+					),
+					$nE('div', {"class":"panel-body", "id" :"gameGrid", "style":"overflow:auto;max-height:680px"})
+				]
+			)
+		);
+		return panel;
+	},
+	
+	/*
+	 * This is the main panel that will hold the editor and the grid
+	 */
+	toolPanel : function(){
+		var panel = $nE('div', {"class":"col-md-4"},
+			$nE('div', {"class":"panel panel-default"},
+				[
+					$nE('div', {"class":"panel-heading"}, 
+						$nE('h3', {"class":"panel-title"}, $cTN('Tileset'))
+					),
+					$nE('div', {"class":"panel-body", "id" :"gameTileset","style":"overflow:auto;max-height:680px"})
+				]
+			)
+		);
+		return panel;
+	},
 	/*
 	 *Generic Modal Base  
 	 */

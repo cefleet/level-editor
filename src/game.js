@@ -1,21 +1,5 @@
-var game = new Phaser.Game(window.innerWidth,window.innerHeight, Phaser.CANVAS,'', {
-	create:create,
-	preload:preload,
-	update : update
+var LE = new LevelEditor({
+	main : 'gameBG',
+	grid : 'gameGrid',
+	tileset : 'gameTileset'
 });
-
-function preload(){
-	game.plugins.add(new Phaser.Plugin.LevelEditor(game));
-};
-
-
-function create(){
-	
-	game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-	game.stage.backgroundColor ='#3F5465';
-		
-};
-
-function update(){
-	
-}

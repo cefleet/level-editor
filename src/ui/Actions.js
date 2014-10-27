@@ -42,18 +42,18 @@ UI.Actions = {
 			var t = UI.data.Tilesets[tilesetId]; //the tilesets
 			tileset = {
 				image : t.image,
-				imageheight : t.imageheight,
-				imagewidth : t.imagewidth,
+				imageheight : Number(t.imageheight),
+				imagewidth : Number(t.imagewidth),
 				name : t.name,
-				tilewidth : t.tilewidth,
-				tileheight : t.tileheight
+				tilewidth : Number(t.tilewidth),
+				tileheight : Number(t.tileheight)
 			};
 			
 			grid = {
-				tilesx : $g('widthFormItem').value,
-				tilesy : $g('heightFormItem').value,
-				tilewidth : t.tilewidth,
-				tileheight : t.tileheight
+				tilesx : Number($g('widthFormItem').value),
+				tilesy : Number($g('heightFormItem').value),
+				tilewidth : Number(t.tilewidth),
+				tileheight : Number(t.tileheight)
 			};
 
 			this._createNewMap($g('mapNameFormItem').value,grid,tileset);
@@ -68,19 +68,19 @@ UI.Actions = {
 	//This all can be run from the map using event Emmiters ... not sure which way is best now
 	 _createNewMap : function(name,grid,tileset){
 		 
-		if(game.le.map.id){
-			game.le.destroy();
+		if(LE.map.id){
+			LE.destroy();
 		}		
-		game.le.create(name,grid,tileset);
+		LE.create(name,grid,tileset);
 		
-		UI.activeMap = game.le.map;
+		UI.activeMap = LE.map;
 		UI.activeMap.tilset = UI.activeTilesetId;
 	},
 	/* 
 	   Saves the current map
 	*/
 	saveMap : function(){
-	  var map = game.le.saveMap();
+	  var map = LE.saveMap();
 	  map.tilesetId = UI.activeTilesetId;
 	  UI.data.Maps[map.id] = map;
 	  localStorage.setItem('LevelEditor', JSON.stringify(UI.data));
@@ -117,7 +117,7 @@ UI.Actions = {
 	
 	_loadMap : function(map){
 
-		game.le.load(map);
+		LE.load(map);
 		var mapTitle = $g('navbarMapName');
 		$rAC(mapTitle);
 		$aC(mapTitle, [$cTN(map.name)]);
@@ -164,11 +164,21 @@ UI.Actions = {
 	
 	_getUpdateMapFormData : function(){
 	  
-	  //get the map name
+	  //get the map name and tileset
+	var name = $g('mapNameFormItem').value;
+	var tileset = $g('tilesetFormItem').value;
+   	
+   	var mapTitle = $g('navbarMapName');
+	$aC(mapTitle, [$cTN(name)]);
+	
+	//TODO do something with the tileset
+	//With this there needs to be a level editor thing  
 	  
-	  //get the tileset
+	  //change those in LE. and UI.activeMap
+	  LE.map.name = name;
+	  UI.activeMap.name = name;
 	  
-	  //change those in game.le and UI.activeMap
+	  $('#mainModal').modal('hide');
 	}
 	
 }

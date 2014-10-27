@@ -4,6 +4,10 @@ document.addEventListener( "DOMContentLoaded", function(){
 		UI.Views.modal(),
 		UI.Views.navbar()
 	]);
+	$aC($g('mainRow'), [
+		UI.Views.mainPanel(),
+		UI.Views.toolPanel()
+	]);
 	UI.setupEvents();  
 	var data = JSON.parse(localStorage.getItem('LevelEditor'));
 	if(!data) {
