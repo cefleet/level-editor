@@ -179,6 +179,12 @@ UI.Actions = {
 	  UI.activeMap.name = name;
 	  
 	  $('#mainModal').modal('hide');
-	}
+	},
 	
+	/*
+	 * Sets the zoom level of the grid
+	 */
+	zoomGridTo : function(zoomLvl){
+		LE.grid.scaleTo(zoomLvl);
+	}
 }

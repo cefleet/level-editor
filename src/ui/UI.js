@@ -10,6 +10,13 @@ UI = {
 			}.bind(links[i]));   
 		}
     
+		var gridZoom = $gBT('a', $g('gridZoomOptions'));
+		for(var i = 0; i < gridZoom.length; i++){
+			gridZoom[i].addEventListener('click', function(){
+				UI.Actions.zoomGridTo(this.getAttribute('zoom'));
+			}.bind(gridZoom[i]));   
+		}
+    
 		//This recives information from the nav bar
 		this.events.addListener('navLinkClicked', this.navClicked.bind(this));
 		//if the id of an event that has been emmited is the name of a function

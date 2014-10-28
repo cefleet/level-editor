@@ -61,10 +61,41 @@ UI.Views = {
 		var panel = $nE('div', {"class":"col-md-8"},
 			$nE('div', {"class":"panel panel-default"},
 				[
-					$nE('div', {"class":"panel-heading"}, 
+					$nE('div', {"class":"panel-heading"},
+					[ 
+						$nE('div', {"class":"dropdown pull-right"},
+							[
+								$nE('a',{"class":"dropdown-toggle", "data-toggle":"dropdown"}, 
+									[
+										$cTN('Zoom'),
+										$nE('span',{"class":"caret"})
+									]
+								),
+								$nE('ul',{"class":"dropdown-menu","role":"menu","id":"gridZoomOptions"}, 
+									[
+										$nE('li',{},
+											$nE('a',{"id":"gridZoom100", "zoom":"100"}, $cTN('100%'))
+										),
+										$nE('li',{},
+											$nE('a',{"id":"gridZoom75", "zoom":"75"}, $cTN('75%'))
+										),
+										$nE('li',{},
+											$nE('a',{"id":"gridZoom50", "zoom":"50"}, $cTN('50%'))
+										),
+										$nE('li',{},
+											$nE('a',{"id":"gridZoom25", "zoom":"25"}, $cTN('25%'))
+										),
+										$nE('li',{},
+											$nE('a',{"id":"gridZoom10", "zoom":"10"}, $cTN('10%'))
+										)
+									]
+								)
+							]
+						),
 						$nE('h3', {"class":"panel-title"}, $cTN('Grid'))
+					]
 					),
-					$nE('div', {"class":"panel-body", "id" :"gameGrid", "style":"overflow:auto;max-height:680px"})
+					$nE('div', {"class":"panel-body", "id" :"gameGrid", "style":"overflow:auto"})
 				]
 			)
 		);
@@ -81,7 +112,7 @@ UI.Views = {
 					$nE('div', {"class":"panel-heading"}, 
 						$nE('h3', {"class":"panel-title"}, $cTN('Tileset'))
 					),
-					$nE('div', {"class":"panel-body", "id" :"gameTileset","style":"overflow:auto;max-height:680px"})
+					$nE('div', {"class":"panel-body", "id" :"gameTileset","style":"overflow:auto"})
 				]
 			)
 		);

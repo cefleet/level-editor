@@ -12,14 +12,18 @@ LevelEditor.Grid = function (options) {
 	this.tilesx = options.tilesx || 18;
 	this.offsetx = 0;
 	this.offsety = 0;
-	this.scaley = 1;
-	this.scalex = 1;
+	this.scale =1;
+	this.baseHeight = this.tilesy*this.tileheight;
+	this.baseWidth = this.tilesx*this.tilewidth;
+
     this.tiles = {};
         
         
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
-		create:function(){	
+		create:function(){
+			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+			this.game.scale.setScreenSize();
 			this.game.stage.backgroundColor ='#545454';
 			this.setup();		
 		}.bind(this)
@@ -153,8 +157,8 @@ LevelEditor.Grid.prototype = {
 	setupMouse : function(){
 		this.game.input.mouse.mouseMoveCallback = function(c){
 			var p = {
-				x : c.offsetX,
-				y : c.offsetY
+				x : c.offsetX/this.scale,
+				y : c.offsetY/this.scale
 			}
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
@@ -170,8 +174,8 @@ LevelEditor.Grid.prototype = {
 	
 		this.game.input.mouse.mouseDownCallback = function(c){
 			var p = {
-				x : c.offsetX,
-				y : c.offsetY
+				x : c.offsetX/this.scale,
+				y : c.offsetY/this.scale
 			}
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
@@ -232,6 +236,15 @@ LevelEditor.Grid.prototype = {
 			this.offsetx = o.left;
 			this.offsety = o.top;
 		}
+	},
+	
+	scaleTo : function(scale){
+			//scale is a # that is a %
+			var decScale = Number(scale)/100;
+			this.game.scale.maxWidth = this.baseWidth*decScale;
+			this.game.scale.maxHeight = this.baseHeight*decScale;
+			this.game.scale.refresh();
+			this.scale = decScale;
 	}
 };
 
