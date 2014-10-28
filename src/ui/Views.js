@@ -42,9 +42,17 @@ UI.Views = {
 					),
 					$nE('ul',{"class":"nav navbar-nav navbar-right"},
 						[
-						  $nE('li',{}, 
-						    $nE('p', {"class":"navbar-text", "id":"navbarMapName"}, $cTN('No Map Selected'))
-						  )
+							$nE('li',{}, 
+								$nE('p', {"class":"navbar-text", "id":"navbarMapName"}, $cTN('No Map Selected'))
+							),
+							$nE('li',{},
+								$nE('button', {"type":"button", "class":"btn btn-success navbar-btn", "disabled":"disabled", "id":"playGameButton"},
+									[
+										$nE('span', {"class":"glyphicon glyphicon-play"}),
+										$cTN(' Run Game')
+									]
+								)
+							)
 						]
 					)
 					]
@@ -145,6 +153,28 @@ UI.Views = {
 		return modal;	 
 	},
 	
+	gameModal : function(){
+		var modal = $nE('div',{"class": "modal fade", "id":"gameModal"},
+			$nE('div', {"class":"modal-dialog modal-lg"},
+				$nE("div",{"class":"modal-content"},
+					[
+						$nE("div",{"class":"modal-header"},
+							$nE("h4", {"class":"modal-title", "id":"gameModalTitle"})
+						),
+						$nE("div", {"class":"modal-body", "id":"gameModalBody"}),
+						$nE("div", {"class":"modal-footer", "id":"gameModalFooter"},
+							[
+								$nE("button", {"type":"button", "class":"btn btn-default", "data-dismiss":"modal"},
+									$cTN("Close")
+								)
+							]
+						)
+					]
+				)
+			)
+		);
+		return modal;	 
+	},
 	/*
 	 * View sections
 	 */

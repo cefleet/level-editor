@@ -3,6 +3,7 @@ UI = {
 		this.events = MasterEmitter;
   
 		//This stays here
+		//Navigation Controls
 		var links = $gBT('a', $g('navigation'));
 		for(var i = 0; i < links.length; i++){
 			links[i].addEventListener('click', function(){
@@ -10,6 +11,7 @@ UI = {
 			}.bind(links[i]));   
 		}
     
+		//Zom Controls
 		var gridZoom = $gBT('a', $g('gridZoomOptions'));
 		for(var i = 0; i < gridZoom.length; i++){
 			gridZoom[i].addEventListener('click', function(){
@@ -21,6 +23,11 @@ UI = {
 		this.events.addListener('navLinkClicked', this.navClicked.bind(this));
 		//if the id of an event that has been emmited is the name of a function
 		//(minus Link) run that function
+		
+		var playGameBtn = $g('playGameButton');
+		playGameBtn.addEventListener('click', function(){
+			UI.Actions.playGame();
+		});
 	},
 
 	navClicked : function(clicked){

@@ -75,6 +75,7 @@ UI.Actions = {
 		
 		UI.activeMap = LE.map;
 		UI.activeMap.tilset = UI.activeTilesetId;
+		$g('playGameButton').disabled = false;
 	},
 	/* 
 	   Saves the current map
@@ -123,6 +124,7 @@ UI.Actions = {
 		$aC(mapTitle, [$cTN(map.name)]);
 		
 		UI.activeMap = map;
+		$g('playGameButton').disabled = false;
 	},
 	
 	settingsPopup :function(){
@@ -174,7 +176,6 @@ UI.Actions = {
 	//TODO do something with the tileset
 	//With this there needs to be a level editor thing  
 	  
-	  //change those in LE. and UI.activeMap
 	  LE.map.name = name;
 	  UI.activeMap.name = name;
 	  
@@ -185,6 +186,32 @@ UI.Actions = {
 	 * Sets the zoom level of the grid
 	 */
 	zoomGridTo : function(zoomLvl){
+		//should just talk to LE I think
 		LE.grid.scaleTo(zoomLvl);
+	},
+	
+	/*
+	 * Launches the modal to put the game into
+	 */
+	 
+	playGame : function(){
+
+		var container = $g('gameModalBody');
+		var baseWidth = container.offsetWidth;
+		var baseHeight = window.innerHeight-130;
+		
+		console.log([baseWidth,baseHeight]);
+		/*
+			$sA(gg,{
+				style:'max-height:'+(window.innerHeight-130)+'px;overflow:auto'
+			});
+		*/
+		var options = {
+			container : 'gameModalBody',
+			
+		}
+		LE.launchGame(options);
+		$('#gameModal').modal('show');
+
 	}
 }

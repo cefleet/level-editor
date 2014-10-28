@@ -4,12 +4,6 @@ LevelEditor = function (containers) {
 	this.gridContainer = containers.grid ||'';
 	this.tilesetContainer = containers.tileset ||'';
 	this.map = {};
-	/*this.game = new Phaser.Game(window.innerWidth,window.innerHeight, Phaser.CANVAS,this.mainContainer, {
-		create:function(){	
-			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
-			this.game.stage.backgroundColor ='#3F5465';		
-		}.bind(this)
-	})	*/
 }
 
 LevelEditor.prototype.constructor = LevelEditor;
@@ -122,7 +116,6 @@ LevelEditor.funcs = {
 	},
 	
 	_load : function() {
-		//TODO this may need to seperate into tileset and grid
 		var map = this.loadMapData;
 		var data = map.tilemap.layers[0].data;
 		for(var i = 0; i < data.length; i++){
@@ -139,6 +132,13 @@ LevelEditor.funcs = {
 	},
 		
 	changeSettings : function(){},
+	
+	launchGame : function(options){
+		this.saveMap();
+		options.map = this.map;
+		this.testGame = new LevelEditor.GameTester(options);
+		//when it closes we need to destroy the game
+	}
 }
 
 Phaser.Utils.extend( LevelEditor.prototype ,  LevelEditor.funcs );
