@@ -30,7 +30,7 @@ document.addEventListener( "DOMContentLoaded", function(){
 		};
     
 		data.Tilesets[id] = {
-			image : 'sampletileset.png',
+			image : 'img/sampletileset.png',
 			id : id,
 			imageheight : '256',
 			imagewidth : '256',

@@ -1,2 +1,4 @@
 /lib/
-/node_modules/
+/dev/node_modules/
+/build/node_modules/
+

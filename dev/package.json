@@ -11,6 +11,9 @@
     "wolfy87-eventemitter":"*",
     "express":"*",
     "body-parser" : "*",
-    "multer":"*"
+    "multer":"*",
+    "nedb":"*",
+    "passport":"*",
+    "passport-local":"*"
    }
 }
