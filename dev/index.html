@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Level Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<style type="text/css">
+	body { margin: 0px; }
+	
+  a {
+    cursor : pointer;
+  }
+ body { 
+	 padding-top: 70px; 
+};
+</style>
+
+
+<!-- UI -->
+<script src ="src/ui/util/mcor-util.js"></script>
+<script src ="src/ui/UI.js"></script>
+<script src ="src/ui/Actions.js"></script>
+<script src ="src/ui/Views.js"></script>
+
+<!-- Phaser -->
+<script src="node_modules/phaser/build/phaser.min.js"></script>
+
+<!-- Editor Stuff -->
+<script src="src/editor/LevelEditor.js"></script>
+<script src="src/editor/Grid.js"></script>
+<script src="src/editor/Tileset.js"></script>
+<script src="src/editor/GameTester.js"></script>
+
+
+<!-- Bootstrap stuff -->
+<link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<!-- Event Emmiter to keep the bootstrap stuff and game stuff sperated -->
+<script src = "node_modules/wolfy87-eventemitter/EventEmitter.min.js"></script>
+
+<!-- Initiators for phaser (game) and then for Editor / UI -->
+<script src="src/game.js"></script>
+<script src="src/main.js"></script>
+
+</title>
+</head>
+<body>
+	<div id='container' class='container-fluid'>
+		<div class='row' id='mainRow'>
+		</div>
+	</div>
+</body>
+</html>

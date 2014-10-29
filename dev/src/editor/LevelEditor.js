@@ -136,8 +136,17 @@ LevelEditor.funcs = {
 	launchGame : function(options){
 		this.saveMap();
 		options.map = this.map;
+		this.grid.destroy();		
+		this.tileset.destroy();
+		delete this.grid;
+		delete this.tileset;
 		this.testGame = new LevelEditor.GameTester(options);
 		//when it closes we need to destroy the game
+	},
+	
+	destroyGame : function(){
+		this.testGame.game.destroy();
+		delete this.testGame;
 	}
 }
 

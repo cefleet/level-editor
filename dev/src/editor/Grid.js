@@ -197,10 +197,11 @@ LevelEditor.Grid.prototype = {
 		if(this.gridImage){
 			this.gridImage.destroy();
 		}
-		
-		this.game.input.mouse.mouseMoveCallback = function(){};
-		this.game.input.mouse.mouseDownCallback = function(){};
-		this.game.destroy();
+		if(this.game){
+			this.game.input.mouse.mouseMoveCallback = function(){};
+			this.game.input.mouse.mouseDownCallback = function(){};
+			this.game.destroy();
+		}
 	},
 	
 	loadTileset : function(t){

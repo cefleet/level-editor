@@ -1,15 +1,3 @@
-/* This doesnt do anythign yet. Just wanted to keep this functio nhere
-testMap : function(){
-		this.saveMap();
-		console.log(JSON.stringify(this.map.tilemap));
-		this.game.cache.addTilemap('map',null, this.map.tilemap, Phaser.Tilemap.TILED_JSON);
-		this.destroy();
-		map = this.game.add.tilemap('map');
-		map.addTilesetImage('sample');
-		var layer = map.createLayer('layer');
-		layer.resizeWorld();		
-	}	
-	*/
 LevelEditor.GameTester = function (options) {
 	
 	options = options || {};
@@ -22,11 +10,9 @@ LevelEditor.GameTester = function (options) {
     //setup
     this.game = new Phaser.Game(this.width,this.height, Phaser.CANVAS,this.container, {
 		preload : function(){
-			//do the loading sstuff here
-			//load it here actually
-			console.log(this.map);
+			
 			//TODO multiple tilesets
-			this.game.load.image('sample', this.map.tilemap.tilesets[0].image);
+			this.game.load.image(this.map.tilemap.tilesets[0].name, this.map.tilemap.tilesets[0].image);
 			this.game.cache.addTilemap('tilemap',null, this.map.tilemap, Phaser.Tilemap.TILED_JSON);
 
 		}.bind(this),
@@ -39,11 +25,17 @@ LevelEditor.GameTester = function (options) {
 			this.game.physics.p2.enable(this.player);
 			this.cursors = this.game.input.keyboard.createCursorKeys();
 			this.game.camera.follow(this.player);
+			this.game.time.advancedTiming = true;
 			this.setup();		
 		}.bind(this),
 		
 		update : function(){
 			this.update();
+		}.bind(this),
+		
+		render : function(){
+			this.game.debug.text('FPS : '+this.game.time.fps, 10,10);
+			//game.debug.body(game.adv.player);
 		}.bind(this)
 	});
     
@@ -53,7 +45,8 @@ LevelEditor.GameTester = function (options) {
 LevelEditor.GameTester.prototype = {
 	setup : function(){
 		var tilemap = this.game.add.tilemap('tilemap');
-		tilemap.addTilesetImage('sample');
+		tilemap.addTilesetImage(this.map.tilemap.tilesets[0].name);
+		
 		//TODO multiple layers
 		var layer = tilemap.createLayer(this.map.tilemap.layers[0].name);
 		layer.resizeWorld();

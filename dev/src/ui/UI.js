@@ -28,6 +28,10 @@ UI = {
 		playGameBtn.addEventListener('click', function(){
 			UI.Actions.playGame();
 		});
+		
+		$('#gameModal').on('hidden.bs.modal', function (e) {
+			UI.Actions.destroyGame();
+		})
 	},
 
 	navClicked : function(clicked){
@@ -41,6 +45,7 @@ UI = {
 		newMapNavLink : 'createNewMapPopup',
 		saveMapNavLink : 'saveMap',
 		loadMapNavLink :'loadMapSelection',
-		settingsNavLink : 'settingsPopup'
+		settingsNavLink : 'settingsPopup',
+		newTilesetNavLink  : 'createNewTilesetPopup'
 	}
 }

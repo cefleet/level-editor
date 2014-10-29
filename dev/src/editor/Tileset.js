@@ -2,7 +2,7 @@ LevelEditor.Tileset = function (options) {
 	//With these changes
 	options = options || {};
 	this.container = options.container;
-	this.image  = options.image || 'sampletileset.png';
+	this.image  = options.image || 'src/img/sampletileset.png';
 	this.name = options.name || 'tiles';
 	this.imageheight = options.imageheight || 256;
 	this.imagewidth = options.imagewidth || 256;

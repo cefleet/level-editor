@@ -8,6 +8,9 @@
     "phaser":"*",
     "bootstrap":"*",
     "jquery": "*",
-    "wolfy87-eventemitter":"*"
+    "wolfy87-eventemitter":"*",
+    "express":"*",
+    "body-parser" : "*",
+    "multer":"*"
    }
 }

@@ -195,23 +195,64 @@ UI.Actions = {
 	 */
 	 
 	playGame : function(){
-
+	//TODO do something with height and width
 		var container = $g('gameModalBody');
 		var baseWidth = container.offsetWidth;
 		var baseHeight = window.innerHeight-130;
 		
-		console.log([baseWidth,baseHeight]);
-		/*
-			$sA(gg,{
-				style:'max-height:'+(window.innerHeight-130)+'px;overflow:auto'
-			});
-		*/
 		var options = {
 			container : 'gameModalBody',
 			
 		}
 		LE.launchGame(options);
 		$('#gameModal').modal('show');
+	},
+	
+	destroyGame : function(){
+		LE.destroyGame();
+		LE.load(UI.activeMap);
+	},
+	
+	createNewTilesetPopup : function(){
+		//sets the title
+		$rAC($g('modalTitle'));
+		$aC($g('modalTitle'), [$cTN('New Tileset')]);
+		//adds the form
+		$rAC($g('modalBody'));
+		$aC($g('modalBody'),[UI.Views.newTilesetForm()]);
+		
+		//
+		$rAC($g('modalFooter'));
+						
+		//add create button
+		$aC($g('modalFooter'),[$nE('button', {"id":"createTilesetButton","class":"btn btn-primary"}, $cTN('Create Tileset'))]);
+		
+		var createButton = $g('createTilesetButton');
+		//createButton.addEventListener('click', this._getNewMapFormData.bind(this),this);			
+				
+		//jquery stuff
+		$('#mainModal').modal('show');
+		/*
+		$(document).on('change', '.btn-file :file', function() {
+			var input = $(this),
+			numFiles = input.get(0).files ? input.get(0).files.length : 1,
+			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+			input.trigger('fileselect', [numFiles, label]);
+		});
 
-	}
+		$(document).ready( function() {
+			$('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+        
+				var input = $(this).parents('.input-group').find(':text'),
+				log = numFiles > 1 ? numFiles + ' files selected' : label;
+        
+				if( input.length ) {
+					input.val(log);
+				} else {
+					if( log ) alert(log);
+				}
+			});
+		});	
+		*/ 		
+	},
 }
