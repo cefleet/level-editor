@@ -3,6 +3,7 @@
   "description": "Create Levels For video games",
   "version": "0.0.1",
   "dependencies": {
+    "crypto":"*",
     "grunt": "*",
     "grunt-contrib-uglify":"*",
     "phaser":"*",
@@ -11,9 +12,8 @@
     "wolfy87-eventemitter":"*",
     "express":"*",
     "body-parser" : "*",
+    "express-session":"*",
     "multer":"*",
-    "nedb":"*",
-    "passport":"*",
-    "passport-local":"*"
+    "nedb":"*"
    }
 }
