@@ -249,30 +249,6 @@ UI.Views = {
 	},
 	
 	newTilesetForm : function(){
-		/*
-		var form = $nE('form',{"class":"form-hroizontal", "role":"form"},
-			$nE('div', {"class":"form-group"},
-				[
-					$nE('div', {"class":"col-sm-12"},
-						[
-							$nE('label', {"for":"tilesetNameFormItem","class":"col-sm-4 control-label"}, $cTN('Tileset Name')),
-							$nE('div', {"class":"col-sm-6"},	
-								$nE('input', {"type":"text", "class":"form-control", "id":"tilesetNameFormItem", "placeholder":"Tileset Name", "value":"New Tileset"})
-							)
-						]
-					),
-					$nE('div', {"class":"col-sm-12"},
-						[
-							$nE('label', {"for":"tilesetImageFormItem","class":"col-sm-4 control-label"}, $cTN('Tileset Image')),
-							$nE('div', {"class":"col-sm-6"},	
-								$nE('input', {"type":"file", "class":"form-control", "id":"tilesetImageFormItem"})
-							)
-						]
-					)
-				]
-			)
-		);
-		* */
 		var form = $nE('form', {"class":"form-horizontal", "role":"form"},
 				$nE('div', {"class":"form-group"},
 					[

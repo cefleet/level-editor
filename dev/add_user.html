@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Log-in </title>
+</head>
+
+<body>
+
+<div id="wrapper">
+
+	<form name="login-form" class="login-form" action="add_user" method="post">
+	
+		<div class="header">
+		<h1>Create User</h1>
+		</div>
+	
+		<div class="content">
+		<input name="username" type="text" class="input username" placeholder="Username" />
+		<div />
+		<input name="password" type="password" class="input password" placeholder="Password" />
+		<div />
+		<select name='level'>
+			<option value= '0'>Admin</option>
+			<option value='1'>Manager</option>
+			<option value='2'>Developer</option>
+			<option value='3'>Player</option>
+		</select>
+		<div />
+		<input type='checkbox' name= 'enabled' value = 'true' checked='checked'/> Enabled
+		</div>
+
+		<div class="footer">
+		<input type="submit" name="submit" value="create" class="button" />
+		</div>
+	
+	</form>
+
+</div>
+<div class="gradient"></div>
+
+
+</body>
+
+</html>

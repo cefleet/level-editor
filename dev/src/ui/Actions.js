@@ -213,6 +213,8 @@ UI.Actions = {
 		LE.load(UI.activeMap);
 	},
 	
+	//TODO this is really messy and needs refractering but it works as expected. 
+	//I need to have width,height and tilewidth and tileheight in this as well to start. At that point I can upload new tilesets
 	createNewTilesetPopup : function(){
 		//sets the title
 		$rAC($g('modalTitle'));
@@ -228,31 +230,41 @@ UI.Actions = {
 		$aC($g('modalFooter'),[$nE('button', {"id":"createTilesetButton","class":"btn btn-primary"}, $cTN('Create Tileset'))]);
 		
 		var createButton = $g('createTilesetButton');
-		//createButton.addEventListener('click', this._getNewMapFormData.bind(this),this);			
+		createButton.addEventListener('click', getData,this);			
 				
 		//jquery stuff
 		$('#mainModal').modal('show');
-		/*
-		$(document).on('change', '.btn-file :file', function() {
-			var input = $(this),
-			numFiles = input.get(0).files ? input.get(0).files.length : 1,
-			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-			input.trigger('fileselect', [numFiles, label]);
-		});
-
-		$(document).ready( function() {
-			$('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-        
-				var input = $(this).parents('.input-group').find(':text'),
-				log = numFiles > 1 ? numFiles + ' files selected' : label;
-        
-				if( input.length ) {
-					input.val(log);
-				} else {
-					if( log ) alert(log);
-				}
+		
+		var files;
+ 
+		// Add events
+		$('input[type=file]').on('change', prepareUpload);
+ 
+		// Grab the files and set them to our variable
+		function prepareUpload(event){
+			files = event.target.files;
+		}
+		
+		function getData(){
+			console.log(files);
+			var data = new FormData();
+			$.each(files, function(key, value)
+			{
+				data.append(key, value);
 			});
-		});	
-		*/ 		
+			var name = $g('tilesetNameFormItem').value;
+			data.append('tilesetName',name);
+
+			$.ajax({
+				url :'/upload/',
+				type :'POST',
+				data : data,
+				 cache: false,
+				dataType: 'json',
+				processData: false, // Don't process the files
+				contentType: false 
+			});
+		}
+		
 	},
 }
