@@ -83,8 +83,17 @@ UI.Actions = {
 	saveMap : function(){
 	  var map = LE.saveMap();
 	  map.tilesetId = UI.activeTilesetId;
-	  UI.data.Maps[map.id] = map;
-	  localStorage.setItem('LevelEditor', JSON.stringify(UI.data));
+	  
+	  
+	  
+	  UI.data.Maps[map.id] = map;//saves it to memory
+	  
+	  map.tilemap = JSON.stringify(map.tilemap);
+	  
+	  //now save it to database
+	  $.post('save_map', map);
+	  //
+	  //localStorage.setItem('LevelEditor', JSON.stringify(UI.data));
 	  //popup saved
 	},
 	
@@ -246,14 +255,24 @@ UI.Actions = {
 		}
 		
 		function getData(){
-			console.log(files);
 			var data = new FormData();
-			$.each(files, function(key, value)
-			{
+			$.each(files, function(key, value)	{
 				data.append(key, value);
 			});
-			var name = $g('tilesetNameFormItem').value;
-			data.append('tilesetName',name);
+			
+			var fields = {
+				name : $g('tilesetNameFormItem').value,
+				tileheight : $g('tileheightFormItem').value,
+				tilewidth :  $g('tilewidthFormItem').value,
+				imagewidth : $g('imagewidthFormItem').value,
+				imageheight : $g('imageheightFormItem').value,
+				collision : $g('collisionTilesFormItem').value,
+				shared : false
+			}
+			
+			for(key in fields){			
+				data.append(key,fields[key]);
+			}
 
 			$.ajax({
 				url :'/upload/',
@@ -262,9 +281,11 @@ UI.Actions = {
 				 cache: false,
 				dataType: 'json',
 				processData: false, // Don't process the files
-				contentType: false 
+				contentType: false,
+				complete : function(){
+					$('#mainModal').modal('hide');
+				}
 			});
-		}
-		
+		}		
 	},
 }

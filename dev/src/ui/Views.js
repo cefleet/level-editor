@@ -267,7 +267,47 @@ UI.Views = {
 									$nE('input', {"type":"file", "class":"form-control", "id":"tilesetImageFormItem"})
 								)
 							]
-						)											
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"tileheightFormItem","class":"col-sm-4 control-label"}, $cTN('Tile Height')),
+								$nE('div', {"class":"col-sm-2"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"tileheightFormItem", "placeholder":"Tile Height", "value":"64"})
+								)
+							]
+						),	
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"tilewidthFormItem","class":"col-sm-4 control-label"}, $cTN('Tile Width')),
+								$nE('div', {"class":"col-sm-2"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"tilewidthFormItem", "placeholder":"Tile Width", "value":"64"})
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"imageheightFormItem","class":"col-sm-4 control-label"}, $cTN('Image Height')),
+								$nE('div', {"class":"col-sm-2"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"imageheightFormItem", "placeholder":"Image Height", "value":"256"})
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"imagewidthFormItem","class":"col-sm-4 control-label"}, $cTN('Image width')),
+								$nE('div', {"class":"col-sm-2"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"imagewidthFormItem", "placeholder":"Image Width", "value":"256"})
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"collisionTilesFormItem","class":"col-sm-4 control-label"}, $cTN('Collision Tiles')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"collisionTilesFormItem", "placeholder":"Collision Tiles", "value":"1,2,3,4,5,6"})
+								)
+							]
+						)										
 					]
 				)
 		);

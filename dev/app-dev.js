@@ -6,14 +6,21 @@ var Datastore = require('nedb');
 var multer  = require('multer')
 var crypto = require('crypto');
 var sanitize = require("sanitize-filename");
+var fs = require('fs');
 
 /********************************************
  * Setup Items
  ********************************************/ 
 app.use(session({secret: 'keyboard cat'}));
+
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+var db = {};
+db.tilesets = new Datastore({ filename: 'data/tilesets.db', autoload: true });
+db.users = new Datastore({ filename: 'data/users.db', autoload: true });
+db.maps = new Datastore({ filename: 'data/maps.db', autoload: true });
 
 var staticMiddleware = express.static(__dirname);
  
@@ -34,51 +41,86 @@ function ensureAuthenticated(req, res, next) {
 }
 
 /****************************************************
- *File Upload
+ *File Upload : Create Tileset
  *****************************************************/
-
+//possibly app.use('/upload/', multer( ...
 app.use(multer(
 	{ 
 		dest: './uploads/',
-		rename: function (fieldname, filename) {
-			console.log(fieldname);
-			return Date.now();
-		},
 		onParseEnd: function (req,next) {
-			console.log(req.body);
-			console.log(req.files);
-			//first check to see if tileset name is already there
+			//sanitize the name
+			//possibly id
+			var save = {
+				image : 'img/'+sanitize(req.body.name)+Date.now()+'.'+req.files[0].extension,
+				imageheight : Number(req.body.imageheight),
+				imagewidth : Number(req.body.imagewidth),
+				name : req.body.name,
+				tilewidth : Number(req.body.tilewidth),
+				tileheight : Number(req.body.tileheight),
+				collision : req.body.collision.split(","),
+				owner : req.session.user_id,
+				shared : 	(req.body.shared === "true") //not too sure about this
+			}
 			
-			//if not then		
-			//move file and rename based on the other
-			//req.file.path
-			
-			//finally 
-			//save to database
-			//req.body is an object of fields
-			
+			//first check to see if tileset name is already there for that owner
+			db.tilesets.find({name : save.name, owner : save.owner}, function(err,docs){
+				
+				if(docs.length < 1){
+					db.tilesets.insert(save, function (err, newDoc){
+						//TODO should add a callback
+						fs.rename(req.files[0].path, save.image);
+						console.log('Created New Tilese');
+					});
+				} else {
+					fs.unlink(req.files[0].path);
+					console.log('There is already a tileset with that name');
+				}
+			});
 			next();
 		}
 	}
 ));
 
+/***************************************
+ * Save Map
+ * *************************************/
+app.post('/save_map', ensureAuthenticated, function(req,res){
+	console.log(req.body);
+	var save = {
+		name : req.body.name,
+		id : req.body.id,
+		tilemap : req.body.tilemap,
+		tilesetId : req.body.tilesetId,
+		owner : req.session.user_id
+	}
+	//first look for item
+	//if found update
+	db.maps.find({id : save.id, owner : save.owner}, function(err,docs){
+		if(docs.length < 1){
+			db.maps.insert(save, function (err, newDoc){
+				//TODO should add a callback
+				console.log('Created New Map');
+			});	
+		} else {
+			db.maps.update({id:save.id}, save,{}, function(err){
+				console.log('Updated Map');
+			});
+		}
+	});
+	//if not found add
+});
 /**********************************************************
- * Database items
+ *Default  Database items
  *******************************************************/
  
-var db = {};
-db.tilesets = new Datastore({ filename: 'data/tilesets.db', autoload: true });
-db.users = new Datastore({ filename: 'data/users.db', autoload: true });
-db.maps = new Datastore({ filename: 'data/maps.db', autoload: true });
-
-
 var sampleTileset = {
 	image : 'img/sampletileset.png',
-	imageheight : 256,
-	imagewidth : 256,
+	imageheight : 1024,
+	imagewidth : 1024,
 	name : 'sample',
 	tilewidth : 32,
 	tileheight : 32,
+	collision : [],
 	owner : 'admin',
 	shared : true	
 }
@@ -174,6 +216,20 @@ app.get('/add_user', function(req,res){
 	}
 });
 
+/************************
+ * Initial Data
+ * ***********************/
+ app.get('/loading', ensureAuthenticated, function(req,res, next){
+	var data = {};
+	console.log(req.session.user_id);
+	db.tilesets.find({$or : [{owner : req.session.user_id}, {shared : true}]}, function(err,docs){	
+		data.Tilesets = docs;
+		db.maps.find({owner : req.session.user_id},function(err,docs){
+			data.Maps = docs;
+			res.send(data);
+		});
+	});
+});
 
 /***********************
  * Static files

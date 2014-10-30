@@ -21,6 +21,12 @@ document.addEventListener( "DOMContentLoaded", function(){
 		style:'max-height:'+(window.innerHeight-130)+'px;overflow:auto'
 	});
 	UI.setupEvents();  
+	
+	$.get('/loading',function(data,status){
+		console.log(data);
+		UI.data = data;
+	})
+	/*
 	var data = JSON.parse(localStorage.getItem('LevelEditor'));
 	if(!data) {
 		var id = $uid();
@@ -41,10 +47,8 @@ document.addEventListener( "DOMContentLoaded", function(){
 	};
   
 	UI.data = data;
+	* */
 	
-	/*
-	 * Some downloaded code
-	 */
-	 
+	//UI data must come from node.. just bring it all at this point 
 	 
 }, false );

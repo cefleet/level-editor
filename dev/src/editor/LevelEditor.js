@@ -95,7 +95,9 @@ LevelEditor.funcs = {
 	
 	//For now this just loads a single layer
 	load : function(map){
-		
+		if(typeof map.tilemap === 'string'){
+			map.tilemap = JSON.parse(map.tilemap);
+		}
 		var tileset = map.tilemap.tilesets[0];		
 		var grid = {
 			tilewidth : map.tilemap.tilewidth,
