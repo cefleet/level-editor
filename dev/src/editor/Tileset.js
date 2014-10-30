@@ -41,8 +41,8 @@ LevelEditor.Tileset.prototype = {
 		this.tileGroup = this.game.add.group();
 		//this.tileGroup.add(this.bg);
 		
-		var cols = this.imageheight/this.tileheight;
-		var rows = this.imagewidth/this.tilewidth;  
+		var rows= this.imageheight/this.tileheight;
+		var cols = this.imagewidth/this.tilewidth;  
   
 		var t = cols*rows;
 		var x;

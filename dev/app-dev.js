@@ -85,7 +85,6 @@ app.use(multer(
  * Save Map
  * *************************************/
 app.post('/save_map', ensureAuthenticated, function(req,res){
-	console.log(req.body);
 	var save = {
 		name : req.body.name,
 		id : req.body.id,
