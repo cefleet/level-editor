@@ -2,6 +2,7 @@ UI = {
 	setupEvents : function(){
 		this.events = MasterEmitter;
   
+        
 		//This stays here
 		//Navigation Controls
 		var links = $gBT('a', $g('navigation'));

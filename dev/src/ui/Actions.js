@@ -94,8 +94,8 @@ UI.Actions = {
 	  
 	  //now save it to database
 	  $.post('save_map', map);
-	  //
-	  //localStorage.setItem('LevelEditor', JSON.stringify(UI.data));
+
+
 	  //popup saved
 	},
 	
@@ -178,11 +178,11 @@ UI.Actions = {
 	_getUpdateMapFormData : function(){
 	  
 	  //get the map name and tileset
-	var name = $g('mapNameFormItem').value;
-	var tileset = $g('tilesetFormItem').value;
+	  var name = $g('mapNameFormItem').value;
+	  var tileset = $g('tilesetFormItem').value;
    	
    	var mapTitle = $g('navbarMapName');
-	$aC(mapTitle, [$cTN(name)]);	
+	  $aC(mapTitle, [$cTN(name)]);	
 	  
 	  LE.map.name = name;
 	  UI.activeMap.name = name;
@@ -221,12 +221,17 @@ UI.Actions = {
 		LE.load(UI.activeMap);
 	},
 	
+	//TODO this does not work It is never active
 	toggleLayers : function(){
 		if($(this).hasClass('active')){
-			$('#gameGrid').removeClass('col-xs-8').addClass('col-xs-12');
+		  console.log('Remove col-xs-8');
+			$('#gameGrid').removeClass('col-xs-8');
+			$('#gameGrid').addClass('col-xs-12');
 			$('#gameLayers').removeClass('col-xs-4').toggle();
 		} else {
-			$('#gameGrid').removeClass('col-xs-12').addClass('col-xs-8');
+			 console.log('Remove col-xs-12');
+			$('#gameGrid').removeClass('col-xs-12');
+			$('#gameGrid').addClass('col-xs-8');
 			$('#gameLayers').addClass('col-xs-4').toggle();
 		}
 	},
@@ -257,12 +262,48 @@ UI.Actions = {
 
 		//add to the list here
 		var layerItem = UI.Views.newLayer();
-		layerItem.id = 'layerListItem'+name;
-		layerItem.layerName = name;
+		layerItem.id = $uid();
+		layerItem.setAttribute('layerName', name);
+
 		$aC(layerItem.firstChild.firstChild, [$cTN(' '+name)]);
 		
 		var layerList = $g('layersList');
 		layerList.insertBefore(layerItem, layerList.firstChild);
+		
+		console.log(layerItem);
+		
+		//add listener s
+		$("#"+layerItem.id).delegate(".makeLayerActive", "click", function(e) {
+
+        var layername = this.parentNode.parentNode.getAttribute('layerName');
+        
+        $('.makeLayerActive').removeClass("active");
+        
+        LE.activateLayer(layername);
+        
+        $(this).addClass('active');
+      
+    });
+    
+     $("#"+layerItem.id).delegate(".setVisibilityLayer", "click", function(e) {
+
+        var layername = this.parentNode.parentNode.getAttribute('layerName');
+        LE.toggleLayerVisibility(layername);
+
+    });
+    
+    $("#"+layerItem.id).delegate(".editLayer", "click", function(e) {
+
+        var layername = this.parentNode.parentNode.getAttribute('layerName');
+        
+    });
+    
+    $("#"+layerItem.id).delegate(".deleteLayer", "click", function(e) {
+
+        var layername = this.parentNode.parentNode.getAttribute('layerName');
+
+    });
+		
 		$('#mainModal').modal('hide');
 	},
 	

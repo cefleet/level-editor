@@ -158,6 +158,14 @@ LevelEditor.funcs = {
 	
 	addLayer: function(name){
 		this.grid.createLayer(name);
+	},
+	
+	activateLayer : function(name){
+	  this.grid.makeLayerActive(name);
+	},
+	
+	toggleLayerVisibility : function(name){
+	  this.grid.toggleLayer(name);
 	}
 }
 

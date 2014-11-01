@@ -129,6 +129,7 @@ LevelEditor.Grid.prototype = {
 		this.layers[name] = this.game.add.group();
 		this.layers[name].tiles = {};
 		this.makeTiles(this.layers[name]);
+		this.makeLayerActive(this.layers[name]);
 	},
 	  
 	//make layer active
@@ -138,7 +139,19 @@ LevelEditor.Grid.prototype = {
 		}
 		this.activeLayer = layer;
 	},
-	//hide layer
+	
+	//Show Hid layer
+  toggleLayer : function(layer){
+    if(typeof layer === 'string'){
+			layer = this.layers[layer];
+		}
+		
+		if(layer.visible){
+		  layer.visible = false;
+		} else {
+		  layer.visible = true;
+		}
+  },
 
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)

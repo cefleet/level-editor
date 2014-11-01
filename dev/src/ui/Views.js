@@ -285,10 +285,10 @@ UI.Views = {
 				$nE('h4', {}, $nE('span', {"class":"label label-default"})),
 				$nE('div', {"class":"btn-group "},
 					[
-						$nE('button', { "class":"btn btn-info active", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"}, 	
+						$nE('button', { "class":"btn btn-default active setVisibilityLayer", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"}, 	
 							$nE('span', {"class":"glyphicon glyphicon-eye-close"})
 						),
-						$nE('button', { "class":"btn btn-info", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"},
+						$nE('button', { "class":"btn btn-default makeLayerActive active"},
 							$nE('span', {"class":"glyphicon glyphicon-pencil"})
 						),
 						$nE('button', {"class":"btn btn-default dropdown-toggle", "data-toggle":"dropdown"},
