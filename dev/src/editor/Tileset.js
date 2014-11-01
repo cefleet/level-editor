@@ -17,7 +17,8 @@ LevelEditor.Tileset = function (options) {
 	this.loaded = false;
 	this.events = {
 		tilesetImageLoaded : new Phaser.Signal(),
-		tileSelected : new Phaser.Signal()
+		tileSelected : new Phaser.Signal(),
+		gameCreated  : new Phaser.Signal()
 	}
 	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
@@ -26,7 +27,8 @@ LevelEditor.Tileset = function (options) {
 			this.game.stage.backgroundColor ='#000000';
 			this.events.tilesetImageLoaded.dispatch(this);
 			this.spritesheet = this.game.load.spritesheet(this.name,this.image,this.tilewidth,this.tileheight);
-			this.setup();		
+			this.setup();	
+			this.events.gameCreated.dispatch(this);		
 		}.bind(this)
 	});	
 

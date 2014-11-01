@@ -78,6 +78,9 @@ UI.Actions = {
 		$g('playGameButton').disabled = false;
 		$g('toggleLayers').disabled = false;
 		$g('addLayer').disabled = false;
+    LE.grid.events.gameCreated.add(function(){
+      UI.Actions.createNewLayer('base');
+    });
 	},
 	/* 
 	   Saves the current map
@@ -186,7 +189,6 @@ UI.Actions = {
 	  
 	  LE.map.name = name;
 	  UI.activeMap.name = name;
-	  
 	  $('#mainModal').modal('hide');
 	},
 	
@@ -256,9 +258,8 @@ UI.Actions = {
 		$('#mainModal').modal('show');
 	},
 	
-	_getNewLayerFormData : function(){
-		var name = $g('layerNameFormItem').value;
-		LE.addLayer(name);
+	createNewLayer : function(name){
+	  LE.addLayer(name);
 
 		//add to the list here
 		var layerItem = UI.Views.newLayer();
@@ -303,7 +304,20 @@ UI.Actions = {
         var layername = this.parentNode.parentNode.getAttribute('layerName');
 
     });
-		
+    
+     $("#"+layerItem.id).delegate(".layerName", "click", function(e) {
+
+        var layername = this.parentNode.parentNode.getAttribute('layerName');
+        
+        //TODO make this turn it into a 
+
+    });
+	
+	},
+	
+	_getNewLayerFormData : function(){
+		var name = $g('layerNameFormItem').value;
+		UI.Actions.createNewLayer(name);		
 		$('#mainModal').modal('hide');
 	},
 	

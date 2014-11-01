@@ -282,25 +282,17 @@ UI.Views = {
 	newLayer : function() {
 		var item = $nE('li', {"class":"list-group-item"},
 			[
-				$nE('h4', {}, $nE('span', {"class":"label label-default"})),
-				$nE('div', {"class":"btn-group "},
+				$nE('h4', {}, $nE('span', {"class":"label label-default layerName"})),
+				$nE('div', {"class":"btn-group"},
 					[
+						$nE('button', {"class":"btn btn-danger"},
+							$nE('span', {"class":"glyphicon glyphicon-remove-circle deleteLayer"})
+						),
 						$nE('button', { "class":"btn btn-default active setVisibilityLayer", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"}, 	
 							$nE('span', {"class":"glyphicon glyphicon-eye-close"})
 						),
 						$nE('button', { "class":"btn btn-default makeLayerActive active"},
 							$nE('span', {"class":"glyphicon glyphicon-pencil"})
-						),
-						$nE('button', {"class":"btn btn-default dropdown-toggle", "data-toggle":"dropdown"},
-							$nE('span', {"class":"caret"})
-						),
-						$nE('ul', {"class":"dropdown-menu", "role":"menu"},
-							$nE('li', {}, 
-								[
-									$nE('a', {"class":"editLayer"}, $cTN('Edit')),
-									$nE('a', {"class":"deleteLayer bg-danger"}, $cTN('Delete'))
-								]
-							)
 						)
 					]
 				)

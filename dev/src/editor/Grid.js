@@ -15,6 +15,10 @@ LevelEditor.Grid = function (options) {
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
 	
+	this.events = {
+		gameCreated  : new Phaser.Signal()
+	}
+	
   //  this.tiles = {}; 
         
     //setup
@@ -24,7 +28,9 @@ LevelEditor.Grid = function (options) {
 			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			this.game.scale.setScreenSize();
 			this.game.stage.backgroundColor ='#545454'; //''
-			this.setup();		
+			this.setup();	
+			
+			this.events.gameCreated.dispatch(this);	
 		}.bind(this)
 	});
     
@@ -42,8 +48,8 @@ LevelEditor.Grid.prototype = {
 		this.layers ={};
 		
 		/* Need to decide to create this or not*/
-		this.createLayer('base', 1);
-		this.makeLayerActive('base');
+	//	this.createLayer('base', 1);
+	//	this.makeLayerActive('base');
 	},
 	
 	/*
