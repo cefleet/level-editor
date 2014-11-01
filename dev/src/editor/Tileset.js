@@ -22,6 +22,7 @@ LevelEditor.Tileset = function (options) {
 	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
 		create:function(){	
+			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 			this.game.stage.backgroundColor ='#000000';
 			this.events.tilesetImageLoaded.dispatch(this);
 			this.spritesheet = this.game.load.spritesheet(this.name,this.image,this.tilewidth,this.tileheight);

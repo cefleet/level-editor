@@ -48,8 +48,11 @@ LevelEditor.GameTester.prototype = {
 		tilemap.addTilesetImage(this.map.tilemap.tilesets[0].name);
 		
 		//TODO multiple layers
-		var layer = tilemap.createLayer(this.map.tilemap.layers[0].name);
-		layer.resizeWorld();
+		var layers = [];
+		for(var i = 0; i < this.map.tilemap.layers.length; i++){
+			layers.push(tilemap.createLayer(this.map.tilemap.layers[i].name));
+		}
+		layers[0].resizeWorld();//all the layers are the same size so just do it on the last layer
 	},
 	
 	update : function(){

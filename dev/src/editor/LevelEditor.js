@@ -49,26 +49,35 @@ LevelEditor.funcs = {
 	 * Saves the Map
 	 */
 	saveMap : function(){
-		var ar = [];
-		for(var t in this.grid.tiles){
-			ar.push(this.grid.tiles[t].tilesetId);
-		}
-		var json = {
-			height : Number(this.grid.tilesy),
-			width: Number(this.grid.tilesx),
-			layers  : [
-				{
+		var layers = [];
+		
+		//TODO sort by the layers z index
+		//into a temp array so they can be placed in this array in order
+		
+		for(var l in this.grid.layers){
+			var layer = this.grid.layers[l];
+			var ar = [];
+			for(var t in layer.tiles){
+				ar.push(layer.tiles[t].tilesetId);
+			}
+			layers.push({
 					data : ar,
 					height : Number(this.grid.tilesy),
-					name : 'layer',//TODO this is bad
+					name : l,
 					opacity : 1,
 					type : 'tilelayer',
 					visible : true,
 					width: Number(this.grid.tilesx),
 					x : 0,
 					y: 0
-				}
-			],
+				});
+		}
+		
+		var json = {
+			height : Number(this.grid.tilesy),
+			width: Number(this.grid.tilesx),
+			layers  : layers,
+		
 			//TODO possibly of combining tilesets
 			tilesets : [
 				{
@@ -117,20 +126,16 @@ LevelEditor.funcs = {
 		}
 	},
 	
+	/*
+	 * This should be in the grid from this point on
+	 */
+	 
 	_load : function() {
 		var map = this.loadMapData;
-		var data = map.tilemap.layers[0].data;
-		for(var i = 0; i < data.length; i++){
-			var id = data[i];
-			var t = this.grid.tiles[i];
-			t.tilesetId = id;
-			if(id != 0){
-				//frame starts with 0 first item
-				if(this.tileset.tiles[id-1]){
-					t.sprite = this.grid.game.add.sprite(t.x,t.y,this.tileset.name, this.tileset.tiles[id-1].frame);
-				}
-			}
-		}
+		//TODO do this for each layer
+		var layers = map.tilemap.layers;
+		this.grid.loadLayers(layers);
+		
 	},
 		
 	changeSettings : function(){},
@@ -149,6 +154,10 @@ LevelEditor.funcs = {
 	destroyGame : function(){
 		this.testGame.game.destroy();
 		delete this.testGame;
+	},
+	
+	addLayer: function(name){
+		this.grid.createLayer(name);
 	}
 }
 

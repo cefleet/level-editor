@@ -3,7 +3,6 @@ LevelEditor.Grid = function (options) {
 	options = options || {};
 	this.container = options.container;
 	this.linecolor = options.line || 0x000000;
-	this.fillcolor = options.fill || 0x545454;
 	this.loc = options.loc || [0,0];
 	this.activeTileOp = 0;
 	this.tilewidth = options.tilewidth || 32;
@@ -15,16 +14,16 @@ LevelEditor.Grid = function (options) {
 	this.scale =1;
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
-
-    this.tiles = {};
-        
+	
+  //  this.tiles = {}; 
         
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 		create:function(){
+			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			this.game.scale.setScreenSize();
-			this.game.stage.backgroundColor ='#545454';
+			this.game.stage.backgroundColor ='#545454'; //''
 			this.setup();		
 		}.bind(this)
 	});
@@ -36,11 +35,15 @@ LevelEditor.Grid.prototype = {
 	
 	setup : function(){
 		this.getContainerOffset();
-		this.makeTiles();
 		this.drawGrid();
 		this.setupMouse();
 		this.marker = this.game.add.sprite(0,0,'');
-		this.marker.tilesetId = 0;
+		this.marker.tilesetId = 0;		
+		this.layers ={};
+		
+		/* Need to decide to create this or not*/
+		this.createLayer('base', 1);
+		this.makeLayerActive('base');
 	},
 	
 	/*
@@ -50,7 +53,6 @@ LevelEditor.Grid.prototype = {
 	  
 		this.gridImage = this.game.add.graphics(0, 0);  //init rect
 		this.gridImage.lineStyle(1, this.linecolor, 1); // width, color (0x0000FF), alpha (0 -> 1) // required settings
-		this.gridImage.beginFill(this.fillcolor, 1);
 		this.gridImage.drawRect(this.loc[0],this.loc[1], this.tilesx*this.tilewidth,this.tilesy*this.tileheight);
 	
 		var r = 0;	
@@ -72,13 +74,13 @@ LevelEditor.Grid.prototype = {
 	/*
 	 * Makes the tiles (id and location data) into an array
 	 * */	 
-	makeTiles : function(){
+	makeTiles : function(layer){
 		var r = 0;	
 		var i = 0;
 		while(r < this.tilesy){
 			var c = 0;
 			while(c < this.tilesx){
-				this.tiles[i] = {
+				layer.tiles[i] = {
 					x : c*this.tilewidth+this.loc[0],
 					y : r*this.tileheight+this.loc[1],
 					id : i,
@@ -94,12 +96,57 @@ LevelEditor.Grid.prototype = {
 		}
 	},
 	
+	loadLayers : function(layers){
+		this.layers ={};// this effictivly deletes the "base" layer that was added on create. There would not be anything in it so it shouldn't hurt anything
+		for(var j = 0; j < layers.length; j++){
+			this.loadLayer(layers[j]);
+		}
+		this.makeLayerActive(layers[0].name);	
+	},
+	
+	loadLayer : function(layer){
+		this.createLayer(layer.name);
+		var data = layer.data;
+		for(var i = 0; i < data.length; i++){
+			var id = data[i];
+			var t = this.layers[layer.name].tiles[i];
+			t.tilesetId = id;
+			if(id != 0){				
+				//frame starts with 0 first item
+				if(LE.tileset.tiles[id-1]){
+					t.sprite = this.game.add.sprite(t.x,t.y,LE.tileset.name, LE.tileset.tiles[id-1].frame);
+					this.layers[layer.name].add(t.sprite);
+				}
+			}
+		}
+	},
+	
+	/*
+	 * Creates a layer... possible even have a layer class in the future
+	 */
+	createLayer : function(name, level){
+		//Don't really know how to implement the level yet but I will figure it iout
+		this.layers[name] = this.game.add.group();
+		this.layers[name].tiles = {};
+		this.makeTiles(this.layers[name]);
+	},
+	  
+	//make layer active
+	makeLayerActive : function(layer){
+		if(typeof layer === 'string'){
+			layer = this.layers[layer];
+		}
+		this.activeLayer = layer;
+	},
+	//hide layer
+
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
 	 */
 	getTileFromPoint : function(point){
-		for(var tile in this.tiles){
-			var t = this.tiles[tile];
+		//Tiles are here
+		for(var tile in this.activeLayer.tiles){
+			var t = this.activeLayer.tiles[tile];
 			if(point.x > t.x && point.x < t.x+this.tilewidth && point.y > t.y && point.y < t.y+this.tileheight){
 				return t;
 			}
@@ -108,6 +155,7 @@ LevelEditor.Grid.prototype = {
 	
 	/*
 	 * Sets the active Tile
+	 * * This name should be moveMarkerToTileFromPoint
 	 */	 
 	setActiveTileFromPoint : function(point){
 		var t = this.getTileFromPoint(point);
@@ -121,6 +169,7 @@ LevelEditor.Grid.prototype = {
 	
 	/*
 	 * Uses the activeTile to set the tileset ID
+
 	 */
 	setTileIdOfActiveTileFromMarker : function(){
 		this.activeTile.tilesetId = this.marker.tilesetId;
@@ -131,6 +180,7 @@ LevelEditor.Grid.prototype = {
 	 */	  
 	setSpriteOfActiveTileFromMarker : function(){
 		this.activeTile.sprite = this.game.add.sprite(this.marker.x,this.marker.y,this.marker.key,this.marker.frame);
+		this.activeLayer.add(this.activeTile.sprite);
 	},
 	
 	/*
@@ -189,10 +239,8 @@ LevelEditor.Grid.prototype = {
 	},
 	
 	destroy : function(){
-		for(t in this.tiles){
-			if(this.tiles[t].sprite) {
-				this.tiles[t].sprite.destroy();
-			}
+		for(g in this.layers){
+			this.layers[g].destroy();
 		}
 		if(this.gridImage){
 			this.gridImage.destroy();

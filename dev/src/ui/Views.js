@@ -91,6 +91,9 @@ UI.Views = {
 				[
 					$nE('div', {"class":"panel-heading"},
 					[ 
+						$nE('button', {"id":"toggleLayers", "class":"btn btn-xs btn-default active", "data-toggle":"button","aria-pressed":"true","autocomplete":"off", "disabled":"disabled"},
+							$nE('span', {"class":"glyphicon glyphicon-tasks"}, $cTN(' Layers'))
+						),
 						$nE('div', {"class":"dropdown pull-right"},
 							[
 								$nE('a',{"class":"dropdown-toggle", "data-toggle":"dropdown"}, 
@@ -119,11 +122,21 @@ UI.Views = {
 									]
 								)
 							]
-						),
-						$nE('h3', {"class":"panel-title"}, $cTN('Grid'))
+						)
 					]
 					),
-					$nE('div', {"class":"panel-body", "id" :"gameGrid", "style":"overflow:auto"})
+					$nE('div', {"class":"panel-body"},
+						$nE('div', {"class":"row"},
+							[
+								$nE('div',{"class":"col-xs-4", "id":"gameLayers"},[
+									//add things here
+									$nE('button', {"class":"btn btn-primary btn-block", "id":"addLayer", "disabled":"disabled"}, 	$cTN('New Layer')),
+									$nE('ul',{"class":"list-group", "id":"layersList"})
+								]),
+								$nE('div',{"class":"col-xs-8", "id":"gameGrid", "style":"overflow:auto"})
+							]
+						)
+					)
 				]
 			)
 		);
@@ -246,6 +259,54 @@ UI.Views = {
 		);
 		
 		return form;
+	},
+	
+	newLayerForm : function(){
+			var form = $nE('form', {"class":"form-horizontal", "role":"form"},
+				$nE('div', {"class":"form-group"},
+					[
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"layerNameFormItem","class":"col-sm-4 control-label"}, $cTN('Layer Name')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"layerNameFormItem", "placeholder":"New Layer Name", "value":"New Layer"})
+								)
+							]
+						)															
+					]
+				)
+		);
+		return form;
+	},
+	
+	newLayer : function() {
+		var item = $nE('li', {"class":"list-group-item"},
+			[
+				$nE('h4', {}, $nE('span', {"class":"label label-default"})),
+				$nE('div', {"class":"btn-group "},
+					[
+						$nE('button', { "class":"btn btn-info active", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"}, 	
+							$nE('span', {"class":"glyphicon glyphicon-eye-close"})
+						),
+						$nE('button', { "class":"btn btn-info", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"},
+							$nE('span', {"class":"glyphicon glyphicon-pencil"})
+						),
+						$nE('button', {"class":"btn btn-default dropdown-toggle", "data-toggle":"dropdown"},
+							$nE('span', {"class":"caret"})
+						),
+						$nE('ul', {"class":"dropdown-menu", "role":"menu"},
+							$nE('li', {}, 
+								[
+									$nE('a', {"class":"editLayer"}, $cTN('Edit')),
+									$nE('a', {"class":"deleteLayer bg-danger"}, $cTN('Delete'))
+								]
+							)
+						)
+					]
+				)
+			]			
+		);	
+		return item;
 	},
 	
 	newTilesetForm : function(){

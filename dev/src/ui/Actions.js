@@ -76,6 +76,8 @@ UI.Actions = {
 		UI.activeMap = LE.map;
 		UI.activeMap.tilset = UI.activeTilesetId;
 		$g('playGameButton').disabled = false;
+		$g('toggleLayers').disabled = false;
+		$g('addLayer').disabled = false;
 	},
 	/* 
 	   Saves the current map
@@ -180,10 +182,7 @@ UI.Actions = {
 	var tileset = $g('tilesetFormItem').value;
    	
    	var mapTitle = $g('navbarMapName');
-	$aC(mapTitle, [$cTN(name)]);
-	
-	//TODO do something with the tileset
-	//With this there needs to be a level editor thing  
+	$aC(mapTitle, [$cTN(name)]);	
 	  
 	  LE.map.name = name;
 	  UI.activeMap.name = name;
@@ -220,6 +219,51 @@ UI.Actions = {
 	destroyGame : function(){
 		LE.destroyGame();
 		LE.load(UI.activeMap);
+	},
+	
+	toggleLayers : function(){
+		if($(this).hasClass('active')){
+			$('#gameGrid').removeClass('col-xs-8').addClass('col-xs-12');
+			$('#gameLayers').removeClass('col-xs-4').toggle();
+		} else {
+			$('#gameGrid').removeClass('col-xs-12').addClass('col-xs-8');
+			$('#gameLayers').addClass('col-xs-4').toggle();
+		}
+	},
+	
+	newLayerPopup : function(){
+		//sets the title
+		$rAC($g('modalTitle'));
+		$aC($g('modalTitle'), [$cTN('New Layer')]);
+		//adds the form
+		$rAC($g('modalBody'));
+		$aC($g('modalBody'),[UI.Views.newLayerForm()]);
+		
+		$rAC($g('modalFooter'));				
+		
+		//add create button
+		$aC($g('modalFooter'),[$nE('button', {"id":"addLayerButton","class":"btn btn-primary"}, $cTN('Add Layer'))]);
+		
+		var createButton = $g('addLayerButton');
+		createButton.addEventListener('click', this._getNewLayerFormData.bind(this),this);			
+				
+		//jquery stuff
+		$('#mainModal').modal('show');
+	},
+	
+	_getNewLayerFormData : function(){
+		var name = $g('layerNameFormItem').value;
+		LE.addLayer(name);
+
+		//add to the list here
+		var layerItem = UI.Views.newLayer();
+		layerItem.id = 'layerListItem'+name;
+		layerItem.layerName = name;
+		$aC(layerItem.firstChild.firstChild, [$cTN(' '+name)]);
+		
+		var layerList = $g('layersList');
+		layerList.insertBefore(layerItem, layerList.firstChild);
+		$('#mainModal').modal('hide');
 	},
 	
 	//TODO this is really messy and needs refractering but it works as expected. 
