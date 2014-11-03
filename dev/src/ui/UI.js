@@ -33,6 +33,19 @@ UI = {
 		$('#gameModal').on('hidden.bs.modal', function (e) {
 			UI.Actions.destroyGame();
 		})
+		
+		$('#layersList').sortable({
+			update: function( event, ui ) {
+				//This may be wrong but it iwl
+				var layers = $g('layersList').children;
+				var order = [];
+				for(var i = 0; i < layers.length; i++){
+					order.push(layers[i].id);
+				}
+				LE.orderLayers(order);				
+			}
+		});
+		
 	},
 
 	navClicked : function(clicked){

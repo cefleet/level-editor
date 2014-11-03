@@ -90,7 +90,8 @@ app.post('/save_map', ensureAuthenticated, function(req,res){
 		id : req.body.id,
 		tilemap : req.body.tilemap,
 		tilesetId : req.body.tilesetId,
-		owner : req.session.user_id
+		owner : req.session.user_id,
+		layers : req.body.layers
 	}
 	//first look for item
 	//if found update

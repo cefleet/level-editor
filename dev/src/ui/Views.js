@@ -282,7 +282,11 @@ UI.Views = {
 	newLayer : function() {
 		var item = $nE('li', {"class":"list-group-item"},
 			[
-				$nE('h4', {}, $nE('span', {"class":"label label-default layerName"})),
+				
+				$nE('h4', {"class":"show"}, $nE('span', {"class":"label label-default layerName"})),
+				$nE('div', {"class":"form-group hidden"}, 
+					$nE('input', {"type":"text","class":"form-control layerNameFormItem", "placeholder":"Layer Name"})
+				),
 				$nE('div', {"class":"btn-group"},
 					[
 						$nE('button', {"class":"btn btn-danger"},

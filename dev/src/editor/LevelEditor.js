@@ -53,13 +53,23 @@ LevelEditor.funcs = {
 		
 		//TODO sort by the layers z index
 		//into a temp array so they can be placed in this array in order
-		
+		var tempArr = [];
 		for(var l in this.grid.layers){
+			tempArr.push([l,this.grid.layers[l].order]);
+		}		
+		tempArr.sort(function(a,b){return a[1]-b[1]});
+		var mapLayers = {};
+		//for(var l in this.grid.layers){
+		for(var i = 0; i < tempArr.length; i++){
+			//tempArr[i][0] should be the id
+			var l = tempArr[i][0];
 			var layer = this.grid.layers[l];
 			var ar = [];
+			
 			for(var t in layer.tiles){
 				ar.push(layer.tiles[t].tilesetId);
 			}
+			
 			layers.push({
 					data : ar,
 					height : Number(this.grid.tilesy),
@@ -71,6 +81,12 @@ LevelEditor.funcs = {
 					x : 0,
 					y: 0
 				});
+				
+				mapLayers[l] = {
+					id : l,
+					name : layer.name,
+					order : layer.order
+				}
 		}
 		
 		var json = {
@@ -99,6 +115,7 @@ LevelEditor.funcs = {
 		}		
 		
 		this.map.tilemap = json;
+		this.map.layers = mapLayers;
 		return this.map;
 	},
 	
@@ -132,10 +149,10 @@ LevelEditor.funcs = {
 	 
 	_load : function() {
 		var map = this.loadMapData;
-		//TODO do this for each layer
+
 		var layers = map.tilemap.layers;
-		this.grid.loadLayers(layers);
-		
+		this.grid.loadLayers(map);
+				
 	},
 		
 	changeSettings : function(){},
@@ -156,16 +173,24 @@ LevelEditor.funcs = {
 		delete this.testGame;
 	},
 	
-	addLayer: function(name){
-		this.grid.createLayer(name);
+	addLayer: function(name, id){
+		this.grid.createLayer(name, id);
 	},
 	
-	activateLayer : function(name){
-	  this.grid.makeLayerActive(name);
+	activateLayer : function(id){
+	  this.grid.makeLayerActive(id);
 	},
 	
-	toggleLayerVisibility : function(name){
-	  this.grid.toggleLayer(name);
+	toggleLayerVisibility : function(id){
+	  this.grid.toggleLayer(id);
+	},
+	
+	changeLayerName : function(id,newname){
+		this.grid.renameLayer(id,newname);
+	},
+	
+	orderLayers : function(order){
+		this.grid.orderLayers(order);
 	}
 }
 

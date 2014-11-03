@@ -70,7 +70,10 @@ UI.Actions = {
 		 
 		if(LE.map.id){
 			LE.destroy();
-		}		
+		}
+		
+		$rAC($g('layersList'));
+
 		LE.create(name,grid,tileset);
 		
 		UI.activeMap = LE.map;
@@ -78,9 +81,10 @@ UI.Actions = {
 		$g('playGameButton').disabled = false;
 		$g('toggleLayers').disabled = false;
 		$g('addLayer').disabled = false;
-    LE.grid.events.gameCreated.add(function(){
-      UI.Actions.createNewLayer('base');
-    });
+		
+		LE.grid.events.gameCreated.add(function(){
+			UI.Actions.createNewLayer('base');
+		});
 	},
 	/* 
 	   Saves the current map
@@ -94,11 +98,7 @@ UI.Actions = {
 	  UI.data.Maps[map.id] = map;//saves it to memory
 	  
 	  map.tilemap = JSON.stringify(map.tilemap);
-	  
-	  //now save it to database
 	  $.post('save_map', map);
-
-
 	  //popup saved
 	},
 	
@@ -131,9 +131,10 @@ UI.Actions = {
 	},
 	
 	_loadMap : function(map){
-
+		
 		LE.load(map);
 		var mapTitle = $g('navbarMapName');
+		$rAC($g('layersList'));
 		$rAC(mapTitle);
 		$aC(mapTitle, [$cTN(map.name)]);
 		
@@ -258,66 +259,89 @@ UI.Actions = {
 		$('#mainModal').modal('show');
 	},
 	
-	createNewLayer : function(name){
-	  LE.addLayer(name);
-
+	createNewLayerUI : function(name,id){
 		//add to the list here
 		var layerItem = UI.Views.newLayer();
-		layerItem.id = $uid();
+		layerItem.id = id;
 		layerItem.setAttribute('layerName', name);
-
+		layerItem.setAttribute('layerId', id);
+		
 		$aC(layerItem.firstChild.firstChild, [$cTN(' '+name)]);
 		
 		var layerList = $g('layersList');
-		layerList.insertBefore(layerItem, layerList.firstChild);
-		
-		console.log(layerItem);
+		layerList.insertBefore(layerItem, layerList.firstChild);		
 		
 		//add listener s
 		$("#"+layerItem.id).delegate(".makeLayerActive", "click", function(e) {
 
-        var layername = this.parentNode.parentNode.getAttribute('layerName');
-        
-        $('.makeLayerActive').removeClass("active");
-        
-        LE.activateLayer(layername);
-        
-        $(this).addClass('active');
+			var layername = this.parentNode.parentNode.getAttribute('layerName');
+			var layerid= this.parentNode.parentNode.getAttribute('layerId');
+			
+			$('.makeLayerActive').removeClass("active");
+			LE.activateLayer(layerid);
+			$(this).addClass('active');
       
-    });
+		});
     
-     $("#"+layerItem.id).delegate(".setVisibilityLayer", "click", function(e) {
+		$("#"+layerItem.id).delegate(".setVisibilityLayer", "click", function(e) {
+			var layerid= this.parentNode.parentNode.getAttribute('layerId');
+			LE.toggleLayerVisibility(layerid);
+		});
 
-        var layername = this.parentNode.parentNode.getAttribute('layerName');
-        LE.toggleLayerVisibility(layername);
-
-    });
+		$("#"+layerItem.id).delegate(".layerName", "click", function(e) {
+			
+			//probably a jquery way to do this
+			var layername = this.parentNode.parentNode.getAttribute('layerName'); 
+			var layerid= this.parentNode.parentNode.getAttribute('layerId');
+			
+			var toggables = $(this).parent();      
+			toggables.next().children().val(layername);
+			toggables.toggleClass('show').toggleClass('hidden');
+			toggables.next().toggleClass('hidden').toggleClass('show');
+						
+			$(document).one('click',function() {
+				var newName = toggables.next().children().val();
+				
+				$rAC(layerItem.firstChild.firstChild);
+				$aC(layerItem.firstChild.firstChild, [$cTN(' '+newName)]);
+								
+				toggables.toggleClass('show').toggleClass('hidden');
+				toggables.next().toggleClass('hidden').toggleClass('show');
+								
+				//TODO send this information to LE
+				LE.changeLayerName(layerid,newName);
+				toggables.parent().attr('layerName', newName);
+				
+			});
+			$("#"+layerItem.id).click(function(e){
+				e.stopPropagation();
+			});
+		});
     
-    $("#"+layerItem.id).delegate(".editLayer", "click", function(e) {
+		$("#"+layerItem.id).delegate(".deleteLayer", "click", function(e) {
 
-        var layername = this.parentNode.parentNode.getAttribute('layerName');
-        
-    });
-    
-    $("#"+layerItem.id).delegate(".deleteLayer", "click", function(e) {
+			var layername = this.parentNode.parentNode.getAttribute('layerName');
 
-        var layername = this.parentNode.parentNode.getAttribute('layerName');
-
-    });
+		});
     
      $("#"+layerItem.id).delegate(".layerName", "click", function(e) {
 
         var layername = this.parentNode.parentNode.getAttribute('layerName');
         
-        //TODO make this turn it into a 
-
     });
 	
 	},
 	
+	createNewLayer :function(name){
+		var id = $uid();
+		LE.addLayer(name, id);
+		//LE.activateLayer(id); 
+		//UI.Actions.createNewLayerUI(name,id);
+	},
+	
 	_getNewLayerFormData : function(){
-		var name = $g('layerNameFormItem').value;
-		UI.Actions.createNewLayer(name);		
+		UI.Actions.createNewLayer($g('layerNameFormItem').value);  
+		
 		$('#mainModal').modal('hide');
 	},
 	

@@ -91,7 +91,7 @@ LevelEditor.Tileset.prototype = {
 	 * kinda gheto hqackish
 	 */
 	onLoad : function(){
-		 console.log('Tileset Loaded');
+		
 	},
 	
 	setup : function(){

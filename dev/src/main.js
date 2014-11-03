@@ -16,7 +16,6 @@ document.addEventListener( "DOMContentLoaded", function(){
 	});
 		
 	$('#addLayer').on('click', function () {
-		console.log('add Layer');
 		UI.Actions.newLayerPopup();
 	});
 	//Little bit of hacking is fine from now to then
