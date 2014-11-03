@@ -40,13 +40,16 @@ UI.Actions = {
 		  var tilesetId = $g('tilesetFormItem').value;
 		  
 			var t = UI.data.Tilesets[tilesetId]; //the tilesets
+			console.log(t);
 			tileset = {
 				image : t.image,
 				imageheight : Number(t.imageheight),
 				imagewidth : Number(t.imagewidth),
 				name : t.name,
 				tilewidth : Number(t.tilewidth),
-				tileheight : Number(t.tileheight)
+				tileheight : Number(t.tileheight),
+				collisionTiles : t.collision,
+				id : t._id
 			};
 			
 			grid = {
@@ -73,7 +76,7 @@ UI.Actions = {
 		}
 		
 		$rAC($g('layersList'));
-
+    console.log(tileset);
 		LE.create(name,grid,tileset);
 		
 		UI.activeMap = LE.map;
@@ -91,8 +94,8 @@ UI.Actions = {
 	*/
 	saveMap : function(){
 	  var map = LE.saveMap();
-	  map.tilesetId = UI.activeTilesetId;
-	  
+	 // map.tilesetId = UI.activeTilesetId;
+	  console.log(map);
 	  	  
 	  
 	  UI.data.Maps[map.id] = map;//saves it to memory
@@ -134,8 +137,16 @@ UI.Actions = {
 		loadButton.addEventListener('click', this._getLoadMapFormData.bind(this),this);
 		$('#mainModal').modal('show');
 	},
+	
 	_getLoadMapFormData : function(){
 		var map = UI.data.Maps[$g('mapsFormItem').value];
+		console.log(map);
+		//map.tileset = UI.
+	  for(var i = 0; i < UI.data.Tilesets.length; i++){
+	    if(UI.data.Tilesets[i]._id === map.tilesetId){
+	      map.tileset = UI.data.Tilesets[i];
+	    }
+	  }
 		this._loadMap(map);
 		$('#mainModal').modal('hide');
 	},
@@ -150,6 +161,8 @@ UI.Actions = {
 		
 		UI.activeMap = map;
 		$g('playGameButton').disabled = false;
+		$g('toggleLayers').disabled = false;
+		$g('addLayer').disabled = false;
 	},
 	
 	settingsPopup :function(){
@@ -337,10 +350,7 @@ UI.Actions = {
 				$('#'+layerid).remove();
 				$('#alertModal').modal('hide');
 			});
-			//delete UI
-			
-			//DELETE sprite group
-			
+
 
 		});
     
@@ -355,8 +365,6 @@ UI.Actions = {
 	createNewLayer :function(name){
 		var id = $uid();
 		LE.addLayer(name, id);
-		//LE.activateLayer(id); 
-		//UI.Actions.createNewLayerUI(name,id);
 	},
 	
 	_getNewLayerFormData : function(){

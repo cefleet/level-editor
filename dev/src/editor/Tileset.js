@@ -8,7 +8,7 @@ LevelEditor.Tileset = function (options) {
 	this.imagewidth = options.imagewidth || 256;
 	this.tilewidth = options.tilewidth || 32;
 	this.tileheight = options.tileheight || 32;
-	this.collisionTiles = options.collisionTiles ||  [0,1,[2,23]]; //this is purposlly writtein to show that it can be an array of number or an array of arrays sets or a mixture
+	this.collisionTiles = options.collisionTiles ||  [0,1,[2-23]]; //this is purposlly writtein to show that it can be an array of number or an array of arrays sets or a mixture
     this.tiles = {};
     this.bgColor = options.bgColor || {
 		line : 0x2F2F2F,
@@ -20,6 +20,9 @@ LevelEditor.Tileset = function (options) {
 		tileSelected : new Phaser.Signal(),
 		gameCreated  : new Phaser.Signal()
 	}
+	
+	console.log(options.id);
+	this.id = options.id || $uid();
 	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
 		create:function(){	
@@ -40,9 +43,9 @@ LevelEditor.Tileset.prototype = {
 	/* creates the tilsets
 	 */
 	create : function(){
-		//this.makeWindow();
+
 		this.tileGroup = this.game.add.group();
-		//this.tileGroup.add(this.bg);
+
 		
 		var rows= this.imageheight/this.tileheight;
 		var cols = this.imagewidth/this.tilewidth;  

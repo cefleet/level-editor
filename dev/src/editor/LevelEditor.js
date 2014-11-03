@@ -116,15 +116,31 @@ LevelEditor.funcs = {
 		
 		this.map.tilemap = json;
 		this.map.layers = mapLayers;
+		this.map.tilesetId = this.tileset.id;
+		
 		return this.map;
 	},
 	
-	//For now this just loads a single layer
+
 	load : function(map){
 		if(typeof map.tilemap === 'string'){
 			map.tilemap = JSON.parse(map.tilemap);
 		}
-		var tileset = map.tilemap.tilesets[0];		
+
+		//right here...
+		// var tileset = map.tilemap.tilesets[0];		
+    
+    tileset = {
+			image : map.tileset.image,
+			imageheight : Number(map.tileset.imageheight),
+			imagewidth : Number(map.tileset.imagewidth),
+			name : map.tileset.name,
+			tilewidth : Number(map.tileset.tilewidth),
+			tileheight : Number(map.tileset.tileheight),
+			collisionTiles : map.tileset.collision,
+			id : map.tileset._id
+	  };	
+		
 		var grid = {
 			tilewidth : map.tilemap.tilewidth,
 			tileheight : map.tilemap.tileheight,
@@ -160,6 +176,7 @@ LevelEditor.funcs = {
 	launchGame : function(options){
 		this.saveMap();
 		options.map = this.map;
+		options.map.tileset = this.tileset;
 		this.grid.destroy();		
 		this.tileset.destroy();
 		delete this.grid;
