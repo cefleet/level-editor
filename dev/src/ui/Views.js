@@ -236,13 +236,26 @@ UI.Views = {
 		)
 	
 		return alert;
-	} ,
+	},
+	
+	saveGood : function(){
+	  var alert = $nE('div', {"id":"saveSuccess","class":"alert alert-success", "role":"alert", "style":"position:absolute;top:20px;left:20px;z-index:10000"},
+	    [
+	      $nE('button', {"type":"button","class":"close","data-dismiss":"alert"},
+	        $nE('span',{"clasS":"glyphicon glyphicon-remove"})
+	      ),
+	      $cTN('The Map has been saved!')
+	    ]
+	  );
+	  
+	  return alert;
+	},
 	 
 	 /*
 	  * New Map Form
 	  */
 	newMapForm : function(){
-		var form = $nE('form', {"class":"form-horizontal", "role":"form"},
+		var form = $nE('div', {"class":"form-horizontal", "role":"form"},
 				$nE('div', {"class":"form-group"},
 					[
 						$nE('div', {"class":"col-sm-12"},
@@ -288,7 +301,7 @@ UI.Views = {
 	},
 	
 	newLayerForm : function(){
-			var form = $nE('form', {"class":"form-horizontal", "role":"form"},
+			var form = $nE('div', {"class":"form-horizontal", "role":"form"},
 				$nE('div', {"class":"form-group"},
 					[
 						$nE('div', {"class":"col-sm-12"},
@@ -332,7 +345,7 @@ UI.Views = {
 	},
 	
 	newTilesetForm : function(){
-		var form = $nE('form', {"class":"form-horizontal", "role":"form"},
+		var form = $nE('div', {"class":"form-horizontal", "role":"form"},
 				$nE('div', {"class":"form-group"},
 					[
 						$nE('div', {"class":"col-sm-12"},
@@ -402,7 +415,7 @@ UI.Views = {
 	 */
 	 loadMapSelection : function(){
 		//TODO can add a little bit of information if needed here like a screenshot of the map
-		var form = $nE('form',{"class":"form-horizontal", "role":"form"},
+		var form = $nE('div',{"class":"form-horizontal", "role":"form"},
 		  $nE('div', {"class":"form-group"},
 			  $nE('div', {"class":"col-sm-12"},
 			  	[
@@ -421,7 +434,7 @@ UI.Views = {
 	* Settings Modal
 	*/
 	settingsForm : function(){
-	  var form = $nE('form',{"class":"form-horizontal", "role":"form"},
+	  var form = $nE('div',{"class":"form-horizontal", "role":"form"},
 	    $nE('div', {"class":"form-group"},
 	      [
 	        $nE('div', {"class":"col-sm-12"},

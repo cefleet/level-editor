@@ -93,13 +93,23 @@ UI.Actions = {
 	  var map = LE.saveMap();
 	  map.tilesetId = UI.activeTilesetId;
 	  
-	  
+	  	  
 	  
 	  UI.data.Maps[map.id] = map;//saves it to memory
 	  
 	  map.tilemap = JSON.stringify(map.tilemap);
 	  $.post('save_map', map);
+	  
+	  //should wait for the return here actually but .. meh
 	  //popup saved
+	  $aC(document.body,[UI.Views.saveGood()]);
+	  
+	  
+	  	  
+	  $("#saveSuccess").fadeTo(2000, 500).slideUp(500, function(){
+      $("#saveSuccess").alert('close');
+    });
+	  
 	},
 	
 	loadMapSelection : function(){
@@ -212,9 +222,9 @@ UI.Actions = {
 		var baseHeight = window.innerHeight-130;
 		
 		var options = {
-			container : 'gameModalBody',
-			
+			container : 'gameModalBody'			
 		}
+		$rAC($g('layersList'));		
 		LE.launchGame(options);
 		$('#gameModal').modal('show');
 	},
