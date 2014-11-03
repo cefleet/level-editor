@@ -208,9 +208,35 @@ UI.Views = {
 		);
 		return modal;	 
 	},
+	
 	/*
-	 * View sections
+	 * Warning alert
 	 */
+	alertModal : function(){
+		var alert = $nE('div',{"class": "modal fade", "id":"alertModal"},
+			$nE('div', {"class":"modal-dialog"},
+				$nE("div",{"class":"modal-content"},
+					[
+						$nE("div", {"class":"modal-body", "id":"alertModalBody"},
+							$nE('div', {"class":"alert", "role":"alert"},							
+								$nE('div', {"id":"dangerAlertContent"})							
+							)
+						),
+						$nE("div", {"class":"modal-footer", "id":"alertModalFooter"},
+							[
+								$nE('button', {"type":"button","class":"btn btn-danger ", "id":"continueDanger"}, $cTN('Continue')),
+								$nE("button", {"type":"button", "class":"btn btn-default", "data-dismiss":"modal"},
+									$cTN("Close")
+								)
+							]
+						)
+					]
+				)
+			)
+		)
+	
+		return alert;
+	} ,
 	 
 	 /*
 	  * New Map Form
@@ -289,8 +315,8 @@ UI.Views = {
 				),
 				$nE('div', {"class":"btn-group"},
 					[
-						$nE('button', {"class":"btn btn-danger"},
-							$nE('span', {"class":"glyphicon glyphicon-remove-circle deleteLayer"})
+						$nE('button', {"class":"btn btn-danger  deleteLayer"},
+							$nE('span', {"class":"glyphicon glyphicon-remove-circle"})
 						),
 						$nE('button', { "class":"btn btn-default active setVisibilityLayer", "data-toggle":"button","aria-pressed":"true","autocomplete":"off"}, 	
 							$nE('span', {"class":"glyphicon glyphicon-eye-close"})

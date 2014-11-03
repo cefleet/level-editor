@@ -191,6 +191,10 @@ LevelEditor.funcs = {
 	
 	orderLayers : function(order){
 		this.grid.orderLayers(order);
+	},
+	
+	deleteLayer : function(id){
+		this.grid.deleteLayer(id);
 	}
 }
 

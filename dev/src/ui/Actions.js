@@ -226,17 +226,8 @@ UI.Actions = {
 	
 	//TODO this does not work It is never active
 	toggleLayers : function(){
-		if($(this).hasClass('active')){
-		  console.log('Remove col-xs-8');
-			$('#gameGrid').removeClass('col-xs-8');
-			$('#gameGrid').addClass('col-xs-12');
-			$('#gameLayers').removeClass('col-xs-4').toggle();
-		} else {
-			 console.log('Remove col-xs-12');
-			$('#gameGrid').removeClass('col-xs-12');
-			$('#gameGrid').addClass('col-xs-8');
-			$('#gameLayers').addClass('col-xs-4').toggle();
-		}
+		$('#gameGrid').toggleClass('col-xs-8').toggleClass('col-xs-12');
+		$('#gameLayers').toggleClass('col-xs-4').toggle();
 	},
 	
 	newLayerPopup : function(){
@@ -319,8 +310,27 @@ UI.Actions = {
 		});
     
 		$("#"+layerItem.id).delegate(".deleteLayer", "click", function(e) {
-
-			var layername = this.parentNode.parentNode.getAttribute('layerName');
+			var layername = this.parentNode.parentNode.getAttribute('layerName'); 
+			var layerid= this.parentNode.parentNode.getAttribute('layerId');
+			$rAC($g('dangerAlertContent'));
+			$('#continueDanger').off();//maybe?
+			$aC($g('dangerAlertContent'),[
+				$nE('h4', {}, $cTN('Warning')),
+				$nE('p', {}, $cTN('You are about to Delete the layer named '+layername)),
+				$nE('p', {}, $cTN('Do you want to continue? This action cannot be undone'))
+			]);
+			$('#alertModal').modal('show');
+			//confirm 
+			$('#continueDanger').on('click', function(){
+				console.log(layerid);
+				LE.deleteLayer(layerid);
+				$('#'+layerid).remove();
+				$('#alertModal').modal('hide');
+			});
+			//delete UI
+			
+			//DELETE sprite group
+			
 
 		});
     

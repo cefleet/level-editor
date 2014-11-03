@@ -2,6 +2,7 @@ document.addEventListener( "DOMContentLoaded", function(){
 	MasterEmitter = new EventEmitter();	
 	$aC(document.body, [
 		UI.Views.gameModal(),
+		UI.Views.alertModal(),
 		UI.Views.modal(),
 		UI.Views.navbar()
 	]);

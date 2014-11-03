@@ -210,6 +210,17 @@ LevelEditor.Grid.prototype = {
 			}
 		}
 	},
+	
+	deleteLayer : function(layer){
+		console.log(layer);
+		if(typeof layer === 'string'){
+			layer = this.layers[layer];
+		}
+		console.log(layer);
+		this.layersGroup.remove(layer,true);
+		
+						
+	},
 
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
