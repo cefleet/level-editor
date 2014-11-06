@@ -148,15 +148,50 @@ UI.Views = {
 	 */
 	toolPanel : function(){
 		var panel = $nE('div', {"class":"col-md-4"},
-			$nE('div', {"class":"panel panel-default"},
+			$nE('div', {"class":"panel panel-default", "id":"toolsPanel"},
+					$nE('div', {"class":"panel-body"}, 
+						[
+							$nE('ul', {"class":"nav nav-tabs", "role":"tablist"},
+								[
+									$nE('li', {"class":"active", "role":"presentation"},
+										$nE('a',{"href":"#gameTilesetContainer", "data-toggle":"tab"},$cTN('Tileset'))
+									),
+									$nE('li', { "role":"presentation"},
+										$nE('a',{"href":"#gameToolsContainer", "data-toggle":"tab"},$cTN('Tools'))
+									)
+								]
+							),
+							$nE('div', {"class":"tab-content"},
+								[
+									$nE('div', {"role":"tabpanel", "class":"tab-pane active", "id":"gameTilesetContainer"}, 
+										$nE('div', {"id":"gameTileset"})
+									),
+									$nE('div', {"role":"tabpanel", "class":"tab-pane", "id":"gameToolsContainer"}, 
+										$nE('div', {"id":"gameTools"})
+									)
+								]
+							)
+						]
+	
+				)
+					//$nE('div', {"class":"panel-body", "id" :"gameTileset","style":"overflow:auto"})
+			)
+		);
+		/*
+		var panel = $nE('div', {"class":"col-md-4"},
+			$nE('div', {"class":"well"},
 				[
-					$nE('div', {"class":"panel-heading"}, 
-						$nE('h3', {"class":"panel-title"}, $cTN('Tileset'))
+					$nE('ul', {"class":"nav nav-tabs", "role":"tablist"},
+						[
+							$nE('li', {"class":"active", "role":"presentation"},
+								$nE('a',{},$cTN('test'))
+							)
+						]
 					),
 					$nE('div', {"class":"panel-body", "id" :"gameTileset","style":"overflow:auto"})
 				]
 			)
-		);
+		)*/
 		return panel;
 	},
 	/*

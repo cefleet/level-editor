@@ -52,26 +52,27 @@ LevelEditor.GameTester.prototype = {
 		//TODO multiple layers
 		var layers = [];
 		for(var i = 0; i < this.map.tilemap.layers.length; i++){
-		  var layer = tilemap.createLayer(this.map.tilemap.layers[i].name); 
-			layers.push(layer);
-      //layer.debug = true;
-			//TODO the actual collision array here
-			/*
-			console.log(this.map.tileset.collisionTiles);
+
+			layers.push(tilemap.createLayer(this.map.tilemap.layers[i].name));
+      
+			
 		  if(this.map.tileset.collisionTiles){		  
-		    for(var i = 0; i < this.map.tileset.collisionTiles.length; i++){
-        //This needs a lot of help .. but it should work for now
-		      if(isNaN(Number(this.map.tileset.collisionTiles[i]))){
-		        var ar = this.map.tileset.collisionTiles[i].split('-');
-		        tilemap.setCollisionBetween(ar[0],ar[1],true,layer);
-		      }
+		    for(var j = 0; j < this.map.tileset.collisionTiles.length; j++){
+				//This needs a lot of help .. but it should work for now
+				if(isNaN(Number(this.map.tileset.collisionTiles[j]))){
+					var ar = this.map.tileset.collisionTiles[j].split('-');
+					tilemap.setCollisionBetween(ar[0],ar[1],true,layers[i]);
+				}
 		    }
-		  }*/
+		  }
+		  
+		  		 
 		}
-		console.log(layers);
-		layers[0].resizeWorld();//all the layers are the same size so just do it on the last layer
-		this.game.world.bringToTop(this.player);
+		
 		this.layers = layers;
+		
+		//layers[0].resizeWorld();//all the layers are the same size so just do it on the last layer
+		this.game.world.bringToTop(this.player);
 
 	},
 	

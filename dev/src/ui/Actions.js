@@ -76,7 +76,6 @@ UI.Actions = {
 		}
 		
 		$rAC($g('layersList'));
-    console.log(tileset);
 		LE.create(name,grid,tileset);
 		
 		UI.activeMap = LE.map;

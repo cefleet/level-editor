@@ -14,6 +14,7 @@ LevelEditor.Grid = function (options) {
 	this.scale =1;
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
+	this.toolType = 'single';
 	
 	this.events = {
 		gameCreated  : new Phaser.Signal()
@@ -295,7 +296,7 @@ LevelEditor.Grid.prototype = {
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
 				if(this.game.input.activePointer.isDown){
-					if(c.which === 3){
+					if(c.which === 3 || this.toolType === 'eraser'){
 						this.unsetActiveTile();
 					} else if(c.which === 1) {
 						this.setActiveTileFromMarker();
@@ -311,7 +312,7 @@ LevelEditor.Grid.prototype = {
 			}
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
-				if(c.which === 3){
+				if(c.which === 3 || this.toolType === 'eraser'){
 					this.unsetActiveTile();
 				} else if(c.which === 1){
 					this.setActiveTileFromMarker();
@@ -342,10 +343,33 @@ LevelEditor.Grid.prototype = {
 		this.spritesheet.start();
 	},
 	
+	setToolType : function(t){
+		/*
+		 * t will be 
+		 * 'single' -single tile
+		 * 'eraser'= erases tiles only.
+		 * 'fill' = fills the whole layer with one tile
+		 * 'sprite' = adds a sprite popup or it is a sprite image .. that's probaby the one
+		 * 'selector' = will select information like if a sprite is in the grid or 
+		 * "trigger" = will add a trigger popup
+		 */
+		 if(t === 'eraser'){
+			this.toolType = 'eraser';
+			this.marker.destroy();
+			this.marker = this.game.add.sprite(0,0, 'tools', 'eraser');//there is no tools image with an eraser frame right now
+		} else {
+			this.toolType = 'single';
+		}
+	},
+	
 	setMarker : function(t){
-		this.marker.destroy();	
+		//only fill will keep the marker
+		this.marker.destroy();
 		this.marker = this.game.add.sprite(0,0, t.name, t.selectedTile.frame*1);
 		this.marker.tilesetId = t.selectedTile.id;
+		if(this.toolType !== 'fill'){
+			this.toolType = 'single';
+		}
 	},
 	
 	/*
