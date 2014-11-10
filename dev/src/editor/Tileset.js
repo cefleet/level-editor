@@ -21,8 +21,14 @@ LevelEditor.Tileset = function (options) {
 		gameCreated  : new Phaser.Signal()
 	}
 	
-	console.log(options.id);
-	this.id = options.id || $uid();
+	if(!options.id) {
+	  console.log('There seems to be a problem with the option id');
+	} else {
+		console.log(options.id);
+		this.id = options.id;
+	}
+
+	//this.id = options.id || $uid();
 	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
 		create:function(){	

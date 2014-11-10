@@ -46,6 +46,10 @@ UI = {
 			}
 		});
 		
+		$('.toolButton').on('click',function(){
+		  UI.Actions.activateTool(this.id.replace('Tool',''));
+		});
+		
 	},
 
 	navClicked : function(clicked){

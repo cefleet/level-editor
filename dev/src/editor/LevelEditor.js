@@ -4,6 +4,9 @@ LevelEditor = function (containers) {
 	this.gridContainer = containers.grid ||'';
 	this.tilesetContainer = containers.tileset ||'';
 	this.map = {};
+	this.events = {
+	  mapSaved : new Phaser.Signal()
+	}
 }
 
 LevelEditor.prototype.constructor = LevelEditor;
@@ -25,7 +28,16 @@ LevelEditor.funcs = {
 			//This is correct because Level Editor should be the 'glue' between the two
 			this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);  
 			this.tileset.events.tilesetImageLoaded.add(this.grid.loadTileset, this.grid); 
-			 
+			
+			//We can have a go between here so phaser events don't mesh with other events
+			//this.grid.events.mapSaved.add(UI.Actions._saveMap);
+      this.grid.events.toolChanged.add(UI.Actions._activateTool);
+      this.grid.events.layerAdded.add(function(o){
+        UI.Actions.createNewLayerUI(o.name,o.id);
+      });
+			
+			this.events.mapSaved.add(UI.Actions._saveMap);
+			
 			//ads in some settings
 			this.map.name =  name || 'My Map';
 			this.map.id = id || $uid();
@@ -49,6 +61,7 @@ LevelEditor.funcs = {
 	 * Saves the Map
 	 */
 	saveMap : function(){
+
 		var layers = [];
 		
 		//TODO sort by the layers z index
@@ -118,7 +131,8 @@ LevelEditor.funcs = {
 		this.map.layers = mapLayers;
 		this.map.tilesetId = this.tileset.id;
 		
-		return this.map;
+		this.events.mapSaved.dispatch(this.map);
+	//	return this.map;
 	},
 	
 
@@ -126,7 +140,7 @@ LevelEditor.funcs = {
 		if(typeof map.tilemap === 'string'){
 			map.tilemap = JSON.parse(map.tilemap);
 		}
-
+    console.log(map);
 		//right here...
 		// var tileset = map.tilemap.tilesets[0];		
     
@@ -174,15 +188,23 @@ LevelEditor.funcs = {
 	changeSettings : function(){},
 	
 	launchGame : function(options){
+
+	  this.eOptions = options;
+	  this.events.mapSaved.addOnce(this._launchGame, this);
 		this.saveMap();
-		options.map = this.map;
+		//when it closes we need to destroy the game
+	},
+	
+	_launchGame : function(map){
+
+    var options = this.eOptions;
+	  options.map = this.map;
 		options.map.tileset = this.tileset;
 		this.grid.destroy();		
 		this.tileset.destroy();
 		delete this.grid;
 		delete this.tileset;
 		this.testGame = new LevelEditor.GameTester(options);
-		//when it closes we need to destroy the game
 	},
 	
 	destroyGame : function(){
@@ -212,6 +234,10 @@ LevelEditor.funcs = {
 	
 	deleteLayer : function(id){
 		this.grid.deleteLayer(id);
+	},
+	
+	setTool : function(tool){
+	  this.grid.setToolType(tool);
 	}
 }
 

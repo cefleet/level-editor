@@ -11,6 +11,8 @@ document.addEventListener( "DOMContentLoaded", function(){
 		UI.Views.toolPanel()
 	]);
 	
+	//adds the tools ..
+	$aC($g('gameTools'),[UI.Views.tools()]);
 	//toggles layers
 	$('#toggleLayers').on('click', function () {
 		UI.Actions.toggleLayers()		

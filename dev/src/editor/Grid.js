@@ -17,7 +17,9 @@ LevelEditor.Grid = function (options) {
 	this.toolType = 'single';
 	
 	this.events = {
-		gameCreated  : new Phaser.Signal()
+		gameCreated  : new Phaser.Signal(),
+		toolChanged : new Phaser.Signal(),
+		layerAdded : new Phaser.Signal()
 	}
 	
   //  this.tiles = {}; 
@@ -162,8 +164,10 @@ LevelEditor.Grid.prototype = {
 		this.layers[id].order = highest;
 		/*****DANGER THIS IS WRONG. I DO NOT WANT TO CALL THE UI FROM THIS OBJECT
 		 * ******************************/
+		 
+		 this.events.layerAdded.dispatch({name:name,id:id});
 		//This should be an event
-		UI.Actions.createNewLayerUI(name,id);
+	//	UI.Actions.createNewLayerUI(name,id);
 			
 	},
 	  
@@ -353,23 +357,23 @@ LevelEditor.Grid.prototype = {
 		 * 'selector' = will select information like if a sprite is in the grid or 
 		 * "trigger" = will add a trigger popup
 		 */
-		 if(t === 'eraser'){
-			this.toolType = 'eraser';
-			this.marker.destroy();
-			this.marker = this.game.add.sprite(0,0, 'tools', 'eraser');//there is no tools image with an eraser frame right now
-		} else {
-			this.toolType = 'single';
-		}
+
+		this.toolType = t;
+		this.marker.destroy();
+		this.marker = this.game.add.sprite(0,0, 'tools', t);
+		 
+		this.events.toolChanged.dispatch(this.toolType);
 	},
 	
 	setMarker : function(t){
+	  if(this.toolType !== 'fill'){
+			this.setToolType('single');
+		}
 		//only fill will keep the marker
 		this.marker.destroy();
 		this.marker = this.game.add.sprite(0,0, t.name, t.selectedTile.frame*1);
 		this.marker.tilesetId = t.selectedTile.id;
-		if(this.toolType !== 'fill'){
-			this.toolType = 'single';
-		}
+		
 	},
 	
 	/*

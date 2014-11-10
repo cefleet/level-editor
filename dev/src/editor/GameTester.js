@@ -10,7 +10,10 @@ LevelEditor.GameTester = function (options) {
     //setup
     this.game = new Phaser.Game(this.width,this.height, Phaser.AUTO,this.container, {
 		preload : function(){
-			
+			console.log(this.map);
+			if(typeof this.map.tilemap === 'string'){
+			  this.map.tilemap = JSON.parse(this.map.tilemap);
+			}
 			//TODO multiple tilesets
 			this.game.load.image(this.map.tilemap.tilesets[0].name, this.map.tilemap.tilesets[0].image);
 			this.game.load.image('player', '../img/teddy.png');
@@ -53,8 +56,7 @@ LevelEditor.GameTester.prototype = {
 		var layers = [];
 		for(var i = 0; i < this.map.tilemap.layers.length; i++){
 
-			layers.push(tilemap.createLayer(this.map.tilemap.layers[i].name));
-      
+			layers.push(tilemap.createLayer(this.map.tilemap.layers[i].name));      
 			
 		  if(this.map.tileset.collisionTiles){		  
 		    for(var j = 0; j < this.map.tileset.collisionTiles.length; j++){

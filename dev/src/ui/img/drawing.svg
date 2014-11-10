@@ -14,7 +14,7 @@
    height="1052.3622047"
    id="svg10468"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="drawing.svg">
   <defs
      id="defs10470">
@@ -433,10 +433,10 @@
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1391"
-     inkscape:window-height="882"
-     inkscape:window-x="49"
-     inkscape:window-y="18"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata10473">
@@ -446,7 +446,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -457,7 +457,10 @@
     <g
        style="display:inline"
        id="ink_selection_reverse"
-       transform="matrix(4.2894794,0,0,4.2894794,-1371.8792,-277.7983)">
+       transform="matrix(4.2894794,0,0,4.2894794,-1371.8792,-277.7983)"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/trigger.png"
+       inkscape:export-xdpi="131.00377"
+       inkscape:export-ydpi="131.00377">
       <path
          inkscape:connector-curvature="0"
          style="fill:none;stroke:#646464;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
@@ -492,7 +495,10 @@
        id="color_management"
        inkscape="#color_management"
        inkscape:label="#color_management"
-       transform="matrix(4.2894794,0,0,4.2894794,-1634.4566,-1813.7383)">
+       transform="matrix(4.2894794,0,0,4.2894794,-1634.4566,-1813.7383)"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/sprite.png"
+       inkscape:export-xdpi="131.00377"
+       inkscape:export-ydpi="131.00377">
       <rect
          style="fill:url(#linearGradient12045);fill-opacity:1;fill-rule:evenodd;stroke:#555753;stroke-width:1.08700001;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:0;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          id="rect11928"
@@ -601,38 +607,11 @@
     </g>
     <g
        style="display:inline"
-       id="draw_erase"
-       transform="matrix(4.2894794,0,0,4.2317949,-4420.8563,-5321.3005)"
-       inkscape:label="#draw_erase">
-      <path
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccccc"
-         id="path12731"
-         d="m 1160.1008,1285 -6.1395,9.8066 -1.9613,5.9051 2.7287,0.6327 13.4728,0.2109 1.9613,-1.7926 3.8372,-9.0685 -0.3412,-3.6907 -13.558,-2.0035 z"
-         style="fill:url(#radialGradient12748);fill-opacity:1;fill-rule:evenodd;stroke:none" />
-      <path
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccccc"
-         id="path12152"
-         d="m 1153.4358,1299.5332 13.6858,0 4.3835,-7.82 0,-5.2016 -1.1485,-1.1829 -10.7837,0.063 -1.5264,1.1338 -4.574,8.2446 -0.037,4.7628 z"
-         style="fill:#fb7474;fill-opacity:1;fill-rule:evenodd;stroke:#ef2929;stroke-width:0.99655467px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccccccc"
-         id="path12154"
-         d="m 1154.5755,1294.452 11.8844,0.045 4.0488,-7.3641 -0.3918,-0.7907 -10.8258,0 -4.6618,8.1702 -0.054,-0.06 z"
-         style="fill:url(#linearGradient12750);fill-opacity:1;fill-rule:evenodd;stroke:#edd6d1;stroke-width:0.98928064px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="ccc"
-         id="path12165"
-         d="m 1154.5625,1295.4957 0,3.0314 11.875,0"
-         style="fill:none;stroke:#efa9a6;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
-    </g>
-    <g
-       style="display:inline"
        transform="matrix(4.2894794,0,0,4.2894794,-887.4076,-1605.8024)"
-       id="draw_select">
+       id="draw_select"
+       inkscape:export-xdpi="87.419998"
+       inkscape:export-ydpi="87.419998"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/select.png">
       <rect
          y="398.95279"
          x="222.12732"
@@ -683,7 +662,10 @@
     <g
        style="display:inline"
        id="draw_paintbucket"
-       transform="matrix(4.2894794,0,0,4.2894794,-752.66222,-640.25932)">
+       transform="matrix(4.2894794,0,0,4.2894794,-752.66222,-640.25932)"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/fill.png"
+       inkscape:export-xdpi="87.419998"
+       inkscape:export-ydpi="87.419998">
       <rect
          y="228"
          x="190.00002"
@@ -754,7 +736,10 @@
        style="display:inline"
        transform="matrix(1.6416824,0,0,1.6416824,320.19011,119.56492)"
        id="draw_rect"
-       inkscape:label="#draw_rect">
+       inkscape:label="#draw_rect"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/single.png"
+       inkscape:export-xdpi="87.419998"
+       inkscape:export-ydpi="87.419998">
       <rect
          style="opacity:0.24267782;fill:#000000;fill-opacity:0;stroke:none"
          id="rect16265"
@@ -884,5 +869,49 @@
          id="tspan10781-8-1-5-3-4"
          x="518.17224"
          y="84.164879">Eraser</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:0;stroke:none"
+       id="rect3128"
+       width="100"
+       height="100"
+       x="-334.28571"
+       y="226.64789"
+       ry="0"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/eraser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <g
+       style="display:inline"
+       id="draw_erase"
+       transform="matrix(4.2894794,0,0,4.2317949,-5272.9502,-5195.8719)"
+       inkscape:label="#draw_erase"
+       inkscape:export-filename="/home/cefleet/LevelEditor/dev/src/ui/img/erase.png"
+       inkscape:export-xdpi="95.436493"
+       inkscape:export-ydpi="95.436493">
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccc"
+         id="path12731"
+         d="m 1160.1008,1285 -6.1395,9.8066 -1.9613,5.9051 2.7287,0.6327 13.4728,0.2109 1.9613,-1.7926 3.8372,-9.0685 -0.3412,-3.6907 -13.558,-2.0035 z"
+         style="fill:url(#radialGradient12748);fill-opacity:1;fill-rule:evenodd;stroke:none" />
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccc"
+         id="path12152"
+         d="m 1153.4358,1299.5332 13.6858,0 4.3835,-7.82 0,-5.2016 -1.1485,-1.1829 -10.7837,0.063 -1.5264,1.1338 -4.574,8.2446 -0.037,4.7628 z"
+         style="fill:#fb7474;fill-opacity:1;fill-rule:evenodd;stroke:#ef2929;stroke-width:0.99655467px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccc"
+         id="path12154"
+         d="m 1154.5755,1294.452 11.8844,0.045 4.0488,-7.3641 -0.3918,-0.7907 -10.8258,0 -4.6618,8.1702 -0.054,-0.06 z"
+         style="fill:url(#linearGradient12750);fill-opacity:1;fill-rule:evenodd;stroke:#edd6d1;stroke-width:0.98928064px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccc"
+         id="path12165"
+         d="m 1154.5625,1295.4957 0,3.0314 11.875,0"
+         style="fill:none;stroke:#efa9a6;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1" />
+    </g>
   </g>
 </svg>

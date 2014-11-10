@@ -40,7 +40,6 @@ UI.Actions = {
 		  var tilesetId = $g('tilesetFormItem').value;
 		  
 			var t = UI.data.Tilesets[tilesetId]; //the tilesets
-			console.log(t);
 			tileset = {
 				image : t.image,
 				imageheight : Number(t.imageheight),
@@ -79,7 +78,10 @@ UI.Actions = {
 		LE.create(name,grid,tileset);
 		
 		UI.activeMap = LE.map;
-		UI.activeMap.tilset = UI.activeTilesetId;
+		
+		//here is the issue the map
+		UI.activeMap.tilesetId = UI.activeTilesetId;
+		
 		$g('playGameButton').disabled = false;
 		$g('toggleLayers').disabled = false;
 		$g('addLayer').disabled = false;
@@ -92,26 +94,30 @@ UI.Actions = {
 	   Saves the current map
 	*/
 	saveMap : function(){
-	  var map = LE.saveMap();
-	 // map.tilesetId = UI.activeTilesetId;
-	  console.log(map);
-	  	  
-	  
-	  UI.data.Maps[map.id] = map;//saves it to memory
+	 LE.saveMap();	  
+	},
+	
+	_saveMap : function(map){
+	   UI.data.Maps[map.id] = map;//saves it to memory
 	  
 	  map.tilemap = JSON.stringify(map.tilemap);
 	  $.post('save_map', map);
 	  
 	  //should wait for the return here actually but .. meh
 	  //popup saved
-	  $aC(document.body,[UI.Views.saveGood()]);
+	  $aC(document.body,[UI.Views.saveGood()]);  
 	  
+
+	  for(var i = 0; i < UI.data.Tilesets.length; i++){
+	    if(UI.data.Tilesets[i]._id === map.tilesetId){
+	      map.tileset = UI.data.Tilesets[i];
+	    }	    
+	  }
 	  
-	  	  
+ 	  UI.activeMap = map;
 	  $("#saveSuccess").fadeTo(2000, 500).slideUp(500, function(){
       $("#saveSuccess").alert('close');
     });
-	  
 	},
 	
 	loadMapSelection : function(){
@@ -139,19 +145,19 @@ UI.Actions = {
 	
 	_getLoadMapFormData : function(){
 		var map = UI.data.Maps[$g('mapsFormItem').value];
-		console.log(map);
-		//map.tileset = UI.
-	  for(var i = 0; i < UI.data.Tilesets.length; i++){
-	    if(UI.data.Tilesets[i]._id === map.tilesetId){
-	      map.tileset = UI.data.Tilesets[i];
-	    }
-	  }
+	  
 		this._loadMap(map);
 		$('#mainModal').modal('hide');
 	},
 	
 	_loadMap : function(map){
-		
+	
+		for(var i = 0; i < UI.data.Tilesets.length; i++){
+	    if(UI.data.Tilesets[i]._id === map.tilesetId){
+	      map.tileset = UI.data.Tilesets[i];
+	    }	    
+	  }
+	  
 		LE.load(map);
 		var mapTitle = $g('navbarMapName');
 		$rAC($g('layersList'));
@@ -164,6 +170,7 @@ UI.Actions = {
 		$g('addLayer').disabled = false;
 	},
 	
+	//GONNA HAVE TO REDO ALL OF THIS
 	settingsPopup :function(){
 	  //sets the title
 		$rAC($g('modalTitle'));
@@ -179,11 +186,13 @@ UI.Actions = {
 		var tilesets = UI.data.Tilesets;
 		var options = [];
 		for(var t in tilesets){
+		/*
       if(UI.activeMap.tilesetId != t){
 			  options.push($nE('option', {"value":t}, $cTN(tilesets[t].name)));
 			} else {
 			  options.push($nE('option', {"value":t, "selected":"selected"}, $cTN(tilesets[t].name)));
 		  }
+		  */
 		}
 		
 		//TODO Selet only those with the same tiles size or errors will happen
@@ -236,6 +245,7 @@ UI.Actions = {
 		var options = {
 			container : 'gameModalBody'			
 		}
+		
 		$rAC($g('layersList'));		
 		LE.launchGame(options);
 		$('#gameModal').modal('show');
@@ -243,7 +253,10 @@ UI.Actions = {
 	
 	destroyGame : function(){
 		LE.destroyGame();
-		LE.load(UI.activeMap);
+		//UI.activeMap seems to be the problem
+		//console.log(UI.activeMap);
+		//LE.load(UI.activeMap);
+		UI.Actions._loadMap(UI.activeMap);
 	},
 	
 	//TODO this does not work It is never active
@@ -438,4 +451,18 @@ UI.Actions = {
 			});
 		}		
 	},
+	
+	activateTool : function(tool){	  
+	  //run the action for the game editor
+	  LE.setTool(tool);
+	},
+	
+	_activateTool : function(tool){
+	  //uncheck all of the tools
+	  $('.toolButton').each(function(){
+	    $(this).removeClass('active');
+	  });
+	  
+	  $('#'+tool+'Tool').addClass('active');
+	}
 }
