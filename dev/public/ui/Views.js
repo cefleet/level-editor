@@ -187,41 +187,41 @@ UI.Views = {
 	      
 	            $nE('button', {"class":"btn btn-default disabled toolButton", "id":"selectTool"},
 	              [
-	              $nE('img', {"class":"center-block", "src":"ui/img/select.png","width":"50px"}),
+	              $nE('img', {"class":"center-block", "src":"img/ui/select.png","width":"50px"}),
 	              $cTN('Select')
 	              ]
 	            ),
 	      
 	          	$nE('button', {"class":"btn btn-default active toolButton", "id":"singleTool"},
 	          	  [
-	              $nE('img', {"class":"center-block","src":"ui/img/single.png", "width":"50px"}),
+	              $nE('img', {"class":"center-block","src":"img/ui/single.png", "width":"50px"}),
 	              $cTN('Single')
 	              ]
 	            ),
 	        
 	          	$nE('button', {"class":"btn btn-default toolButton", "id":"eraserTool"},
 	          	  [
-	              $nE('img', {"class":"center-block","src":"ui/img/erase.png", "width":"50px"}),
+	              $nE('img', {"class":"center-block","src":"img/ui/erase.png", "width":"50px"}),
 	              $cTN('Erase')
 	              ]
 	            ),
 	             $nE('button', {"class":"btn btn-default toolButton disabled", "id":"fillTool"},
 	              [
-	              $nE('img', {"class":"center-block", "src":"ui/img/fill.png","width":"50px"}),
+	              $nE('img', {"class":"center-block", "src":"img/ui/fill.png","width":"50px"}),
 	              $cTN('Fill')
 	              ]
 	            ),
 	      
 	          	$nE('button', {"class":"btn btn-default disabled toolButton", "id":"triggerTool"},
 	          	  [
-	              $nE('img', {"class":"center-block","src":"ui/img/trigger.png", "width":"50px"}),
+	              $nE('img', {"class":"center-block","src":"img/ui/trigger.png", "width":"50px"}),
 	              $cTN('Trigger')
 	              ]
 	            ),
 	        
 	          	$nE('button', {"class":"btn btn-default disabled toolButton", "id":"spriteTool"},
 	          	  [
-	              $nE('img', {"class":"center-block","src":"ui/img/sprite.png", "width":"50px"}),
+	              $nE('img', {"class":"center-block","src":"img/ui/sprite.png", "width":"50px"}),
 	              $cTN('sprite')
 	              ]
 	            )

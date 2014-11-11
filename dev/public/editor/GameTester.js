@@ -16,8 +16,9 @@ LevelEditor.GameTester = function (options) {
 			}
 			//TODO multiple tilesets
 			this.game.load.image(this.map.tilemap.tilesets[0].name, this.map.tilemap.tilesets[0].image);
-			this.game.load.image('player', '../img/teddy.png');
+			this.game.load.spritesheet('player', 'img/player.png',80,80);
 			this.game.cache.addTilemap('tilemap',null, this.map.tilemap, Phaser.Tilemap.TILED_JSON);
+			
 
 		}.bind(this),
 		
@@ -27,6 +28,7 @@ LevelEditor.GameTester = function (options) {
 			this.game.scale.setScreenSize();
 			this.game.physics.startSystem(Phaser.Physics.ARCADE);
 			this.player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
+			
 			this.game.physics.arcade.enable(this.player);
 			this.cursors = this.game.input.keyboard.createCursorKeys();
 			this.game.camera.follow(this.player);
