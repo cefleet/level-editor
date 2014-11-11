@@ -295,8 +295,12 @@ UI.Actions = {
 		$aC(layerItem.firstChild.firstChild, [$cTN(' '+name)]);
 		
 		var layerList = $g('layersList');
-		layerList.insertBefore(layerItem, layerList.firstChild);		
-		
+		layerList.insertBefore(layerItem, layerList.firstChild);	
+			
+		$('.makeLayerActive').removeClass("active");
+	
+		//make this one active
+		$('#'+id+' .makeLayerActive').addClass("active");
 		//add listener s
 		$("#"+layerItem.id).delegate(".makeLayerActive", "click", function(e) {
 
@@ -305,8 +309,7 @@ UI.Actions = {
 			
 			$('.makeLayerActive').removeClass("active");
 			LE.activateLayer(layerid);
-			$(this).addClass('active');
-      
+			$(this).addClass('active');      
 		});
     
 		$("#"+layerItem.id).delegate(".setVisibilityLayer", "click", function(e) {
@@ -357,7 +360,6 @@ UI.Actions = {
 			$('#alertModal').modal('show');
 			//confirm 
 			$('#continueDanger').on('click', function(){
-				console.log(layerid);
 				LE.deleteLayer(layerid);
 				$('#'+layerid).remove();
 				$('#alertModal').modal('hide');

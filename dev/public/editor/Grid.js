@@ -19,13 +19,24 @@ LevelEditor.Grid = function (options) {
 	this.events = {
 		gameCreated  : new Phaser.Signal(),
 		toolChanged : new Phaser.Signal(),
-		layerAdded : new Phaser.Signal()
+		layerAdded : new Phaser.Signal(),
+		tilesetLoaded : new Phaser.Signal()
 	}
 	
   //  this.tiles = {}; 
         
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
+		
+		preload : function(){
+			//this is a little funky but it's fine for now
+			this.game.load.image('eraser', 'img/ui/erase.png');
+			//this.game.load.image('single', 'img/ui/single.png');
+			this.game.load.image('fill', 'img/ui/fill.png');
+			this.game.load.image('select','img/ui/select.png');
+			this.game.load.image('trigger','img/ui/trigger.png');
+		},
+		
 		create:function(){
 			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -341,9 +352,13 @@ LevelEditor.Grid.prototype = {
 	
 	loadTileset : function(t){
 		this.spritesheet = this.game.load.spritesheet(t.name,t.image,t.tilewidth,t.tileheight);
+	
 		this.spritesheet.onLoadComplete.add(function(){
 			//Don't make the tileset box until the image is loaded	
+			this.events.tilesetLoaded.dispatch();
 		}, this);
+		
+		
 		this.spritesheet.start();
 	},
 	
@@ -360,12 +375,19 @@ LevelEditor.Grid.prototype = {
 
 		this.toolType = t;
 		this.marker.destroy();
-		this.marker = this.game.add.sprite(0,0, 'tools', t);
+		if(this.toolType !== 'single'){
+			this.marker = this.game.add.sprite(0,0, t);
+		} else {
+			this.marker = this.game.add.sprite(0,0, '');
+		}
+		this.marker.width = this.tilewidth;
+		this.marker.height = this.tileheight;
 		 
 		this.events.toolChanged.dispatch(this.toolType);
 	},
 	
 	setMarker : function(t){
+		console.log(t);
 	  if(this.toolType !== 'fill'){
 			this.setToolType('single');
 		}

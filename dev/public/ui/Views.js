@@ -359,8 +359,7 @@ UI.Views = {
 								$nE('label', {"for":"tilesetFormItem","class":"col-sm-4 control-label"}, $cTN('Tileset')),
 								$nE('div', {"class":"col-sm-4"},
 									[
-										$nE('select', {"class":"form-control", "id":"tilesetFormItem"}),//options needs to be added from the view
-										$nE('button', {"class":"btn btn-info btn-sm", "type":"button", "id":"createTileset", "disabled":"disabled"},$cTN('Create TIleset'))
+										$nE('select', {"class":"form-control", "id":"tilesetFormItem"})//options needs to be added from the view
 									]
 								)
 							]

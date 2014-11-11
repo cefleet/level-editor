@@ -28,8 +28,18 @@ LevelEditor.GameTester = function (options) {
 			this.game.scale.setScreenSize();
 			this.game.physics.startSystem(Phaser.Physics.ARCADE);
 			this.player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
-			
 			this.game.physics.arcade.enable(this.player);
+			this.player.body.collideWorldBounds = true;
+
+			//animations here
+			this.player.animations.add('moveleft',[7,8,7,6], 6);
+			//RIGHT
+			this.player.animations.add('moveright',[1,2,1,0], 6);
+			//UP
+			this.player.animations.add('moveup',[19,20,19,18], 6);
+			//DOWN
+			this.player.animations.add('movedown',[13,14,13,12], 6);
+
 			this.cursors = this.game.input.keyboard.createCursorKeys();
 			this.game.camera.follow(this.player);
 			this.game.time.advancedTiming = true;
@@ -75,7 +85,7 @@ LevelEditor.GameTester.prototype = {
 		
 		this.layers = layers;
 		
-		//layers[0].resizeWorld();//all the layers are the same size so just do it on the last layer
+		layers[0].resizeWorld();//all the layers are the same size so just do it on the last layer
 		this.game.world.bringToTop(this.player);
 
 	},
@@ -86,16 +96,30 @@ LevelEditor.GameTester.prototype = {
 	    this.game.physics.arcade.collide(this.player, this.layers[i]);
 	  }
 
-	  this.player.body.velocity.set(0);
+		this.player.body.velocity.set(0);
+		var moving = false;
 		if (this.cursors.up.isDown){
+			moving = true;
 			this.player.body.velocity.y = -300;
+			this.player.animations.play('moveup');
 		} else if (this.cursors.down.isDown){
+			moving = true;
 			this.player.body.velocity.y = 300;
+			this.player.animations.play('movedown');
 		}
 		if (this.cursors.left.isDown){
+			moving = true;
 			this.player.body.velocity.x = -300;
+			this.player.animations.play('moveleft');
+
 		} else if (this.cursors.right.isDown){
+			moving = true;
 			this.player.body.velocity.x = 300;
+			this.player.animations.play('moveright');
+		}
+		
+		if(moving === false){
+			this.player.animations.stop();
 		}
 	}
 }

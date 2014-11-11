@@ -16,9 +16,7 @@ LevelEditor.funcs = {
 			this.destroy();
 			this.map = {};
 			//Mkaes the componants
-			grid = grid || {};
-			grid.container = grid.container || this.gridContainer;			
-			this.grid = new LevelEditor.Grid(grid);
+			
 			
 			tileset = tileset || {};
 			tileset.container = tileset.container || this.tilesetContainer;
@@ -26,15 +24,27 @@ LevelEditor.funcs = {
 			
 			//listeners for cross object communication
 			//This is correct because Level Editor should be the 'glue' between the two
-			this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);  
-			this.tileset.events.tilesetImageLoaded.add(this.grid.loadTileset, this.grid); 
+			//this.tileset.events.tilesetImageLoaded.add(this.grid.loadTileset, this.grid); 
+			grid = grid || {};
+			grid.container = grid.container || this.gridContainer;			
+			this.grid = new LevelEditor.Grid(grid);
+				
+			this.grid.events.gameCreated.add(function(){
+				
+				this.grid.loadTileset(this.tileset);
+					
+				this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);  
 			
+					//this.grid.events.mapSaved.add(UI.Actions._saveMap);
+				this.grid.events.toolChanged.add(UI.Actions._activateTool);	
+						
+				this.grid.events.layerAdded.add(function(o){
+					UI.Actions.createNewLayerUI(o.name,o.id);
+				});
+			
+			}, this);		
 			//We can have a go between here so phaser events don't mesh with other events
-			//this.grid.events.mapSaved.add(UI.Actions._saveMap);
-      this.grid.events.toolChanged.add(UI.Actions._activateTool);
-      this.grid.events.layerAdded.add(function(o){
-        UI.Actions.createNewLayerUI(o.name,o.id);
-      });
+			
 			
 			this.events.mapSaved.add(UI.Actions._saveMap);
 			
@@ -140,9 +150,7 @@ LevelEditor.funcs = {
 		if(typeof map.tilemap === 'string'){
 			map.tilemap = JSON.parse(map.tilemap);
 		}
-    console.log(map);
-		//right here...
-		// var tileset = map.tilemap.tilesets[0];		
+	
     
     tileset = {
 			image : map.tileset.image,
@@ -164,27 +172,33 @@ LevelEditor.funcs = {
 
 		this.create(map.name,grid,tileset,map.id);
 		
-		this.loadMapData = map;
+		//the create has already made the grid		
+		this.grid.events.tilesetLoaded.add(function(){
+				this.grid.loadLayers(map);	
+		}, this);
+		//this.loadMapData = map;
 		
+		//TODO this is waiting o nthe wrong thing
+		/*
 		if(this.tileset.loaded === false	){
 			this.tileset.onLoad = this._load.bind(this);
 		} else {
 			this._load();
 		}
+		*/
 	},
 	
 	/*
 	 * This should be in the grid from this point on
 	 */
-	 
+/*	 
 	_load : function() {
 		var map = this.loadMapData;
 
-		var layers = map.tilemap.layers;
-		this.grid.loadLayers(map);
-				
+		//var layers = map.tilemap.layers;
+		this.grid.loadLayers(map);				
 	},
-		
+	*/	
 	changeSettings : function(){},
 	
 	launchGame : function(options){
