@@ -8,10 +8,12 @@ var crypto = require('crypto');
 var sanitize = require("sanitize-filename");
 var fs = require('fs');
 
+
+
 /********************************************
  * Setup Items
  ********************************************/ 
-app.use(session({secret: 'keyboard cat'}));
+app.use(session({secret: 'Iamsgoing45ferfIfoyrt435fe4eDF34f'}));
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -22,8 +24,8 @@ db.tilesets = new Datastore({ filename: 'data/tilesets.db', autoload: true });
 db.users = new Datastore({ filename: 'data/users.db', autoload: true });
 db.maps = new Datastore({ filename: 'data/maps.db', autoload: true });
 
-var staticMiddleware = express.static(__dirname);
- 
+var staticMiddleware = express.static(__dirname+'/public');
+app.use 
  /********************************************************
   * FUNCTIONS 
   ********************************************************/
@@ -177,7 +179,7 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/login', function(req,res){
-	res.sendFile(__dirname + '/login.html');
+	res.sendFile(__dirname + '/public/login.html');
 });
 
 /*****************************************************
@@ -210,7 +212,7 @@ app.post('/add_user', function(req,res){
 
 app.get('/add_user', function(req,res){
 	if(req.session.user_level < 1){
-		res.sendFile(__dirname + '/add_user.html');
+		res.sendFile(__dirname + '/public/add_user.html');
 	} else {
 		res.redirect('/');
 	}
@@ -237,5 +239,8 @@ app.get('/add_user', function(req,res){
 app.use('/',ensureAuthenticated, function(req,res,next){
    staticMiddleware(req, res, next);
 });
+
+//Remove for production
+app.use('/node_modules',express.static(__dirname + "/node_modules"));
 
 app.listen(3030);
