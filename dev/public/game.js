@@ -3,3 +3,5 @@ var LE = new LevelEditor({
 	grid : 'gameGrid',
 	tileset : 'gameTileset'
 });
+
+var G = new Game();

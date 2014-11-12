@@ -188,43 +188,31 @@ LevelEditor.funcs = {
 		*/
 	},
 	
-	/*
-	 * This should be in the grid from this point on
-	 */
-/*	 
-	_load : function() {
-		var map = this.loadMapData;
-
-		//var layers = map.tilemap.layers;
-		this.grid.loadLayers(map);				
-	},
-	*/	
+	
 	changeSettings : function(){},
 	
 	launchGame : function(options){
 
-	  this.eOptions = options;
-	  this.events.mapSaved.addOnce(this._launchGame, this);
+		this.eOptions = options;
+		this.events.mapSaved.addOnce(this._launchGame, this);		
 		this.saveMap();
-		//when it closes we need to destroy the game
 	},
 	
 	_launchGame : function(map){
 
-    var options = this.eOptions;
-	  options.map = this.map;
+		var options = this.eOptions;
+		options.map = this.map;
 		options.map.tileset = this.tileset;
+		
 		this.grid.destroy();		
 		this.tileset.destroy();
 		delete this.grid;
 		delete this.tileset;
-		this.testGame = new LevelEditor.GameTester(options);
+		
+		UI.Actions._playGame(options);
 	},
 	
-	destroyGame : function(){
-		this.testGame.game.destroy();
-		delete this.testGame;
-	},
+	
 	
 	addLayer: function(name, id){
 		this.grid.createLayer(name, id);

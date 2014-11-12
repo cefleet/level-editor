@@ -94,30 +94,29 @@ UI.Actions = {
 	   Saves the current map
 	*/
 	saveMap : function(){
-	 LE.saveMap();	  
+		LE.saveMap();	  
 	},
 	
 	_saveMap : function(map){
-	   UI.data.Maps[map.id] = map;//saves it to memory
+		UI.data.Maps[map.id] = map;//saves it to memory
 	  
-	  map.tilemap = JSON.stringify(map.tilemap);
-	  $.post('save_map', map);
+		map.tilemap = JSON.stringify(map.tilemap);
+		$.post('save_map', map);
 	  
-	  //should wait for the return here actually but .. meh
-	  //popup saved
-	  $aC(document.body,[UI.Views.saveGood()]);  
+		//should wait for the return here actually but .. meh
+		//popup saved
+		$aC(document.body,[UI.Views.saveGood()]);  
 	  
-
-	  for(var i = 0; i < UI.data.Tilesets.length; i++){
-	    if(UI.data.Tilesets[i]._id === map.tilesetId){
-	      map.tileset = UI.data.Tilesets[i];
-	    }	    
-	  }
-	  
- 	  UI.activeMap = map;
-	  $("#saveSuccess").fadeTo(2000, 500).slideUp(500, function(){
-      $("#saveSuccess").alert('close');
-    });
+		for(var i = 0; i < UI.data.Tilesets.length; i++){
+			if(UI.data.Tilesets[i]._id === map.tilesetId){
+				map.tileset = UI.data.Tilesets[i];
+			}	    
+		}
+			  
+		UI.activeMap = map;
+		$("#saveSuccess").fadeTo(2000, 500).slideUp(500, function(){
+			$("#saveSuccess").alert('close');
+		});
 	},
 	
 	loadMapSelection : function(){
@@ -242,20 +241,31 @@ UI.Actions = {
 		var baseWidth = container.offsetWidth;
 		var baseHeight = window.innerHeight-130;
 		
+		$rAC($g('layersList'));	
+		
+		LE.events.mapSaved.add(this._playGame);
+		this.saveMap();
+		
+	},
+	
+	_playGame : function(options){
 		var options = {
 			container : 'gameModalBody'			
+		};
+		options.map = LE.map;
+		options.map.tileset = {
+			collisionTiles : LE.tileset.collisionTiles
 		}
 		
-		$rAC($g('layersList'));		
-		LE.launchGame(options);
+		LE.destroy();
 		$('#gameModal').modal('show');
+
+		G.launchGame(options);
+
 	},
 	
 	destroyGame : function(){
-		LE.destroyGame();
-		//UI.activeMap seems to be the problem
-		//console.log(UI.activeMap);
-		//LE.load(UI.activeMap);
+		G.destroyGame();
 		UI.Actions._loadMap(UI.activeMap);
 	},
 	
