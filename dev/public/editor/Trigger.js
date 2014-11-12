@@ -13,6 +13,5 @@ LevelEditor.Trigger = function(options){
 	this.impactItem = options.impactItem || 'triggeredSprite';//this needs to be a sprite or a layer determined by "this.actionType" not used for customCode //this is the item impacted by trigger
 	this.onComplete = options.onComplete || '';//'',{action : callTrigger, trigger : trigername || id} , {action : callCode, code : function to run}
 	
-	return this;
-			
+	return this;			
 }
