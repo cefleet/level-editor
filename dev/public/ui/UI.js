@@ -1,37 +1,54 @@
-UI = {
+UI = function(options){
+	options = options || {};
+	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Actions = new UI.Actions(this);
+	this.Views = new UI.Views(this);
+	return this;
+};
+
+UI.prototype = {
 	setupEvents : function(){
-		this.events = MasterEmitter;
+		//this.events = MasterEmitter;
   
         
 		//This stays here
 		//Navigation Controls
+		/*
+		 * TODO THIS IS BAD AS WELL
+		 */
 		var links = $gBT('a', $g('navigation'));
 		for(var i = 0; i < links.length; i++){
 			links[i].addEventListener('click', function(){
-				UI.events.emitEvent('navLinkClicked', [this.id]);
+				/****BAD BAD BAD **/
+				GameMaker.UI.EventEmitter.trigger('navLinkClicked', [this.id]);
 			}.bind(links[i]));   
 		}
     
 		//Zom Controls
+		
+		/***********************
+		 * TODO THIS IS BAD
+		 * //
+		 */ 
 		var gridZoom = $gBT('a', $g('gridZoomOptions'));
 		for(var i = 0; i < gridZoom.length; i++){
 			gridZoom[i].addEventListener('click', function(){
-				UI.Actions.zoomGridTo(this.getAttribute('zoom'));
+				GameMaker.UI.zoomGridTo(this.getAttribute('zoom'));
 			}.bind(gridZoom[i]));   
 		}
     
 		//This recives information from the nav bar
-		this.events.addListener('navLinkClicked', this.navClicked.bind(this));
+		this.EventEmitter.addListener('navLinkClicked', this.navClicked.bind(this));
 		//if the id of an event that has been emmited is the name of a function
 		//(minus Link) run that function
 		
 		var playGameBtn = $g('playGameButton');
 		playGameBtn.addEventListener('click', function(){
-			UI.Actions.playGame();
+			GameMaker.UI.Actions.playGame();
 		});
 		
 		$('#gameModal').on('hidden.bs.modal', function (e) {
-			UI.Actions.destroyGame();
+			GameMaker.UI.Actions.destroyGame();
 		})
 		
 		$('#layersList').sortable({
@@ -42,19 +59,19 @@ UI = {
 				for(var i = 0; i < layers.length; i++){
 					order.push(layers[i].id);
 				}
-				LE.orderLayers(order);				
+				GameMaker.LE.orderLayers(order);				
 			}
 		});
 		
 		$('.toolButton').on('click',function(){
-		  UI.Actions.activateTool(this.id.replace('Tool',''));
+		  GameMaker.UI.Actions.activateTool(this.id.replace('Tool',''));
 		});
 		
 	},
 
 	navClicked : function(clicked){
 		if(this.navLinkToFunc[clicked]){	
-			this.Actions[this.navLinkToFunc[clicked]]();
+			GameMaker.UI.Actions[this.navLinkToFunc[clicked]]();
 		}
 	},
 	
@@ -67,3 +84,5 @@ UI = {
 		newTilesetNavLink  : 'createNewTilesetPopup'
 	}
 }
+
+UI.prototype.constructor = UI;

@@ -1,4 +1,10 @@
-UI.Actions = {
+UI.Actions = function(parent){
+	this.parent = parent  || {};
+	
+	return this;
+}
+
+UI.Actions.prototype = {
 
 /*
   Makes a popup to create a new map  
@@ -10,13 +16,13 @@ UI.Actions = {
 		$aC($g('modalTitle'), [$cTN('New Map')]);
 		//adds the form
 		$rAC($g('modalBody'));
-		$aC($g('modalBody'),[UI.Views.newMapForm()]);
+		$aC($g('modalBody'),[GameMaker.UI.Views.newMapForm()]);
 		
 		//
 		$rAC($g('modalFooter'));
 				
 		//Get possible tilesets
-		var tilesets = UI.data.Tilesets;
+		var tilesets = GameMaker.UI.data.Tilesets;
 		var options = [];
 		for(var t in tilesets){
 			options.push($nE('option', {"value":t}, $cTN(tilesets[t].name)));
@@ -39,7 +45,7 @@ UI.Actions = {
 	_getNewMapFormData : function(){
 		  var tilesetId = $g('tilesetFormItem').value;
 		  
-			var t = UI.data.Tilesets[tilesetId]; //the tilesets
+			var t = GameMaker.UI.data.Tilesets[tilesetId]; //the tilesets
 			tileset = {
 				image : t.image,
 				imageheight : Number(t.imageheight),
@@ -64,68 +70,68 @@ UI.Actions = {
 			$aC(mapTitle, [$cTN($g('mapNameFormItem').value)]);
 			
 			$('#mainModal').modal('hide');
-			UI.activeTilesetId = tilesetId;
+			GameMaker.UI.activeTilesetId = tilesetId;
 		},
 	
 	//This all can be run from the map using event Emmiters ... not sure which way is best now
 	 _createNewMap : function(name,grid,tileset){
 		 
-		if(LE.map.id){
-			LE.destroy();
+		if(GameMaker.LE.map.id){
+			GameMaker.LE.destroy();
 		}
 		
 		$rAC($g('layersList'));
-		LE.create(name,grid,tileset);
+		GameMaker.LE.create(name,grid,tileset);
 		
-		UI.activeMap = LE.map;
+		GameMaker.UI.activeMap = GameMaker.LE.map;
 		
 		//here is the issue the map
-		UI.activeMap.tilesetId = UI.activeTilesetId;
+		GameMaker.UI.activeMap.tilesetId = GameMaker.UI.activeTilesetId;
 		
 		$g('playGameButton').disabled = false;
 		$g('toggleLayers').disabled = false;
 		$g('addLayer').disabled = false;
 		
-		LE.grid.events.gameCreated.add(function(){
-			UI.Actions.createNewLayer('base');
+		GameMaker.LE.grid.events.gameCreated.add(function(){
+			GameMaker.UI.Actions.createNewLayer('base');
 		});
 	},
 	/* 
 	   Saves the current map
 	*/
 	saveMap : function(){
-		LE.saveMap();	  
+		GameMaker.LE.saveMap();	  
 	},
 	
 	_saveMap : function(map){
-		UI.data.Maps[map.id] = map;//saves it to memory
+		GameMaker.UI.data.Maps[map.id] = map;//saves it to memory
 	  
 		map.tilemap = JSON.stringify(map.tilemap);
 		$.post('save_map', map);
 	  
 		//should wait for the return here actually but .. meh
 		//popup saved
-		$aC(document.body,[UI.Views.saveGood()]);  
+		$aC(document.body,[GameMaker.UI.Views.saveGood()]);  
 	  
-		for(var i = 0; i < UI.data.Tilesets.length; i++){
-			if(UI.data.Tilesets[i]._id === map.tilesetId){
-				map.tileset = UI.data.Tilesets[i];
+		for(var i = 0; i < GameMaker.UI.data.Tilesets.length; i++){
+			if(GameMaker.UI.data.Tilesets[i]._id === map.tilesetId){
+				map.tileset = GameMaker.UI.data.Tilesets[i];
 			}	    
 		}
 			  
-		UI.activeMap = map;
+		GameMaker.UI.activeMap = map;
 		$("#saveSuccess").fadeTo(2000, 500).slideUp(500, function(){
 			$("#saveSuccess").alert('close');
 		});
 	},
 	
 	loadMapSelection : function(){
-		var maps = UI.data.Maps;
+		var maps = GameMaker.UI.data.Maps;
 		$rAC($g('modalTitle'));
 		$aC($g('modalTitle'), [$cTN('Select Map')]);
 		//adds the form
 		$rAC($g('modalBody'));
-		$aC($g('modalBody'),[UI.Views.loadMapSelection()]);
+		$aC($g('modalBody'),[GameMaker.UI.Views.loadMapSelection()]);
 		
 		var options = [];
 		for(var m in maps){
@@ -143,7 +149,7 @@ UI.Actions = {
 	},
 	
 	_getLoadMapFormData : function(){
-		var map = UI.data.Maps[$g('mapsFormItem').value];
+		var map = GameMaker.UI.data.Maps[$g('mapsFormItem').value];
 	  
 		this._loadMap(map);
 		$('#mainModal').modal('hide');
@@ -151,19 +157,19 @@ UI.Actions = {
 	
 	_loadMap : function(map){
 	
-		for(var i = 0; i < UI.data.Tilesets.length; i++){
-	    if(UI.data.Tilesets[i]._id === map.tilesetId){
-	      map.tileset = UI.data.Tilesets[i];
+		for(var i = 0; i < GameMaker.UI.data.Tilesets.length; i++){
+	    if(GameMaker.UI.data.Tilesets[i]._id === map.tilesetId){
+	      map.tileset = GameMaker.UI.data.Tilesets[i];
 	    }	    
 	  }
 	  
-		LE.load(map);
+		GameMaker.LE.load(map);
 		var mapTitle = $g('navbarMapName');
 		$rAC($g('layersList'));
 		$rAC(mapTitle);
 		$aC(mapTitle, [$cTN(map.name)]);
 		
-		UI.activeMap = map;
+		GameMaker.UI.activeMap = map;
 		$g('playGameButton').disabled = false;
 		$g('toggleLayers').disabled = false;
 		$g('addLayer').disabled = false;
@@ -176,13 +182,13 @@ UI.Actions = {
 		$aC($g('modalTitle'), [$cTN('Change Map Settings')]);
 		//adds the form
 		$rAC($g('modalBody'));
-		$aC($g('modalBody'),[UI.Views.settingsForm()]);
+		$aC($g('modalBody'),[GameMaker.UI.Views.settingsForm()]);
 		
 		//
 		$rAC($g('modalFooter'));
 				
 		//Get possible tilesets
-		var tilesets = UI.data.Tilesets;
+		var tilesets = GameMaker.UI.data.Tilesets;
 		var options = [];
 		for(var t in tilesets){
 		/*
@@ -196,7 +202,7 @@ UI.Actions = {
 		
 		//TODO Selet only those with the same tiles size or errors will happen
 		//set tilesets in modal
-		$g('mapNameFormItem').value = UI.activeMap.name;
+		$g('mapNameFormItem').value = GameMaker.UI.activeMap.name;
 		$aC($g('tilesetFormItem'),options);
 		
 		//add create button
@@ -218,8 +224,8 @@ UI.Actions = {
    	var mapTitle = $g('navbarMapName');
 	  $aC(mapTitle, [$cTN(name)]);	
 	  
-	  LE.map.name = name;
-	  UI.activeMap.name = name;
+	  GameMaker.LE.map.name = name;
+	  GameMaker.UI.activeMap.name = name;
 	  $('#mainModal').modal('hide');
 	},
 	
@@ -228,7 +234,7 @@ UI.Actions = {
 	 */
 	zoomGridTo : function(zoomLvl){
 		//should just talk to LE I think
-		LE.grid.scaleTo(zoomLvl);
+		GameMaker.LE.grid.scaleTo(zoomLvl);
 	},
 	
 	/*
@@ -243,7 +249,7 @@ UI.Actions = {
 		
 		$rAC($g('layersList'));	
 		
-		LE.events.mapSaved.add(this._playGame);
+		GameMaker.LE.events.mapSaved.add(this._playGame);
 		this.saveMap();
 		
 	},
@@ -252,21 +258,21 @@ UI.Actions = {
 		var options = {
 			container : 'gameModalBody'			
 		};
-		options.map = LE.map;
+		options.map = GameMaker.LE.map;
 		options.map.tileset = {
-			collisionTiles : LE.tileset.collisionTiles
+			collisionTiles : GameMaker.LE.tileset.collisionTiles
 		}
 		
-		LE.destroy();
+		GameMaker.LE.destroy();
 		$('#gameModal').modal('show');
 
-		G.launchGame(options);
+		GameMaker.Game.launchGame(options);
 
 	},
 	
 	destroyGame : function(){
-		G.destroyGame();
-		UI.Actions._loadMap(UI.activeMap);
+		GameMaker.Game.destroyGame();
+		GameMaker.UI.Actions._loadMap(GameMaker.UI.activeMap);
 	},
 	
 	//TODO this does not work It is never active
@@ -281,7 +287,7 @@ UI.Actions = {
 		$aC($g('modalTitle'), [$cTN('New Layer')]);
 		//adds the form
 		$rAC($g('modalBody'));
-		$aC($g('modalBody'),[UI.Views.newLayerForm()]);
+		$aC($g('modalBody'),[GameMaker.UI.Views.newLayerForm()]);
 		
 		$rAC($g('modalFooter'));				
 		
@@ -297,7 +303,7 @@ UI.Actions = {
 	
 	createNewLayerUI : function(name,id){
 		//add to the list here
-		var layerItem = UI.Views.newLayer();
+		var layerItem = GameMaker.UI.Views.newLayer();
 		layerItem.id = id;
 		layerItem.setAttribute('layerName', name);
 		layerItem.setAttribute('layerId', id);
@@ -318,13 +324,13 @@ UI.Actions = {
 			var layerid= this.parentNode.parentNode.getAttribute('layerId');
 			
 			$('.makeLayerActive').removeClass("active");
-			LE.activateLayer(layerid);
+			GameMaker.LE.activateLayer(layerid);
 			$(this).addClass('active');      
 		});
     
 		$("#"+layerItem.id).delegate(".setVisibilityLayer", "click", function(e) {
 			var layerid= this.parentNode.parentNode.getAttribute('layerId');
-			LE.toggleLayerVisibility(layerid);
+			GameMaker.LE.toggleLayerVisibility(layerid);
 		});
 
 		$("#"+layerItem.id).delegate(".layerName", "click", function(e) {
@@ -348,7 +354,7 @@ UI.Actions = {
 				toggables.next().toggleClass('hidden').toggleClass('show');
 								
 				//TODO send this information to LE
-				LE.changeLayerName(layerid,newName);
+				GameMaker.LE.changeLayerName(layerid,newName);
 				toggables.parent().attr('layerName', newName);
 				
 			});
@@ -370,7 +376,7 @@ UI.Actions = {
 			$('#alertModal').modal('show');
 			//confirm 
 			$('#continueDanger').on('click', function(){
-				LE.deleteLayer(layerid);
+				GameMaker.LE.deleteLayer(layerid);
 				$('#'+layerid).remove();
 				$('#alertModal').modal('hide');
 			});
@@ -388,11 +394,11 @@ UI.Actions = {
 	
 	createNewLayer :function(name){
 		var id = $uid();
-		LE.addLayer(name, id);
+		GameMaker.LE.addLayer(name, id);
 	},
 	
 	_getNewLayerFormData : function(){
-		UI.Actions.createNewLayer($g('layerNameFormItem').value);  
+		GameMaker.UI.Actions.createNewLayer($g('layerNameFormItem').value);  
 		
 		$('#mainModal').modal('hide');
 	},
@@ -405,7 +411,7 @@ UI.Actions = {
 		$aC($g('modalTitle'), [$cTN('New Tileset')]);
 		//adds the form
 		$rAC($g('modalBody'));
-		$aC($g('modalBody'),[UI.Views.newTilesetForm()]);
+		$aC($g('modalBody'),[GameMaker.UI.Views.newTilesetForm()]);
 		
 		//
 		$rAC($g('modalFooter'));
@@ -466,7 +472,7 @@ UI.Actions = {
 	
 	activateTool : function(tool){	  
 	  //run the action for the game editor
-	  LE.setTool(tool);
+	  GameMaker.LE.setTool(tool);
 	},
 	
 	_activateTool : function(tool){

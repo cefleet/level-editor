@@ -20,10 +20,9 @@ LevelEditor.Grid = function (options) {
 		gameCreated  : new Phaser.Signal(),
 		toolChanged : new Phaser.Signal(),
 		layerAdded : new Phaser.Signal(),
-		tilesetLoaded : new Phaser.Signal()
+		tilesetLoaded : new Phaser.Signal(),
+		triggerPlaced : new Phaser.Signal()
 	}
-	
-  //  this.tiles = {}; 
         
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
@@ -148,8 +147,11 @@ LevelEditor.Grid.prototype = {
 			t.tilesetId = id;
 			if(id != 0){				
 				//frame starts with 0 first item
-				if(LE.tileset.tiles[id-1]){
-					t.sprite = this.game.add.sprite(t.x,t.y,LE.tileset.name, LE.tileset.tiles[id-1].frame);
+				/*******
+				 * WRONG DO NOT CALL LE FROM INSIDE
+				 */
+				if(GameMaker.LE.tileset.tiles[id-1]){
+					t.sprite = this.game.add.sprite(t.x,t.y,GameMaker.LE.tileset.name, GameMaker.LE.tileset.tiles[id-1].frame);
 					this.layers[layerinfo.id].add(t.sprite);
 				}
 			}
@@ -176,10 +178,7 @@ LevelEditor.Grid.prototype = {
 		/*****DANGER THIS IS WRONG. I DO NOT WANT TO CALL THE UI FROM THIS OBJECT
 		 * ******************************/
 		 
-		 this.events.layerAdded.dispatch({name:name,id:id});
-		//This should be an event
-	//	UI.Actions.createNewLayerUI(name,id);
-			
+		 this.events.layerAdded.dispatch({name:name,id:id});			
 	},
 	  
 	//make layer active
@@ -311,10 +310,15 @@ LevelEditor.Grid.prototype = {
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
 				if(this.game.input.activePointer.isDown){
-					if(c.which === 3 || this.toolType === 'eraser'){
-						this.unsetActiveTile();
-					} else if(c.which === 1) {
-						this.setActiveTileFromMarker();
+					
+					if(c.which === 1){
+					
+						if(this.toolType === 'eraser'){
+							this.unsetActiveTile();
+						} else if(this.toolType === 'single') {
+							this.setActiveTileFromMarker();
+						} 
+											
 					}
 				}
 			}
@@ -327,10 +331,17 @@ LevelEditor.Grid.prototype = {
 			}
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
-				if(c.which === 3 || this.toolType === 'eraser'){
-					this.unsetActiveTile();
-				} else if(c.which === 1){
-					this.setActiveTileFromMarker();
+				
+				if(c.which === 1){
+					
+						if(this.toolType === 'eraser'){
+							this.unsetActiveTile();
+						} else if(this.toolType === 'single') {
+							this.setActiveTileFromMarker();
+						} else if (this.toolType === 'trigger'){
+							this.placeTrigger()
+						}
+											
 				}
 			}
 		}.bind(this);
@@ -426,6 +437,13 @@ LevelEditor.Grid.prototype = {
 			this.game.scale.maxHeight = this.baseHeight*decScale;
 			this.game.scale.refresh();
 			this.scale = decScale;
+	},
+	
+	//Places the trigger
+	placeTrigger : function(){
+		console.log(this.activeTile);
+		var loc = '';//get active tile location
+		this.events.triggerPlaced.dispatch(loc);
 	}
 };
 

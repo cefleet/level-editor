@@ -1,40 +1,55 @@
+var GameMaker ={};
 document.addEventListener( "DOMContentLoaded", function(){
-	MasterEmitter = new EventEmitter();	
+	GameMaker.EventEmitter = new EventEmitter();	
+
+	GameMaker.LE = new LevelEditor({
+		main : 'gameBG',
+		grid : 'gameGrid',
+		tileset : 'gameTileset',
+		EventEmitter : GameMaker.EventEmitter
+	});
+
+	GameMaker.Game = new Game({
+		EventEmitter : GameMaker.EventEmitter
+	});
+	
+	GameMaker.UI = new UI({
+		EventEmitter : GameMaker.EventEmitter
+	});
+	
 	$aC(document.body, [
-		UI.Views.gameModal(),
-		UI.Views.alertModal(),
-		UI.Views.modal(),
-		UI.Views.navbar()
+		GameMaker.UI.Views.gameModal(),
+		GameMaker.UI.Views.alertModal(),
+		GameMaker.UI.Views.modal(),
+		GameMaker.UI.Views.navbar()
 	]);
 	$aC($g('mainRow'), [
-		UI.Views.mainPanel(),
-		UI.Views.toolPanel()
+		GameMaker.UI.Views.mainPanel(),
+		GameMaker.UI.Views.toolPanel()
 	]);
 	
 	//adds the tools ..
-	$aC($g('gameTools'),[UI.Views.tools()]);
+	$aC($g('gameTools'),[GameMaker.UI.Views.tools()]);
 	//toggles layers
 	$('#toggleLayers').on('click', function () {
-		UI.Actions.toggleLayers()		
+		GameMaker.UI.Actions.toggleLayers()		
 	});
 		
 	$('#addLayer').on('click', function () {
-		UI.Actions.newLayerPopup();
+		GameMaker.UI.Actions.newLayerPopup();
 	});
-	//Little bit of hacking is fine from now to then
-	var gg = $g('gameGrid');
-	var gt = $g('gameTileset');
-	$sA(gg,{
+
+	$sA($g('gameGrid'),{
 		style:'max-height:'+(window.innerHeight-180)+'px;overflow:auto'
 	});
 	
-	$sA(gt,{
+	$sA($g('gameTileset'),{
 		style:'max-height:'+(window.innerHeight-130)+'px;overflow:auto'
 	});
-	UI.setupEvents();  
+	GameMaker.UI.setupEvents();  
 	
 	$.get('/loading',function(data,status){
-		UI.data = data;
+		GameMaker.UI.data = data;
 	})
 	
 	 

@@ -70,7 +70,7 @@ app.use(multer(
 				if(docs.length < 1){
 					db.tilesets.insert(save, function (err, newDoc){
 						//TODO should add a callback
-						fs.rename(req.files[0].path, save.image);
+						fs.rename(req.files[0].path, 'public/'+save.image);
 						console.log('Created New Tilese');
 					});
 				} else {

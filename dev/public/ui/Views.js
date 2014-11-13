@@ -1,4 +1,7 @@
-UI.Views = {
+UI.Views = function(parent) {
+	parent = parent || {};
+};
+UI.Views.prototype = {
 	/*
 	 * navbar
 	 * Simply makes the navbar

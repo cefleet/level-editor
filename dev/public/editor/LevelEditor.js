@@ -35,18 +35,17 @@ LevelEditor.funcs = {
 					
 				this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);  
 			
-					//this.grid.events.mapSaved.add(UI.Actions._saveMap);
-				this.grid.events.toolChanged.add(UI.Actions._activateTool);	
+				this.grid.events.toolChanged.add(GameMaker.UI.Actions._activateTool);	
 						
 				this.grid.events.layerAdded.add(function(o){
-					UI.Actions.createNewLayerUI(o.name,o.id);
+					GameMaker.UI.Actions.createNewLayerUI(o.name,o.id);
 				});
 			
 			}, this);		
 			//We can have a go between here so phaser events don't mesh with other events
 			
 			
-			this.events.mapSaved.add(UI.Actions._saveMap);
+			this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
 			
 			//ads in some settings
 			this.map.name =  name || 'My Map';
@@ -209,7 +208,7 @@ LevelEditor.funcs = {
 		delete this.grid;
 		delete this.tileset;
 		
-		UI.Actions._playGame(options);
+		GameMaker.UI.Actions._playGame(options);
 	},
 	
 	
