@@ -40,7 +40,7 @@ Game.GameTester = function (options) {
 						//This needs a lot of help .. but it should work for now
 						if(isNaN(Number(this.map.tileset.collisionTiles[j]))){
 							var ar = this.map.tileset.collisionTiles[j].split('-');
-							this.tilemap.setCollisionBetween(ar[0],ar[1],true,layers[i]);
+							this.tilemap.setCollisionBetween(ar[0],ar[1],true,this.layers[i]);
 						}
 					}
 				}
