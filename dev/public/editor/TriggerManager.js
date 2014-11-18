@@ -1,4 +1,4 @@
-  LevelEditor.TriggerManager  = function(){
+LevelEditor.TriggerManager  = function(){
 	
 	this.events  = {
 		triggerCreated : new Phaser.Signal()
