@@ -301,6 +301,35 @@ UI.Actions.prototype = {
 		$('#mainModal').modal('show');
 	},
 	
+	createNewTriggerPopup : function(loc){
+	  console.log(loc);
+	  	$rAC($g('modalTitle'));
+		  $aC($g('modalTitle'), [$cTN('Create Trigger')]);
+		  //adds the form
+		  $rAC($g('modalBody'));
+		  $aC($g('modalBody'),[GameMaker.UI.Views.newTriggerForm()]);
+		
+		  $rAC($g('modalFooter'));				
+		
+		  //add create button
+		  $aC($g('modalFooter'),[$nE('button', {"id":"addTriggerButton","class":"btn btn-primary"}, $cTN('Create Trigger'))]);
+		
+		var createButton = $g('addTriggerButton');
+		createButton.addEventListener('click', this._getNewTriggerFormData.bind(this),this);			
+		
+		$('#triggerActionTypeFormItem').change(function(){
+		  console.log(this.value);
+		  console.log('I need to load based on options');
+		});
+			
+		//jquery stuff
+		$('#mainModal').modal('show');
+	},
+	
+	_getNewTriggerFormData : function(){
+
+  },
+	
 	createNewLayerUI : function(name,id){
 		//add to the list here
 		var layerItem = GameMaker.UI.Views.newLayer();
@@ -482,5 +511,6 @@ UI.Actions.prototype = {
 	  });
 	  
 	  $('#'+tool+'Tool').addClass('active');
+	  	  
 	}
 }

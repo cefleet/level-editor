@@ -215,7 +215,7 @@ UI.Views.prototype = {
 	              ]
 	            ),
 	      
-	          	$nE('button', {"class":"btn btn-default disabled toolButton", "id":"triggerTool"},
+	          	$nE('button', {"class":"btn btn-default toolButton", "id":"triggerTool"},
 	          	  [
 	              $nE('img', {"class":"center-block","src":"img/ui/trigger.png", "width":"50px"}),
 	              $cTN('Trigger')
@@ -482,6 +482,78 @@ UI.Views.prototype = {
 				)
 		);
 		return form;
+	},
+	
+	newTriggerForm : function(){
+	  var form = $nE('div', {"class":"form-horizontal", "role":"form"},
+				$nE('div', {"class":"form-group"},
+				  [
+				    $nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"triggerNameFormItem","class":"col-sm-4 control-label"}, $cTN('Trigger Name')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('input', {"type":"text", "class":"form-control", "id":"triggerNameFormItem", "placeholder":"Trigger Name", "value":"New Trigger"})
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"triggerTypeFormItem","class":"col-sm-4 control-label"}, $cTN('Trigger Type')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('select', {"class":"form-control", "id":"triggerTypeFormItem"},
+									  [
+									    $nE('option', {"value":"sprite"}, $cTN('Sprite')),
+									    $nE('option',{"value":"off"}, $cTN('Off Screen'))  
+									  ]
+									)
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"triggerTriggeredByFormItem","class":"col-sm-4 control-label"}, $cTN('Triggered By')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('select', {"class":"form-control", "id":"triggerTriggeredByFormItem"},
+									  [
+									    $nE('option', {"value":"collide"}, $cTN('Being Touched')),
+									    $nE('option',{"value":"action"}, $cTN('Action Key')),
+ 									    $nE('option',{"value":"trigger"}, $cTN('Another Trigger')),
+ 									    $nE('option',{"value":"code"}, $cTN('From Code'))   
+									  ]
+									)
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12"},
+							[
+								$nE('label', {"for":"triggerActionTypeFormItem","class":"col-sm-4 control-label"}, $cTN('Action Type')),
+								$nE('div', {"class":"col-sm-6"},	
+									$nE('select', {"class":"form-control", "id":"triggerActionTypeFormItem"},
+									  [
+									    $nE('option', {"value":"addSprite"}, $cTN('Add Sprite')),
+									    $nE('option',{"value":"removeSprite"}, $cTN('Remove Sprite')),
+ 									    $nE('option',{"value":"moveSprite"}, $cTN('Move Sprite')),
+ 									    $nE('option',{"value":"animateSprite"}, $cTN('Animate Sprite')),
+ 									    $nE('option',{"value":"showLayer"}, $cTN('Show Layer')),
+ 									    $nE('option',{"value":"hideLayer"}, $cTN('Hide Layer')),
+ 									    $nE('option',{"value":"customCode"}, $cTN('Custom Code'))   
+									  ]
+									)
+								)
+							]
+						),
+						$nE('div', {"class":"col-sm-12 hidden"},
+							[
+								$nE('label', {"for":"triggerImpactItemFormItem","class":"col-sm-4 control-label"}),
+								$nE('div', {"class":"col-sm-6", "id":"triggerImpactItemFormItemHolder"})
+							]
+						),
+					]
+				)
+			);
+		
+		return form;
+		
 	},
 	
 	/*

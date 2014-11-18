@@ -1,4 +1,4 @@
-LevelEditor.TriggerManager  = function(){
+  LevelEditor.TriggerManager  = function(){
 	
 	this.events  = {
 		triggerCreated : new Phaser.Signal()
@@ -11,7 +11,7 @@ LevelEditor.TriggerManager  = function(){
 
 LevelEditor.TriggerManager.prototype = {
 	
-	createTrigger : function(options){
+	create : function(options){
 		console.log(this);
 		var t = new LevelEditor.Trigger(options);
 		this.triggers[t.id] = t;

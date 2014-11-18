@@ -1,4 +1,4 @@
-UI = function(options){
+  UI = function(options){
 	options = options || {};
 	this.EventEmitter = options.EventEmitter || new EventEmitter();
 	this.Actions = new UI.Actions(this);

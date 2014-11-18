@@ -44,8 +44,14 @@ LevelEditor.funcs = {
 			}, this);		
 			//We can have a go between here so phaser events don't mesh with other events
 			
+			this.triggerManager = new LevelEditor.TriggerManager();
 			
+			this.grid.events.triggerPlaced.add(function(loc){
+			  GameMaker.UI.Actions.createNewTriggerPopup();
+			});
+						
 			this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
+			
 			
 			//ads in some settings
 			this.map.name =  name || 'My Map';

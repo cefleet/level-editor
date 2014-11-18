@@ -175,9 +175,7 @@ LevelEditor.Grid.prototype = {
 		this.makeLayerActive(this.layers[id]);
 		this.layers[id].name = name;
 		this.layers[id].order = highest;
-		/*****DANGER THIS IS WRONG. I DO NOT WANT TO CALL THE UI FROM THIS OBJECT
-		 * ******************************/
-		 
+				 
 		 this.events.layerAdded.dispatch({name:name,id:id});			
 	},
 	  
@@ -444,6 +442,9 @@ LevelEditor.Grid.prototype = {
 		console.log(this.activeTile);
 		var loc = '';//get active tile location
 		this.events.triggerPlaced.dispatch(loc);
+		
+		//TODO this may need to be moved at some point in time
+		//this.triggers.create();
 	}
 };
 
