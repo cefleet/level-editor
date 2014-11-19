@@ -45,9 +45,14 @@ LevelEditor.funcs = {
 			//We can have a go between here so phaser events don't mesh with other events
 			
 			this.triggerManager = new LevelEditor.TriggerManager();
+			this.spriteManager = new LevelEditor.SpriteManager();
 			
 			this.grid.events.triggerPlaced.add(function(loc){
 			  GameMaker.UI.Actions.createNewTriggerPopup();
+			});
+			
+			this.grid.events.spritePlaced.add(function(loc){
+			  GameMaker.UI.Actions.createNewSpritePopup();
 			});
 						
 			this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);

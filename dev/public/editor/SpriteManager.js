@@ -4,7 +4,7 @@ LevelEditor.SpriteManager = function(){
 		spriteCreated : new Phaser.Signal()
 	};
 	
-	this.triggers = {};
+	this.sprites = {};
 	
 	return this;	
 }

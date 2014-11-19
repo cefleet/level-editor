@@ -326,9 +326,32 @@ UI.Actions.prototype = {
 		$('#mainModal').modal('show');
 	},
 	
+		
 	_getNewTriggerFormData : function(){
 
   },
+	
+	createNewSpritePopup : function(loc){
+	  console.log(loc);
+	  	$rAC($g('modalTitle'));
+		  $aC($g('modalTitle'), [$cTN('Create Sprite')]);
+		  //adds the form
+		  $rAC($g('modalBody'));
+		  $aC($g('modalBody'),[GameMaker.UI.Views.newSpriteForm()]);
+		
+		  $rAC($g('modalFooter'));				
+		
+		  //add create button
+		  $aC($g('modalFooter'),[$nE('button', {"id":"addSpriteButton","class":"btn btn-primary"}, $cTN('Create Sprite'))]);
+		
+		var createButton = $g('addSpriteButton');
+		createButton.addEventListener('click', this._getNewSpriteFormData.bind(this),this);			
+		
+					
+		$('#mainModal').modal('show');
+	},
+	
+	
 	
 	createNewLayerUI : function(name,id){
 		//add to the list here

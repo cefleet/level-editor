@@ -222,7 +222,7 @@ UI.Views.prototype = {
 	              ]
 	            ),
 	        
-	          	$nE('button', {"class":"btn btn-default disabled toolButton", "id":"spriteTool"},
+	          	$nE('button', {"class":"btn btn-default toolButton", "id":"spriteTool"},
 	          	  [
 	              $nE('img', {"class":"center-block","src":"img/ui/sprite.png", "width":"50px"}),
 	              $cTN('sprite')

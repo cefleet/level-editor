@@ -21,7 +21,8 @@ LevelEditor.Grid = function (options) {
 		toolChanged : new Phaser.Signal(),
 		layerAdded : new Phaser.Signal(),
 		tilesetLoaded : new Phaser.Signal(),
-		triggerPlaced : new Phaser.Signal()
+		triggerPlaced : new Phaser.Signal(),
+		spritePlaced : new Phaser.Signal()
 	}
         
     //setup
@@ -34,6 +35,8 @@ LevelEditor.Grid = function (options) {
 			this.game.load.image('fill', 'img/ui/fill.png');
 			this.game.load.image('select','img/ui/select.png');
 			this.game.load.image('trigger','img/ui/trigger.png');
+			this.game.load.image('sprite','img/ui/sprite.png');
+
 		},
 		
 		create:function(){
@@ -337,9 +340,10 @@ LevelEditor.Grid.prototype = {
 						} else if(this.toolType === 'single') {
 							this.setActiveTileFromMarker();
 						} else if (this.toolType === 'trigger'){
-							this.placeTrigger()
-						}
-											
+							this.placeTrigger();
+						} else if(this.toolType === 'sprite'){
+							this.placeSprite();
+						}											
 				}
 			}
 		}.bind(this);
@@ -445,7 +449,16 @@ LevelEditor.Grid.prototype = {
 		
 		//TODO this may need to be moved at some point in time
 		//this.triggers.create();
-	}
+	},
+	
+	placeSprite : function(){
+		console.log(this.activeTile);
+		var loc = '';//get active tile location
+		this.events.spritePlaced.dispatch(loc);
+		
+		//TODO this may need to be moved at some point in time
+		//this.triggers.create();
+	},
 };
 
 LevelEditor.Grid.prototype.constructor = LevelEditor.Grid;
