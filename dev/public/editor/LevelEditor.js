@@ -6,8 +6,8 @@ LevelEditor = function (containers) {
 	this.map = {};
 	this.events = {
 	  mapSaved : new Phaser.Signal()
-	}
-}
+	};
+};
 
 LevelEditor.prototype.constructor = LevelEditor;
 
@@ -90,13 +90,12 @@ LevelEditor.funcs = {
 		for(var l in this.grid.layers){
 			tempArr.push([l,this.grid.layers[l].order]);
 		}		
-		tempArr.sort(function(a,b){return a[1]-b[1]});
+		tempArr.sort(function(a,b){return a[1]-b[1];});
 		var mapLayers = {};
 		//for(var l in this.grid.layers){
 		for(var i = 0; i < tempArr.length; i++){
 			//tempArr[i][0] should be the id
-			var l = tempArr[i][0];
-			var layer = this.grid.layers[l];
+			var layer = this.grid.layers[tempArr[i][0]];
 			var ar = [];
 			
 			for(var t in layer.tiles){
@@ -119,7 +118,7 @@ LevelEditor.funcs = {
 					id : l,
 					name : layer.name,
 					order : layer.order
-				}
+				};
 		}
 		
 		var json = {
@@ -145,7 +144,7 @@ LevelEditor.funcs = {
 			tileheight : Number(this.tileset.tileheight),
 			tilewidth:Number(this.tileset.tilewidth),
 			version :1		
-		}		
+		};		
 		
 		this.map.tilemap = json;
 		this.map.layers = mapLayers;
@@ -178,7 +177,7 @@ LevelEditor.funcs = {
 			tileheight : map.tilemap.tileheight,
 			tilesx : map.tilemap.width,
 			tilesy : map.tilemap.height
-		}
+		};
 
 		this.create(map.name,grid,tileset,map.id);
 		
@@ -251,6 +250,6 @@ LevelEditor.funcs = {
 	setTool : function(tool){
 	  this.grid.setToolType(tool);
 	}
-}
+};
 
 Phaser.Utils.extend( LevelEditor.prototype ,  LevelEditor.funcs );

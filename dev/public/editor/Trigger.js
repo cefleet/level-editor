@@ -15,4 +15,4 @@ LevelEditor.Trigger = function(options){
 	this.onComplete = options.onComplete || '';//'',{action : callTrigger, trigger : trigername || id} , {action : callCode, code : function to run}
 	
 	return this;			
-}
+};

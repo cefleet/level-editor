@@ -7,7 +7,7 @@ LevelEditor.TriggerManager  = function(){
 	this.triggers = {};
 	
 	return this;	
-}
+};
 
 LevelEditor.TriggerManager.prototype = {
 	
@@ -17,5 +17,5 @@ LevelEditor.TriggerManager.prototype = {
 		this.triggers[t.id] = t;
 		this.events.triggerCreated.dispatch(t);
 	}
-}
+};
 LevelEditor.TriggerManager.prototype.constructor = LevelEditor.TriggerManager;

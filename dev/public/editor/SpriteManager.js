@@ -7,7 +7,7 @@ LevelEditor.SpriteManager = function(){
 	this.sprites = {};
 	
 	return this;	
-}
+};
 
 LevelEditor.SpriteManager.prototype = {
 	
@@ -17,5 +17,5 @@ LevelEditor.SpriteManager.prototype = {
 		this.sprites[t.id] = t;
 		this.events.spriteCreated.dispatch(t);
 	}
-}
+};
 LevelEditor.SpriteManager.prototype.constructor = LevelEditor.SpriteManager;

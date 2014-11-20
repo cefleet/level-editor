@@ -23,7 +23,7 @@ LevelEditor.Grid = function (options) {
 		tilesetLoaded : new Phaser.Signal(),
 		triggerPlaced : new Phaser.Signal(),
 		spritePlaced : new Phaser.Signal()
-	}
+	};
         
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
@@ -40,7 +40,7 @@ LevelEditor.Grid = function (options) {
 		},
 		
 		create:function(){
-			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			this.game.scale.setScreenSize();
 			this.game.stage.backgroundColor ='#545454'; //''
@@ -51,7 +51,7 @@ LevelEditor.Grid = function (options) {
 	});
     
 	return this;
-}
+};
 
 LevelEditor.Grid.prototype = {
 	
@@ -107,7 +107,7 @@ LevelEditor.Grid.prototype = {
 					col : r,
 					loc : c+'-'+r,
 					tilesetId : 0
-				}
+				};
 				c++;
 				i++;
 			}
@@ -127,7 +127,7 @@ LevelEditor.Grid.prototype = {
 		for(var l in this.layers){
 			tempArr.push([l,this.layers[l].order]);
 		}		
-		tempArr.sort(function(a,b){return a[1]-b[1]});
+		tempArr.sort(function(a,b){return a[1]-b[1];});
 		
 		var orderArr = [];
 		
@@ -148,7 +148,7 @@ LevelEditor.Grid.prototype = {
 			var id = data[i];
 			var t = this.layers[layer.name].tiles[i];
 			t.tilesetId = id;
-			if(id != 0){				
+			if(id !== 0){				
 				//frame starts with 0 first item
 				/*******
 				 * WRONG DO NOT CALL LE FROM INSIDE
@@ -170,7 +170,7 @@ LevelEditor.Grid.prototype = {
 		for(var layer in this.layers){
 			if(this.layers[layer].order > highest) {
 				highest = 	this.layers[layer].order+1;
-			};
+			}
 		}
 		this.layers[id] = this.layersGroup.add(this.game.add.group());
 		this.layers[id].tiles = {};
@@ -307,7 +307,8 @@ LevelEditor.Grid.prototype = {
 			var p = {
 				x : c.offsetX/this.scale,
 				y : c.offsetY/this.scale
-			}
+			};
+			
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
 				if(this.game.input.activePointer.isDown){
@@ -329,7 +330,7 @@ LevelEditor.Grid.prototype = {
 			var p = {
 				x : c.offsetX/this.scale,
 				y : c.offsetY/this.scale
-			}
+			};
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
 				
@@ -350,7 +351,7 @@ LevelEditor.Grid.prototype = {
 	},
 	
 	destroy : function(){
-		for(g in this.layers){
+		for(var g in this.layers){
 			this.layers[g].destroy();
 		}
 		if(this.gridImage){

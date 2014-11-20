@@ -83,7 +83,7 @@ Game.GameTester = function (options) {
 	});
     
 	return this;
-}
+};
 
 Game.GameTester.prototype = {
 		
@@ -119,4 +119,4 @@ Game.GameTester.prototype = {
 			this.player.animations.stop();
 		}
 	}
-}
+};

@@ -1,0 +1,10 @@
+{{!if there is an action }}
+{{#if action}}
+  {{#if disabled}}
+    <li class='disabled navLink'><a action='{{action}}'>{{title}}</a></li>
+  {{else}}
+    <li class='navLink'><a action='{{action}}'>{{title}}</a></li>
+  {{/if}}
+{{else}}
+  <li class='divider'></li>
+{{/if}}

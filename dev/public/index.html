@@ -5,21 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <style type="text/css">
 	body { margin: 0px; }
-	
+
   a {
     cursor : pointer;
   }
- body { 
-	 padding-top: 70px; 
+ body {
+	 padding-top: 70px;
 };
 </style>
+<script src="main.js"></script>
 
 
 <!-- UI -->
-<script src ="ui/util/mcor-util.js"></script>
+<script src="node_modules/handlebars/dist/handlebars.runtime.min.js"></script>
 <script src ="ui/UI.js"></script>
 <script src ="ui/Actions.js"></script>
 <script src ="ui/Views.js"></script>
+<!-- The rest of the UI files here Like actions etc -->
 
 <!-- Phaser -->
 <script src="node_modules/phaser/build/phaser.min.js"></script>
@@ -40,14 +42,13 @@
 <!-- Bootstrap stuff -->
 <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
-<script src ="ui/util/jquery-ui.min.js"></script>
+<script src ="ui/lib/jquery-ui.min.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
 <!-- Event Emmiter to keep the bootstrap stuff and game stuff sperated -->
 <script src = "node_modules/wolfy87-eventemitter/EventEmitter.min.js"></script>
 
 <!-- Initiators for phaser (game) and then for Editor / UI -->
-<script src="main.js"></script>
 
 </title>
 </head>

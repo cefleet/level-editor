@@ -6,15 +6,20 @@
     "crypto":"*",
     "grunt": "*",
     "grunt-contrib-uglify":"*",
+    "grunt-contrib-handlebars":"*",
+    "grunt-contrib-jshint":"*",
+    "grunt-contrib-watch":"*",
     "phaser":"*",
     "bootstrap":"*",
     "jquery": "*",
+    "jquery-ui":"*",
     "wolfy87-eventemitter":"*",
     "express":"*",
     "body-parser" : "*",
     "express-session":"*",
     "multer":"*",
     "nedb":"*",
-    "sanitize-filename":"*"
+    "sanitize-filename":"*",
+    "handlebars":"*"
    }
 }

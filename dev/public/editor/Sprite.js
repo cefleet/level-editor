@@ -18,4 +18,4 @@ LevelEditor.Trigger = function(options){
 	this.patrolPos = 0; // the index of the sprites patrol
 	
 	return this;			
-}
+};

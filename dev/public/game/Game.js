@@ -1,4 +1,4 @@
-var Game = function(){}
+var Game = function(){};
 Game.prototype.constructor = Game;
 
 

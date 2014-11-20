@@ -1,88 +1,80 @@
-  UI = function(options){
+UI = function(options){
 	options = options || {};
 	this.EventEmitter = options.EventEmitter || new EventEmitter();
 	this.Actions = new UI.Actions(this);
-	this.Views = new UI.Views(this);
-	return this;
+  this.Views = UI.Views;
+  //views are added by handlebars/grunt
+
+  this.buildUI();
+  return this;
 };
 
 UI.prototype = {
-	setupEvents : function(){
-		//this.events = MasterEmitter;
-  
-        
-		//This stays here
-		//Navigation Controls
-		/*
-		 * TODO THIS IS BAD AS WELL
-		 */
-		var links = $gBT('a', $g('navigation'));
-		for(var i = 0; i < links.length; i++){
-			links[i].addEventListener('click', function(){
-				/****BAD BAD BAD **/
-				GameMaker.UI.EventEmitter.trigger('navLinkClicked', [this.id]);
-			}.bind(links[i]));   
-		}
-    
-		//Zom Controls
-		
-		/***********************
-		 * TODO THIS IS BAD
-		 * //
-		 */ 
-		var gridZoom = $gBT('a', $g('gridZoomOptions'));
-		for(var i = 0; i < gridZoom.length; i++){
-			gridZoom[i].addEventListener('click', function(){
-				GameMaker.UI.zoomGridTo(this.getAttribute('zoom'));
-			}.bind(gridZoom[i]));   
-		}
-    
-		//This recives information from the nav bar
-		this.EventEmitter.addListener('navLinkClicked', this.navClicked.bind(this));
-		//if the id of an event that has been emmited is the name of a function
-		//(minus Link) run that function
-		
-		var playGameBtn = $g('playGameButton');
-		playGameBtn.addEventListener('click', function(){
-			GameMaker.UI.Actions.playGame();
-		});
-		
-		$('#gameModal').on('hidden.bs.modal', function (e) {
-			GameMaker.UI.Actions.destroyGame();
-		})
-		
-		$('#layersList').sortable({
-			update: function( event, ui ) {
-				//This may be wrong but it iwl
-				var layers = $g('layersList').children;
-				var order = [];
-				for(var i = 0; i < layers.length; i++){
-					order.push(layers[i].id);
-				}
-				GameMaker.LE.orderLayers(order);				
-			}
-		});
-		
-		$('.toolButton').on('click',function(){
-		  GameMaker.UI.Actions.activateTool(this.id.replace('Tool',''));
-		});
-		
-	},
+  buildUI : function(){
 
-	navClicked : function(clicked){
-		if(this.navLinkToFunc[clicked]){	
-			GameMaker.UI.Actions[this.navLinkToFunc[clicked]]();
-		}
-	},
-	
-	////Here I can have an array telling which function to run based on options
-	navLinkToFunc : {
-		newMapNavLink : 'createNewMapPopup',
-		saveMapNavLink : 'saveMap',
-		loadMapNavLink :'loadMapSelection',
-		settingsNavLink : 'settingsPopup',
-		newTilesetNavLink  : 'createNewTilesetPopup'
-	}
-}
+    //TODO get this from a config file
+    var dropdowns = {
+      dropdown : {
+        file : {
+          title : 'File',
+          items : [
+            {title:'New Map',action:'newMap'},
+            {title:'Load Map',action:'loadMap'},
+            {title:'divider'},
+            {title:'Save Map',action:'saveMap', disabled:'disabled'}
+          ]
+        },
+        tilesetOption : {
+          title : 'Tilesets',
+          items : [
+            {title:'New Tileset', action :'newTileset$'}
+          ]
+        }
+      }
+    };
+
+    $(document.body).append([
+      this.Views.navbar(dropdowns)
+    ]);
+  },
+
+  //This is only a test but it's pretty close to working
+  testModalContent : function(){
+    var formContent = {
+      form : {
+        name : [{
+          id : 'mapNameFormItem',
+          title : 'Map Name',
+          placeholder : 'My New Map',
+          value : 'New Map',
+          cols : '6'
+        }],
+        width : [{
+          id : 'widthNameFormItem',
+          title : 'Width(in Tiles)',
+          placeholder : 'Y',
+          value : '16',
+          cols : '2'
+        }],
+        height : [{
+          id : 'heightNameFormItem',
+          title : 'Height (In Tiles)',
+          placeholder : 'X',
+          value : '16',
+          cols : '2'
+        }]
+      }
+    };
+
+    var modalContent = {
+        title : 'Create New Map',
+        content : this.Views.create_map_form(formContent),//this is unique to this modal
+        footer : 'Add something here'
+    };
+
+    $(document.body).append(this.Views.modal(modalContent));
+    $('#mainModal').modal('show');
+  }
+};
 
 UI.prototype.constructor = UI;

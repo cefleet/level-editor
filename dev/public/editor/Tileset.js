@@ -19,7 +19,7 @@ LevelEditor.Tileset = function (options) {
 		tilesetImageLoaded : new Phaser.Signal(),
 		tileSelected : new Phaser.Signal(),
 		gameCreated  : new Phaser.Signal()
-	}
+	};
 	
 	if(!options.id) {
 	  console.log('There seems to be a problem with the option id');
@@ -32,7 +32,7 @@ LevelEditor.Tileset = function (options) {
 	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
 		create:function(){	
-			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
+			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 			this.game.stage.backgroundColor ='#000000';
 			this.events.tilesetImageLoaded.dispatch(this);
 			this.spritesheet = this.game.load.spritesheet(this.name,this.image,this.tilewidth,this.tileheight);
@@ -42,7 +42,7 @@ LevelEditor.Tileset = function (options) {
 	});	
 
 	return this;
-}
+};
 
 LevelEditor.Tileset.prototype = {
 	
@@ -110,6 +110,6 @@ LevelEditor.Tileset.prototype = {
 		}, this);
 		this.spritesheet.start();
 	}
-}
+};
 
 LevelEditor.Tileset.prototype.constructor = LevelEditor.Tileset;
