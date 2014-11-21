@@ -24,6 +24,7 @@ document.addEventListener( "DOMContentLoaded", function(){
 	//loads data
 	$.get('/loading',function(data,status){
 		GameMaker.UI.data = data;
+		GameMaker.UI.processData();
 	});
 
 }, false );

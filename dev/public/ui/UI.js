@@ -1,80 +1,66 @@
 UI = function(options){
 	options = options || {};
 	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Views = UI.Views;
 	this.Actions = new UI.Actions(this);
-  this.Views = UI.Views;
+	this.LaunchPad = new UI.LaunchPad(this);
   //views are added by handlebars/grunt
 
-  this.buildUI();
+  this.start();
   return this;
 };
 
 UI.prototype = {
-  buildUI : function(){
 
-    //TODO get this from a config file
-    var dropdowns = {
-      dropdown : {
-        file : {
-          title : 'File',
-          items : [
-            {title:'New Map',action:'newMap'},
-            {title:'Load Map',action:'loadMap'},
-            {title:'divider'},
-            {title:'Save Map',action:'saveMap', disabled:'disabled'}
-          ]
-        },
-        tilesetOption : {
-          title : 'Tilesets',
-          items : [
-            {title:'New Tileset', action :'newTileset$'}
-          ]
-        }
-      }
-    };
+  start : function(){
+		//the simplest launcher
+		this.launch('navbar');
 
-    $(document.body).append([
-      this.Views.navbar(dropdowns)
-    ]);
+		//This is an example of launching on element with a different lanucher
+	//	this.launch('modal',null,'newMap');
   },
 
-  //This is only a test but it's pretty close to working
-  testModalContent : function(){
-    var formContent = {
-      form : {
-        name : [{
-          id : 'mapNameFormItem',
-          title : 'Map Name',
-          placeholder : 'My New Map',
-          value : 'New Map',
-          cols : '6'
-        }],
-        width : [{
-          id : 'widthNameFormItem',
-          title : 'Width(in Tiles)',
-          placeholder : 'Y',
-          value : '16',
-          cols : '2'
-        }],
-        height : [{
-          id : 'heightNameFormItem',
-          title : 'Height (In Tiles)',
-          placeholder : 'X',
-          value : '16',
-          cols : '2'
-        }]
-      }
-    };
+	/*
+		This is essentially the view launcher. What it does is it looks to see if there
+		is a function with the name view in the Launchpad. If there is then it executes that and does the callback
+		the default callback simply appends the output of the view with options recived from the launchpad. After that it checks to see if
+		there is a '_' function of the view. If so then it exicutes that. The _ function of the view name
+		mainly is to setup listners.
+		the launchpad returns options (or not) for the view and then can change where the view launches into.
+		You can also launch a view using a different launcher
+	*/
+	launch : function(view,into,launcher,callback,working){
+		into = into || document.body;
+		launcher = launcher || view;
+		working = working || false; //doesn't do anything yet
 
-    var modalContent = {
-        title : 'Create New Map',
-        content : this.Views.create_map_form(formContent),//this is unique to this modal
-        footer : 'Add something here'
-    };
+		//If there is no view with that name this this function shall not pass
+		if(typeof this.Views[view] !== 'function'){
+			throw "There is no view named "+view;
+		}
 
-    $(document.body).append(this.Views.modal(modalContent));
-    $('#mainModal').modal('show');
-  }
+		callback = callback || function(options, newInto){
+			newInto = newInto || into;
+			$(newInto).append(this.Views[view](options));
+			if(typeof this.LaunchPad['_'+launcher] ==='function'){
+				this.LaunchPad['_'+launcher]();
+			}
+		}.bind(this);
+
+		if(typeof this.LaunchPad[launcher] === 'function'){
+			this.LaunchPad[launcher](callback,into);
+		} else {
+			$(into).append(this.Views[view]());
+			if(typeof this.LaunchPad['_'+view] ==='function'){
+				this.LaunchPad['_'+launcher]();
+			}
+		}
+	},
+
+	processData : function(){
+		console.log(this.data);
+	}
+	//TODO I need to do something with the data issue
 };
 
 UI.prototype.constructor = UI;
