@@ -60,7 +60,6 @@ UI.prototype = {
 	processData : function(){
 		console.log(this.data);
 	}
-	//TODO I need to do something with the data issue
 };
 
 UI.prototype.constructor = UI;

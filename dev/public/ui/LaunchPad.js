@@ -54,6 +54,17 @@ UI.LaunchPad.prototype = {
   },
 
   newMap : function(callback){
+
+      //TODO this should be pulled from the server most likey
+    var tilesets = this.parent.data.Tilesets;
+    var tilesetOptions = [];
+    for(var i = 0; i < tilesets.length; i++){
+      tilesetOptions.push({
+        title : tilesets[i].name,
+        value : tilesets[i]._id
+      });
+    }
+
     var formContent = {
       form : {
         name : [{
@@ -64,18 +75,24 @@ UI.LaunchPad.prototype = {
           cols : '6'
         }],
         width : [{
-          id : 'widthNameFormItem',
+          id : 'widthFormItem',
           title : 'Width(in Tiles)',
           placeholder : 'Y',
           value : '16',
           cols : '2'
         }],
         height : [{
-          id : 'heightNameFormItem',
+          id : 'heightFormItem',
           title : 'Height (In Tiles)',
           placeholder : 'X',
           value : '16',
           cols : '2'
+        }],
+        tileset : [{
+          id : 'tilesetFormItem',
+          title : 'Tileset',
+          cols : '6',
+          option : tilesetOptions
         }]
       }
     };
@@ -83,16 +100,22 @@ UI.LaunchPad.prototype = {
     var modalContent = {
       title : 'Create New Map',
       content : this.parent.Views.create_map_form(formContent),//this is unique to this modal
-      footer : 'Add something here'
+      footer : this.parent.Views.button({
+        option :'primary',
+        size:'',
+        class:'',
+        id:'createMap',
+        text : 'Create Map'
+      })
     };
-
-    console.log(modalContent);
 
     callback(modalContent);
   },
 
   _newMap : function(){
     $('#mainModal').modal('show');
+    var $this = this;
+    $('#createMap').on('click', $this.parent.Actions.getNewMapFormData.bind($this.parent.Actions));
   }
 };
 
