@@ -55,7 +55,7 @@ UI.LaunchPad.prototype = {
 
   newMap : function(callback){
 
-      //TODO this should be pulled from the server most likey
+    //TODO this should be pulled from the server most likey
     var tilesets = this.parent.data.Tilesets;
     var tilesetOptions = [];
     for(var i = 0; i < tilesets.length; i++){
@@ -68,28 +68,30 @@ UI.LaunchPad.prototype = {
     var formContent = {
       form : {
         name : [{
-          id : 'mapNameFormItem',
+          id : 'randNameId',
+          name : 'name',
           title : 'Map Name',
           placeholder : 'My New Map',
           value : 'New Map',
           cols : '6'
         }],
         width : [{
-          id : 'widthFormItem',
+          id : 'randWidthId',
+          name: 'width',
           title : 'Width(in Tiles)',
           placeholder : 'Y',
           value : '16',
           cols : '2'
         }],
         height : [{
-          id : 'heightFormItem',
+          name : 'height',
           title : 'Height (In Tiles)',
           placeholder : 'X',
           value : '16',
           cols : '2'
         }],
         tileset : [{
-          id : 'tilesetFormItem',
+          name : 'tilesetId',
           title : 'Tileset',
           cols : '6',
           option : tilesetOptions
@@ -115,7 +117,9 @@ UI.LaunchPad.prototype = {
   _newMap : function(){
     $('#mainModal').modal('show');
     var $this = this;
-    $('#createMap').on('click', $this.parent.Actions.getNewMapFormData.bind($this.parent.Actions));
+    $('#createMap').on('click', function(){
+      $this.parent.collect('createMapForm','createMap');
+    });
   }
 };
 

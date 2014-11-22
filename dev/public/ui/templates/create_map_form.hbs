@@ -1,15 +1,21 @@
 {{! I like this because I can use easy redy made elements pulled from the controller or I can just write it in HTML if it is too complex}}
-<div class='form-horizontal' role='form'>
+<div class='form-horizontal' role='form' id='createMapForm'>
   <div class='form-group'>
     {{#each form.name}}
       {{> input}}
     {{/each}}
+  </div>
+  <div class='form-group'>
     {{#each form.width}}
       {{> input}}
     {{/each}}
+  </div>
+  <div class='form-group'>
     {{#each form.height}}
       {{> input}}
     {{/each}}
+  </div>
+  <div class='form-group'>
     {{#each form.tileset}}
       {{> select}}
     {{/each}}

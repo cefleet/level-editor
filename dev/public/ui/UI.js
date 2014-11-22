@@ -57,6 +57,29 @@ UI.prototype = {
 		}
 	},
 
+	//This is a helper to collect form content
+	//forms can be an array of element id or the name of the parent container
+	collect : function(forms,next,useIds){
+		var data = {};
+		var use = 'name';
+		if(useIds === true){
+			use = 'id';
+		}
+
+		if(typeof forms === 'string'){
+			$('#'+forms+' :input').each(function(){
+				data[$(this).attr(use)] = $(this).val();
+			});
+		} else if(Array.isArray(forms)){
+			//TODO I may want to check to see if it is a DOM element
+			forms.forEach(function(e){
+				data[$('#'+e).attr(use)] = $('#'+e).val();
+			});
+		}
+
+		this.Actions[next](data);
+	},
+
 	processData : function(){
 		console.log(this.data);
 	}

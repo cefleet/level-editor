@@ -22,18 +22,12 @@ UI.Actions.prototype = {
 		console.log('Create New Tileset');
 	},
 
-	//TODO instead of this make a function similer to the launcher
-	getNewMapFormData : function(){
-		console.log(this);
-		//after gotten all of the information
-		var formData = {};//should be f
-		this.createNewMap(formData);
-	},
-
-	createNewMap : function(){
-		console.log('Begin the cycle to do something as awesome as loading a map');
-		//This is where i need to make a decision on how to communicate with the
-		//editor.
+	createMap : function(data){
+		console.log(data);
+		//Tell UI to launch the panels for the grid and the tools
+		
+		//This sends out the event so the editor can begin its work
+		this.parent.EventEmitter.trigger('createMap',[data]);
 	}
 
 };

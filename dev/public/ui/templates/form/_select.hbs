@@ -1,7 +1,7 @@
 <div class='col-sm-12'>
   <label for='{{id}}' class='col-sm-4 control-label'>{{title}}</label>
   <div class='col-sm-{{cols}}'>
-    <select class='form-control' id='{{id}}'>
+    <select class='form-control' id='{{id}}' name='{{name}}'>
       {{#each option}}
         {{> select_option}}
       {{/each}}
