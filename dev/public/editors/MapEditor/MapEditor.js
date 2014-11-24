@@ -6,60 +6,32 @@ MapEditor = function (options) {
 	this.gridContainer = options.grid ||'';
 	this.tilesetContainer = options.tileset ||'';
 
-	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Intercom = options.Intercom || new Intercom();
+	this.EventEmitter = this.Intercom.EventEmitter;
 
 	this.map = {};
-
+/*
 	this.events = {
 	  mapSaved : new Phaser.Signal()
 	};
+*/
 
 	this.listenOutFor = [
+	//FROM UI
 	{
 		event:'createMap',
 		action : 'create'
 	},
-	{
-		event:'saveMap',
-		action : 'saveMap'
-	}
 
+	//FROM Editor
 	];
 
-	this.setupListeners();
+	this.Intercom.setupListeners(this);
 };
 
 MapEditor.prototype.constructor = MapEditor;
 
 Phaser.Utils.extend(MapEditor.prototype , {
-	/*
-		This setups the listeners. It expects the trigger to send an array of
-		the arguments for the function that it will be preforming.
-	*/
-	setupListeners : function(){
-		/*
-		DONT DELETE YET I MAY END UP USING THIS
-		var f = function(arr){
-			//apply is the key thing here
-			this.$this[this.e.action].apply(this.$this, arr);
-	};
-
-		for(var l in this.listenOutFor){
-			var e = this.listenOutFor[l];
-			var o = {$this: this,e : e};
-			this.EventEmitter.on(e.event, f.bind(o));
-		}*/
-
-		for(var l in this.listenOutFor){
-			var e = this.listenOutFor[l];
-			if(typeof this[e.action] === 'function'){
-				this.EventEmitter.on(e.event,this[e.action].bind(this));
-			} else {
-				console.warn('The function '+e.action+' is not found. The event '+
-					e.event+' will do nothing to this Object.');
-			}
-		}
-	},
 
 	create : function(name,grid,tileset,id){
 		this.destroy();
@@ -67,24 +39,18 @@ Phaser.Utils.extend(MapEditor.prototype , {
 
 		tileset = tileset || {};
 		tileset.container = tileset.container || this.tilesetContainer;
-		console.log(tileset.container);
+		this.tileset = new MapEditor.Tileset(tileset, this);
 
-		console.log($('#'+tileset.container));
-		this.tileset = new MapEditor.Tileset(tileset);
-
-		//listeners for cross object communication
-		//This is correct because Level Editor should be the 'glue' between the two
-		//this.tileset.events.tilesetImageLoaded.add(this.grid.loadTileset, this.grid);
 		grid = grid || {};
 		grid.container = grid.container || this.gridContainer;
-		this.grid = new MapEditor.Map(grid);
+		this.grid = new MapEditor.Map(grid, this);
 
+		//This tells the Layer Manager to create a layer
+		this.EventEmitter.once('gridReadyForLayers', function(){
+			this.EventEmitter.trigger('createLayer', ['base']);
+		}.bind(this));
 		/*
 		this.grid.events.gameCreated.add(function(){
-
-			this.grid.loadTileset(this.tileset);
-
-			this.tileset.events.tileSelected.add(this.grid.setMarker, this.grid);
 
 			//TODO this goes to a new class I think Tools
 			//this.grid.events.toolChanged.add(GameMaker.UI.Actions._activateTool);
@@ -96,13 +62,15 @@ Phaser.Utils.extend(MapEditor.prototype , {
 
 		}, this);
 		*/
+
 		//We can have a go between here so phaser events don't mesh with other events
-		this.layerManager = new MapEditor.LayerManager(this);
+		this.layerManager = new MapEditor.LayerManager(grid, this);
 		this.toolManager = new MapEditor.ToolManager(this);
 		this.triggerManager = new MapEditor.TriggerManager(this);
 		this.spriteManager = new MapEditor.SpriteManager(this);
 
 		//We need to change the whoel triggering system
+		/*
 		this.grid.events.triggerPlaced.add(function(loc){
 			GameMaker.UI.Actions.createNewTriggerPopup();
 		});
@@ -110,8 +78,8 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.grid.events.spritePlaced.add(function(loc){
 			GameMaker.UI.Actions.createNewSpritePopup();
 		});
-
-		this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
+*/
+		//this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
 
 
 		//ads in some settings

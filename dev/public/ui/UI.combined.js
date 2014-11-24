@@ -1,6 +1,7 @@
 UI = function(options){
 	options = options || {};
-	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Intercom = options.Intercom;
+	this.EventEmitter = this.Intercom.EventEmitter;
 	this.Views = UI.Views;
 	this.Actions = new UI.Actions(this);
 	this.LaunchPad = new UI.LaunchPad(this);
@@ -59,7 +60,7 @@ UI.prototype = {
 
 	//This is a helper to collect form content
 	//forms can be an array of element id or the name of the parent container
-	collect : function(forms,next,useIds){
+	collect : function(forms,next,useIds, emit){
 		var data = {};
 		var use = 'name';
 		if(useIds === true){
@@ -76,8 +77,11 @@ UI.prototype = {
 				data[$('#'+e).attr(use)] = $('#'+e).val();
 			});
 		}
-
-		this.Actions[next](data);
+		if(emit === true) {
+			this.EventEmitter.trigger(next,[data]);
+		} else {
+			this.Actions[next](data);
+		}
 	},
 
 	processData : function(){
@@ -91,8 +95,27 @@ UI.Actions = function(parent){
 
 	this.parent = parent  || {};
 	this.Views = UI.Views;
+
+	this.listenOutFor = [
+	{
+		event : 'layerCreated',
+		action : 'addLayerToList'
+	},
+	{
+		event : 'newLayer',
+		action : 'newLayer'
+	}
+	];
+
+	this.parent.Intercom.setupListeners(this);
+
 	return this;
 };
+
+UI.Actions.prototype.addLayerToList = function(layer){
+  console.log(layer);
+};
+
 
 UI.Actions.prototype.createMap = function(data){
   this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
@@ -132,7 +155,14 @@ UI.Actions.prototype.loadMap = function(){
   console.log('Launch Load Map Modal');
 };
 
+UI.Actions.prototype.newLayer = function(){
+  $('#mainModal').remove();
+  
+  this.parent.launch('modal', null, 'newLayer');
+};
+
 UI.Actions.prototype.newMap = function(){
+  $('#mainModal').remove();
   this.parent.launch('modal', null, 'newMap');
 };
 
@@ -300,6 +330,20 @@ Handlebars.registerPartial("select_option", Handlebars.template({"1":function(de
 this["UI"] = this["UI"] || {};
 this["UI"]["Views"] = this["UI"]["Views"] || {};
 
+this["UI"]["Views"]["create_layer_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "";
+  stack1 = this.invokePartial(partials.input, '    ', 'input', depth0, undefined, helpers, partials, data);
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class='form-horizontal' role='form' id='createLayerForm'>\n  <div class='form-group'>\n";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 != null ? depth0.form : depth0)) != null ? stack1.name : stack1), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "  </div>\n</div>\n";
+},"usePartial":true,"useData":true});
+
+
+
 this["UI"]["Views"]["create_map_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = this.invokePartial(partials.input, '      ', 'input', depth0, undefined, helpers, partials, data);
@@ -462,6 +506,22 @@ this["UI"]["Views"]["tabs"] = Handlebars.template({"1":function(depth0,helpers,p
 
 
 
+this["UI"]["Views"]["ul"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<ul class=' list-group "
+    + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
+    + "' id='"
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
+    + "' ";
+  stack1 = this.invokePartial(partials.attribs, '', 'attribs', depth0, undefined, helpers, partials, data);
+  if (stack1 != null) { buffer += stack1; }
+  buffer += " >";
+  stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</ul>\n";
+},"usePartial":true,"useData":true});
+
+
+
 this["UI"]["Views"]["mainBody"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<div id='container' class='container-fluid'>\n  <div class='row' id='mainRow'>\n    <div id='mainPanel' class='col-md-12'></div>\n  </div>\n</div>\n";
   },"useData":true});
@@ -522,7 +582,13 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
     {
       id : 'layersContainer',
       title : 'Layers',
-      content : this.parent.Views.div({
+      content : this.parent.Views.button({
+        option :'primary',
+        class:'btn-block',
+        id:'newLayer',
+        text : 'New Layer'
+      })+
+      this.parent.Views.ul({
         id : 'layers',
         attribs : [{
           key :'style',
@@ -574,6 +640,11 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
+
+  $('#newLayer').on('click', function(){
+    this.parent.EventEmitter.trigger('newLayer');
+  }.bind(this));
+
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
   $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
 };
@@ -624,6 +695,46 @@ UI.LaunchPad.prototype._navbar = function(){
         });
       }
     });
+};
+
+UI.LaunchPad.prototype.newLayer = function(callback){
+  console.log('It got to the launcher');
+  var formContent = {
+    form : {
+      name : [{
+        name : 'name',
+        title : 'Layer Name',
+        placeholder : 'Layer Name',
+        value : 'New Layer',
+        cols : '6'
+      }]
+    }
+  };
+
+  var modalContent = {
+    title : 'Create New Layer',
+    content : this.parent.Views.create_layer_form(formContent),//this is unique to this modal
+    footer : this.parent.Views.button({
+      option :'primary',
+      size:'',
+      class:'',
+      id:'createLayer',
+      text : 'Create Layer'
+    })
+  };
+
+  console.log('it got to the callback');
+  callback(modalContent);
+};
+
+UI.LaunchPad.prototype._newLayer = function(){
+  console.log('it got to the return for the loauncher');
+  $('#mainModal').modal('show');
+  var $this = this;
+  $('#createLayer').off('click');//turns it off so you will not have multiple clicks
+  $('#createLayer').one('click', function(){
+    $this.parent.collect('createMapForm','createLayer',false,true);
+  });
 };
 
 UI.LaunchPad.prototype.newMap = function(callback){

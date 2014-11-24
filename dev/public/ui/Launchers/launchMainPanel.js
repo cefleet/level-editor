@@ -35,7 +35,13 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
     {
       id : 'layersContainer',
       title : 'Layers',
-      content : this.parent.Views.div({
+      content : this.parent.Views.button({
+        option :'primary',
+        class:'btn-block',
+        id:'newLayer',
+        text : 'New Layer'
+      })+
+      this.parent.Views.ul({
         id : 'layers',
         attribs : [{
           key :'style',
@@ -87,6 +93,11 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
+
+  $('#newLayer').on('click', function(){
+    this.parent.EventEmitter.trigger('newLayer');
+  }.bind(this));
+
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
   $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
 };

@@ -154,6 +154,20 @@ Handlebars.registerPartial("select_option", Handlebars.template({"1":function(de
 this["UI"] = this["UI"] || {};
 this["UI"]["Views"] = this["UI"]["Views"] || {};
 
+this["UI"]["Views"]["create_layer_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "";
+  stack1 = this.invokePartial(partials.input, '    ', 'input', depth0, undefined, helpers, partials, data);
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class='form-horizontal' role='form' id='createLayerForm'>\n  <div class='form-group'>\n";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 != null ? depth0.form : depth0)) != null ? stack1.name : stack1), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "  </div>\n</div>\n";
+},"usePartial":true,"useData":true});
+
+
+
 this["UI"]["Views"]["create_map_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = this.invokePartial(partials.input, '      ', 'input', depth0, undefined, helpers, partials, data);
@@ -313,6 +327,22 @@ this["UI"]["Views"]["tabs"] = Handlebars.template({"1":function(depth0,helpers,p
   if (stack1 != null) { buffer += stack1; }
   return buffer;
 },"useData":true});
+
+
+
+this["UI"]["Views"]["ul"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<ul class=' list-group "
+    + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
+    + "' id='"
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
+    + "' ";
+  stack1 = this.invokePartial(partials.attribs, '', 'attribs', depth0, undefined, helpers, partials, data);
+  if (stack1 != null) { buffer += stack1; }
+  buffer += " >";
+  stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</ul>\n";
+},"usePartial":true,"useData":true});
 
 
 

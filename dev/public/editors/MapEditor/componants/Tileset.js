@@ -1,6 +1,10 @@
-MapEditor.Tileset = function (options) {
+MapEditor.Tileset = function (options,parent) {
 	//With these changes
 	options = options || {};
+
+	this.parent = options.parent || parent;
+	this.EventEmitter = this.parent.EventEmitter;
+
 	this.container = options.container;
 	this.image  = options.image || 'img/sampletileset.png';
 	this.name = options.name || 'tiles';
@@ -15,16 +19,10 @@ MapEditor.Tileset = function (options) {
 		fill : 0x9C9C9C
 	};
 	this.loaded = false;
-	this.events = {
-		tilesetImageLoaded : new Phaser.Signal(),
-		tileSelected : new Phaser.Signal(),
-		gameCreated  : new Phaser.Signal()
-	};
 
 	if(!options.id) {
-	  console.log('There seems to be a problem with the option id');
+	  console.warn('There is no tileset id');
 	} else {
-		console.log(options.id);
 		this.id = options.id;
 	}
 
@@ -32,10 +30,9 @@ MapEditor.Tileset = function (options) {
 		create:function(){
 			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 			this.game.stage.backgroundColor ='#000000';
-			this.events.tilesetImageLoaded.dispatch(this);
+
 			this.spritesheet = this.game.load.spritesheet(this.name,this.image,this.tilewidth,this.tileheight);
 			this.setup();
-			this.events.gameCreated.dispatch(this);
 		}.bind(this)
 	});
 
@@ -49,7 +46,6 @@ MapEditor.Tileset.prototype = {
 	create : function(){
 
 		this.tileGroup = this.game.add.group();
-
 
 		var rows= this.imageheight/this.tileheight;
 		var cols = this.imagewidth/this.tilewidth;
@@ -72,8 +68,9 @@ MapEditor.Tileset.prototype = {
 			this.tileGroup.add(this.tiles[i]);
 			c++;
 		}
-		this.loaded = true;
-		this.onLoad();
+
+		this.EventEmitter.trigger('tilesetLoaded', [this]);
+
 	},
 
 	destroy : function(){
@@ -90,15 +87,7 @@ MapEditor.Tileset.prototype = {
 	 */
 	selectTile : function(item){
 		this.selectedTile = item;
-		this.events.tileSelected.dispatch(this);
-	},
-
-	/*
-	 * run once loaded. Should be overwritten
-	 * kinda gheto hqackish
-	 */
-	onLoad : function(){
-
+		this.EventEmitter.trigger('tileSelected',[this]);
 	},
 
 	setup : function(){

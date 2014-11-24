@@ -1,6 +1,10 @@
-MapEditor.Map = function (options) {
+MapEditor.Map = function (options,parent) {
 
 	options = options || {};
+
+	this.parent = options.parent || parent;
+	this.EventEmitter = this.parent.EventEmitter;
+
 	this.container = options.container;
 	this.linecolor = options.line || 0x000000;
 	this.loc = options.loc || [0,0];
@@ -11,24 +15,23 @@ MapEditor.Map = function (options) {
 	this.tilesx = options.tilesx || 18;
 	this.offsetx = 0;
 	this.offsety = 0;
-	this.scale =1;
+	this.scale = 1;
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
 	this.toolType = 'single';
 
+	/*
 	this.events = {
-		gameCreated  : new Phaser.Signal(),
 		toolChanged : new Phaser.Signal(),
 		layerAdded : new Phaser.Signal(),
-		tilesetLoaded : new Phaser.Signal(),
-		triggerPlaced : new Phaser.Signal(),
-		spritePlaced : new Phaser.Signal()
 	};
-
+*/
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 
 		preload : function(){
+			//TODO this needs to be gotten from the tools section
+
 			//this is a little funky but it's fine for now
 			this.game.load.image('eraser', 'img/ui/erase.png');
 			//this.game.load.image('single', 'img/ui/single.png');
@@ -46,23 +49,46 @@ MapEditor.Map = function (options) {
 			this.game.stage.backgroundColor ='#545454'; //''
 			this.setup();
 
-			this.events.gameCreated.dispatch(this);
 		}.bind(this)
 	});
 
+	this.listenOutFor = [
+	{
+		event : 'tileSelected',
+		action :'setMarkerFromTile'
+	},
+	{
+		event : 'toolChnaged',
+		action : 'setToolType'
+	},
+	{
+		event : 'tilesetLoaded',
+		action : 'loadTilesetImage'
+	},
+	{
+		event : 'layerCreated',
+		action : 'addLayerToMap'
+	},
+	{
+		event: 'activeLayerSet',
+		action : 'setActiveLayer'
+	}
+	];
+
+	this.parent.Intercom.setupListeners(this);
 	return this;
 };
 
 MapEditor.Map.prototype = {
 
 	setup : function(){
-		this.getContainerOffset();
 		this.drawGrid();
 		this.setupMouse();
 		this.marker = this.game.add.sprite(0,0,'');
 		this.marker.tilesetId = 0;
-		this.layers ={};
+
 		this.layersGroup =  this.game.add.group();
+		this.EventEmitter.trigger('gridReadyForLayers');
 	},
 
 	/*
@@ -90,152 +116,17 @@ MapEditor.Map.prototype = {
 		}
 	},
 
-	/*
-	 * Makes the tiles (id and location data) into an array
-	 * */
-	makeTiles : function(layer){
-		var r = 0;
-		var i = 0;
-		while(r < this.tilesy){
-			var c = 0;
-			while(c < this.tilesx){
-				layer.tiles[i] = {
-					x : c*this.tilewidth+this.loc[0],
-					y : r*this.tileheight+this.loc[1],
-					id : i,
-					row : c,
-					col : r,
-					loc : c+'-'+r,
-					tilesetId : 0
-				};
-				c++;
-				i++;
-			}
-			r++;
-		}
-	},
-
-	loadLayers : function(map){
-		this.layers ={};// this effictivly deletes the "base" layer that was added on create. There would not be anything in it so it shouldn't hurt anything
-		var len = map.tilemap.layers.length;
-		var layers = map.tilemap.layers;
-		for(var j = 0; j < len; j++){
-			this.loadLayer(layers[j], map.layers[layers[j].name]);
-		}
-		//set the order
-		var tempArr = [];
-		for(var l in this.layers){
-			tempArr.push([l,this.layers[l].order]);
-		}
-		tempArr.sort(function(a,b){return a[1]-b[1];});
-
-		var orderArr = [];
-
-		for(var i = 0; i < tempArr.length; i++){
-			orderArr.push(tempArr[0]);
-		}
-
-		this.orderLayers(orderArr);
-		//then get
-		this.makeLayerActive(layers[0].name);
-	},
-
-	loadLayer : function(layer, layerinfo){
-		this.createLayer(layerinfo.name,layerinfo.id);
-		this.layers[layerinfo.id].order = layerinfo.order;
-		var data = layer.data;
-		for(var i = 0; i < data.length; i++){
-			var id = data[i];
-			var t = this.layers[layer.name].tiles[i];
-			t.tilesetId = id;
-			if(id !== 0){
-				//frame starts with 0 first item
-				/*******
-				 * WRONG DO NOT CALL LE FROM INSIDE
-				 */
-				if(GameMaker.LE.tileset.tiles[id-1]){
-					t.sprite = this.game.add.sprite(t.x,t.y,GameMaker.LE.tileset.name, GameMaker.LE.tileset.tiles[id-1].frame);
-					this.layers[layerinfo.id].add(t.sprite);
-				}
-			}
-		}
-	},
-
-	/*
-	 * Creates a layer... possible even have a layer class in the future
-	 */
-	createLayer : function(name, id){
-		//pushes the order of every one of them down
-		var highest = 0;
-		for(var layer in this.layers){
-			if(this.layers[layer].order > highest) {
-				highest = 	this.layers[layer].order+1;
-			}
-		}
-		this.layers[id] = this.layersGroup.add(this.game.add.group());
-		this.layers[id].tiles = {};
-		this.makeTiles(this.layers[id]);
-		this.makeLayerActive(this.layers[id]);
-		this.layers[id].name = name;
-		this.layers[id].order = highest;
-
-		 this.events.layerAdded.dispatch({name:name,id:id});
-	},
-
-	//make layer active
-	makeLayerActive : function(layer){
-		if(typeof layer === 'string'){
-			layer = this.layers[layer];
-		}
+	setActiveLayer : function(layer){
+		console.log(layer);
 		this.activeLayer = layer;
 	},
 
-	//Show Hid layer
-	toggleLayer : function(layer){
-		if(typeof layer === 'string'){
-			layer = this.layers[layer];
+	addLayerToMap : function(t){
+		if(!this.layers){
+			this.layers = {};
 		}
 
-		if(layer.visible){
-			layer.visible = false;
-		} else {
-			layer.visible = true;
-		}
-  },
-
-	renameLayer : function(layer, newName){
-		if(typeof layer === 'string'){
-			layer = this.layers[layer];
-		}
-
-		layer.name = newName;
-	},
-
-	//orders the layers by id or actall object. order is an array
-	orderLayers : function(order){
-		var o = order.length;
-		for(var i =0; i < order.length; i++){
-			var layer = order[i];
-			if(typeof  layer === 'string'){
-				layer = this.layers[layer];
-			}
-			if(typeof layer !== 'undefined'){
-				layer.order = o;
-				this.layersGroup.sendToBack(layer);
-				o--;
-			}
-		}
-	},
-
-	deleteLayer : function(layer){
-		console.log(layer);
-		if(typeof layer === 'string'){
-			layer = this.layers[layer];
-		}
-		console.log(layer);
-		this.layersGroup.remove(layer,true);
-
-
+		this.layers[t.id] = this.layersGroup.add(this.game.add.group());
 	},
 
 	/*
@@ -278,7 +169,7 @@ MapEditor.Map.prototype = {
 	 */
 	setSpriteOfActiveTileFromMarker : function(){
 		this.activeTile.sprite = this.game.add.sprite(this.marker.x,this.marker.y,this.marker.key,this.marker.frame);
-		this.activeLayer.add(this.activeTile.sprite);
+	//	this.activeLayer.add(this.activeTile.sprite);
 	},
 
 	/*
@@ -364,12 +255,12 @@ MapEditor.Map.prototype = {
 		}
 	},
 
-	loadTileset : function(t){
+
+	loadTilesetImage : function(t){
 		this.spritesheet = this.game.load.spritesheet(t.name,t.image,t.tilewidth,t.tileheight);
 
 		this.spritesheet.onLoadComplete.add(function(){
-			//Don't make the tileset box until the image is loaded
-			this.events.tilesetLoaded.dispatch();
+			this.EventEmitter.trigger('tilesetImageLoadedInGrid', [this]);
 		}, this);
 
 
@@ -397,14 +288,15 @@ MapEditor.Map.prototype = {
 		this.marker.width = this.tilewidth;
 		this.marker.height = this.tileheight;
 
-		this.events.toolChanged.dispatch(this.toolType);
+		//this.events.toolChanged.dispatch(this.toolType);
 	},
 
-	setMarker : function(t){
-		console.log(t);
-	  if(this.toolType !== 'fill'){
+	setMarkerFromTile : function(t){
+
+		if(this.toolType !== 'fill'){
 			this.setToolType('single');
 		}
+
 		//only fill will keep the marker
 		this.marker.destroy();
 		this.marker = this.game.add.sprite(0,0, t.name, t.selectedTile.frame*1);
@@ -421,25 +313,6 @@ MapEditor.Map.prototype = {
 		} else {
 			return false;
 		}
-	},
-
-	getContainerOffset : function(){
-		//this breaks some of the game aspect
-		if(this.container) {
-			var e = document.getElementById(this.container);
-			var o = e.getBoundingClientRect();
-			this.offsetx = o.left;
-			this.offsety = o.top;
-		}
-	},
-
-	scaleTo : function(scale){
-			//scale is a # that is a %
-			var decScale = Number(scale)/100;
-			this.game.scale.maxWidth = this.baseWidth*decScale;
-			this.game.scale.maxHeight = this.baseHeight*decScale;
-			this.game.scale.refresh();
-			this.scale = decScale;
 	},
 
 	//Places the trigger

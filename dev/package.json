@@ -21,6 +21,6 @@
     "multer":"*",
     "nedb":"*",
     "sanitize-filename":"*",
-    "handlebars":"*"
+    "handlebars":"*",
    }
 }

@@ -1,6 +1,7 @@
 UI = function(options){
 	options = options || {};
-	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Intercom = options.Intercom;
+	this.EventEmitter = this.Intercom.EventEmitter;
 	this.Views = UI.Views;
 	this.Actions = new UI.Actions(this);
 	this.LaunchPad = new UI.LaunchPad(this);
@@ -59,7 +60,7 @@ UI.prototype = {
 
 	//This is a helper to collect form content
 	//forms can be an array of element id or the name of the parent container
-	collect : function(forms,next,useIds){
+	collect : function(forms,next,useIds, emit){
 		var data = {};
 		var use = 'name';
 		if(useIds === true){
@@ -76,8 +77,11 @@ UI.prototype = {
 				data[$('#'+e).attr(use)] = $('#'+e).val();
 			});
 		}
-
-		this.Actions[next](data);
+		if(emit === true) {
+			this.EventEmitter.trigger(next,[data]);
+		} else {
+			this.Actions[next](data);
+		}
 	},
 
 	processData : function(){
