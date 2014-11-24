@@ -1,5 +1,5 @@
-LevelEditor.Grid = function (options) {
-	
+MapEditor.Map = function (options) {
+
 	options = options || {};
 	this.container = options.container;
 	this.linecolor = options.line || 0x000000;
@@ -15,7 +15,7 @@ LevelEditor.Grid = function (options) {
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
 	this.toolType = 'single';
-	
+
 	this.events = {
 		gameCreated  : new Phaser.Signal(),
 		toolChanged : new Phaser.Signal(),
@@ -24,10 +24,10 @@ LevelEditor.Grid = function (options) {
 		triggerPlaced : new Phaser.Signal(),
 		spritePlaced : new Phaser.Signal()
 	};
-        
+
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
-		
+
 		preload : function(){
 			//this is a little funky but it's fine for now
 			this.game.load.image('eraser', 'img/ui/erase.png');
@@ -38,63 +38,63 @@ LevelEditor.Grid = function (options) {
 			this.game.load.image('sprite','img/ui/sprite.png');
 
 		},
-		
+
 		create:function(){
 			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 			this.game.scale.setScreenSize();
 			this.game.stage.backgroundColor ='#545454'; //''
-			this.setup();	
-			
-			this.events.gameCreated.dispatch(this);	
+			this.setup();
+
+			this.events.gameCreated.dispatch(this);
 		}.bind(this)
 	});
-    
+
 	return this;
 };
 
-LevelEditor.Grid.prototype = {
-	
+MapEditor.Map.prototype = {
+
 	setup : function(){
 		this.getContainerOffset();
 		this.drawGrid();
 		this.setupMouse();
 		this.marker = this.game.add.sprite(0,0,'');
-		this.marker.tilesetId = 0;		
+		this.marker.tilesetId = 0;
 		this.layers ={};
 		this.layersGroup =  this.game.add.group();
 	},
-	
+
 	/*
 	 * Draws the grid
-	 */	 
+	 */
 	drawGrid : function(){
-	  
+
 		this.gridImage = this.game.add.graphics(0, 0);  //init rect
 		this.gridImage.lineStyle(1, this.linecolor, 1); // width, color (0x0000FF), alpha (0 -> 1) // required settings
 		this.gridImage.drawRect(this.loc[0],this.loc[1], this.tilesx*this.tilewidth,this.tilesy*this.tileheight);
-	
-		var r = 0;	
+
+		var r = 0;
 		var c = 0;
-	 
+
 		while(r <= this.tilesx){
 			this.gridImage.moveTo(this.loc[0]+(this.tilewidth*r), this.loc[1]); // x, y
 			this.gridImage.lineTo(this.loc[0]+(this.tilewidth*r), this.tileheight*(this.tilesy)+this.loc[1]);
 			r++;
-		}  
-	  
+		}
+
 		while(c <= this.tilesy){
 			this.gridImage.moveTo(this.loc[0], this.loc[1]+(this.tileheight*c)); // x, y
 			this.gridImage.lineTo(this.tilewidth*(this.tilesx)+this.loc[0],this.loc[1]+(this.tileheight*c));
 			c++;
-		}	  	  
+		}
 	},
-	
+
 	/*
 	 * Makes the tiles (id and location data) into an array
-	 * */	 
+	 * */
 	makeTiles : function(layer){
-		var r = 0;	
+		var r = 0;
 		var i = 0;
 		while(r < this.tilesy){
 			var c = 0;
@@ -114,7 +114,7 @@ LevelEditor.Grid.prototype = {
 			r++;
 		}
 	},
-	
+
 	loadLayers : function(map){
 		this.layers ={};// this effictivly deletes the "base" layer that was added on create. There would not be anything in it so it shouldn't hurt anything
 		var len = map.tilemap.layers.length;
@@ -126,20 +126,20 @@ LevelEditor.Grid.prototype = {
 		var tempArr = [];
 		for(var l in this.layers){
 			tempArr.push([l,this.layers[l].order]);
-		}		
+		}
 		tempArr.sort(function(a,b){return a[1]-b[1];});
-		
+
 		var orderArr = [];
-		
+
 		for(var i = 0; i < tempArr.length; i++){
 			orderArr.push(tempArr[0]);
 		}
-		
+
 		this.orderLayers(orderArr);
-		//then get 
-		this.makeLayerActive(layers[0].name);	
+		//then get
+		this.makeLayerActive(layers[0].name);
 	},
-	
+
 	loadLayer : function(layer, layerinfo){
 		this.createLayer(layerinfo.name,layerinfo.id);
 		this.layers[layerinfo.id].order = layerinfo.order;
@@ -148,7 +148,7 @@ LevelEditor.Grid.prototype = {
 			var id = data[i];
 			var t = this.layers[layer.name].tiles[i];
 			t.tilesetId = id;
-			if(id !== 0){				
+			if(id !== 0){
 				//frame starts with 0 first item
 				/*******
 				 * WRONG DO NOT CALL LE FROM INSIDE
@@ -160,7 +160,7 @@ LevelEditor.Grid.prototype = {
 			}
 		}
 	},
-	
+
 	/*
 	 * Creates a layer... possible even have a layer class in the future
 	 */
@@ -178,10 +178,10 @@ LevelEditor.Grid.prototype = {
 		this.makeLayerActive(this.layers[id]);
 		this.layers[id].name = name;
 		this.layers[id].order = highest;
-				 
-		 this.events.layerAdded.dispatch({name:name,id:id});			
+
+		 this.events.layerAdded.dispatch({name:name,id:id});
 	},
-	  
+
 	//make layer active
 	makeLayerActive : function(layer){
 		if(typeof layer === 'string'){
@@ -189,13 +189,13 @@ LevelEditor.Grid.prototype = {
 		}
 		this.activeLayer = layer;
 	},
-	
+
 	//Show Hid layer
 	toggleLayer : function(layer){
 		if(typeof layer === 'string'){
 			layer = this.layers[layer];
 		}
-		
+
 		if(layer.visible){
 			layer.visible = false;
 		} else {
@@ -207,7 +207,7 @@ LevelEditor.Grid.prototype = {
 		if(typeof layer === 'string'){
 			layer = this.layers[layer];
 		}
-		
+
 		layer.name = newName;
 	},
 
@@ -226,7 +226,7 @@ LevelEditor.Grid.prototype = {
 			}
 		}
 	},
-	
+
 	deleteLayer : function(layer){
 		console.log(layer);
 		if(typeof layer === 'string'){
@@ -234,8 +234,8 @@ LevelEditor.Grid.prototype = {
 		}
 		console.log(layer);
 		this.layersGroup.remove(layer,true);
-		
-						
+
+
 	},
 
 	/*
@@ -250,21 +250,21 @@ LevelEditor.Grid.prototype = {
 			}
 		}
 	},
-	
+
 	/*
 	 * Sets the active Tile
 	 * * This name should be moveMarkerToTileFromPoint
-	 */	 
+	 */
 	setActiveTileFromPoint : function(point){
 		var t = this.getTileFromPoint(point);
 		if(t){
 			this.activeTile = t;
 			this.marker.x = t.x;
 			this.marker.y = t.y;
-		} 
+		}
 		return this.activeTile;
 	},
-	
+
 	/*
 	 * Uses the activeTile to set the tileset ID
 
@@ -272,15 +272,15 @@ LevelEditor.Grid.prototype = {
 	setTileIdOfActiveTileFromMarker : function(){
 		this.activeTile.tilesetId = this.marker.tilesetId;
 	},
-	
+
 	/*
-	 * Uses the active tile and marker sprite to place a sprite on the 
-	 */	  
+	 * Uses the active tile and marker sprite to place a sprite on the
+	 */
 	setSpriteOfActiveTileFromMarker : function(){
 		this.activeTile.sprite = this.game.add.sprite(this.marker.x,this.marker.y,this.marker.key,this.marker.frame);
 		this.activeLayer.add(this.activeTile.sprite);
 	},
-	
+
 	/*
 	 * combines the id and sprite
 	 */
@@ -297,35 +297,35 @@ LevelEditor.Grid.prototype = {
 			if(this.activeTile.sprite){
 				this.activeTile.sprite.destroy();
 			}
-		}	
-		
-		this.activeTile.tilesetId = 0;	
+		}
+
+		this.activeTile.tilesetId = 0;
 	},
-	
+
 	setupMouse : function(){
 		this.game.input.mouse.mouseMoveCallback = function(c){
 			var p = {
 				x : c.offsetX/this.scale,
 				y : c.offsetY/this.scale
 			};
-			
+
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
 				if(this.game.input.activePointer.isDown){
-					
+
 					if(c.which === 1){
-					
+
 						if(this.toolType === 'eraser'){
 							this.unsetActiveTile();
 						} else if(this.toolType === 'single') {
 							this.setActiveTileFromMarker();
-						} 
-											
+						}
+
 					}
 				}
 			}
 		}.bind(this);
-	
+
 		this.game.input.mouse.mouseDownCallback = function(c){
 			var p = {
 				x : c.offsetX/this.scale,
@@ -333,9 +333,9 @@ LevelEditor.Grid.prototype = {
 			};
 			if(this.inGrid(p)){
 				this.setActiveTileFromPoint(p);
-				
+
 				if(c.which === 1){
-					
+
 						if(this.toolType === 'eraser'){
 							this.unsetActiveTile();
 						} else if(this.toolType === 'single') {
@@ -344,12 +344,12 @@ LevelEditor.Grid.prototype = {
 							this.placeTrigger();
 						} else if(this.toolType === 'sprite'){
 							this.placeSprite();
-						}											
+						}
 				}
 			}
 		}.bind(this);
 	},
-	
+
 	destroy : function(){
 		for(var g in this.layers){
 			this.layers[g].destroy();
@@ -363,27 +363,27 @@ LevelEditor.Grid.prototype = {
 			this.game.destroy();
 		}
 	},
-	
+
 	loadTileset : function(t){
 		this.spritesheet = this.game.load.spritesheet(t.name,t.image,t.tilewidth,t.tileheight);
-	
+
 		this.spritesheet.onLoadComplete.add(function(){
-			//Don't make the tileset box until the image is loaded	
+			//Don't make the tileset box until the image is loaded
 			this.events.tilesetLoaded.dispatch();
 		}, this);
-		
-		
+
+
 		this.spritesheet.start();
 	},
-	
+
 	setToolType : function(t){
 		/*
-		 * t will be 
+		 * t will be
 		 * 'single' -single tile
 		 * 'eraser'= erases tiles only.
 		 * 'fill' = fills the whole layer with one tile
 		 * 'sprite' = adds a sprite popup or it is a sprite image .. that's probaby the one
-		 * 'selector' = will select information like if a sprite is in the grid or 
+		 * 'selector' = will select information like if a sprite is in the grid or
 		 * "trigger" = will add a trigger popup
 		 */
 
@@ -396,10 +396,10 @@ LevelEditor.Grid.prototype = {
 		}
 		this.marker.width = this.tilewidth;
 		this.marker.height = this.tileheight;
-		 
+
 		this.events.toolChanged.dispatch(this.toolType);
 	},
-	
+
 	setMarker : function(t){
 		console.log(t);
 	  if(this.toolType !== 'fill'){
@@ -409,9 +409,9 @@ LevelEditor.Grid.prototype = {
 		this.marker.destroy();
 		this.marker = this.game.add.sprite(0,0, t.name, t.selectedTile.frame*1);
 		this.marker.tilesetId = t.selectedTile.id;
-		
+
 	},
-	
+
 	/*
 	 * Checks to see if point is in the grid
 	 */
@@ -420,11 +420,11 @@ LevelEditor.Grid.prototype = {
 			return true;
 		} else {
 			return false;
-		}	
+		}
 	},
-	
+
 	getContainerOffset : function(){
-		//this breaks some of the game aspect 
+		//this breaks some of the game aspect
 		if(this.container) {
 			var e = document.getElementById(this.container);
 			var o = e.getBoundingClientRect();
@@ -432,7 +432,7 @@ LevelEditor.Grid.prototype = {
 			this.offsety = o.top;
 		}
 	},
-	
+
 	scaleTo : function(scale){
 			//scale is a # that is a %
 			var decScale = Number(scale)/100;
@@ -441,25 +441,25 @@ LevelEditor.Grid.prototype = {
 			this.game.scale.refresh();
 			this.scale = decScale;
 	},
-	
+
 	//Places the trigger
 	placeTrigger : function(){
 		console.log(this.activeTile);
 		var loc = '';//get active tile location
 		this.events.triggerPlaced.dispatch(loc);
-		
+
 		//TODO this may need to be moved at some point in time
 		//this.triggers.create();
 	},
-	
+
 	placeSprite : function(){
 		console.log(this.activeTile);
 		var loc = '';//get active tile location
 		this.events.spritePlaced.dispatch(loc);
-		
+
 		//TODO this may need to be moved at some point in time
 		//this.triggers.create();
 	},
 };
 
-LevelEditor.Grid.prototype.constructor = LevelEditor.Grid;
+MapEditor.Map.prototype.constructor = MapEditor.Map;

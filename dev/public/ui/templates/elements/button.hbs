@@ -1,1 +1,2 @@
-<a type='button' class='btn btn-{{option}} btn-{{size}} {{class}}' id='{{id}}'>{{text}}</a>
+<a type='button' class='btn btn-{{#if option}}{{option}}{{else}}default{{/if}}
+  {{#if size}}btn-{{size}}{{/if}} {{class}}' id='{{id}}' {{> attribs}} >{{text}}</a>

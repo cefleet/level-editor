@@ -4,7 +4,6 @@ UI = function(options){
 	this.Views = UI.Views;
 	this.Actions = new UI.Actions(this);
 	this.LaunchPad = new UI.LaunchPad(this);
-  //views are added by handlebars/grunt
 
   this.start();
   return this;
@@ -13,11 +12,8 @@ UI = function(options){
 UI.prototype = {
 
   start : function(){
-		//the simplest launcher
-		this.launch('navbar');
-
-		//This is an example of launching on element with a different lanucher
-	//	this.launch('modal',null,'newMap');
+		//launches always happen from actions or lauchers
+		this.Actions.loadContainers();
   },
 
 	/*
@@ -39,21 +35,25 @@ UI.prototype = {
 			throw "There is no view named "+view;
 		}
 
-		callback = callback || function(options, newInto){
-			newInto = newInto || into;
-			$(newInto).append(this.Views[view](options));
+		var launch = function(options,into){
+			if(typeof into === 'string'){
+				into = '#'+into.replace('#',''); //this seems reduntant but it removes a has if there is one and adds it back
+			}
+			$(into).append(this.Views[view](options));
 			if(typeof this.LaunchPad['_'+launcher] ==='function'){
 				this.LaunchPad['_'+launcher]();
 			}
 		}.bind(this);
 
+		callback = callback || function(options, newInto){
+			into = newInto || into;
+			launch(options, into);
+		}.bind(this);
+
 		if(typeof this.LaunchPad[launcher] === 'function'){
 			this.LaunchPad[launcher](callback,into);
 		} else {
-			$(into).append(this.Views[view]());
-			if(typeof this.LaunchPad['_'+view] ==='function'){
-				this.LaunchPad['_'+launcher]();
-			}
+			launch(null,into);
 		}
 	},
 

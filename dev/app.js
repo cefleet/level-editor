@@ -12,7 +12,7 @@ var fs = require('fs');
 
 /********************************************
  * Setup Items
- ********************************************/ 
+ ********************************************/
 app.use(session({secret: 'Iamsgoing45ferfIfoyrt435fe4eDF34f'}));
 
 app.use(bodyParser.urlencoded({
@@ -25,9 +25,9 @@ db.users = new Datastore({ filename: 'data/users.db', autoload: true });
 db.maps = new Datastore({ filename: 'data/maps.db', autoload: true });
 
 var staticMiddleware = express.static(__dirname+'/public');
-app.use 
+//app.use 
  /********************************************************
-  * FUNCTIONS 
+  * FUNCTIONS
   ********************************************************/
 
 //This is syroncus I know I shall fix it
@@ -47,7 +47,7 @@ function ensureAuthenticated(req, res, next) {
  *****************************************************/
 //possibly app.use('/upload/', multer( ...
 app.use(multer(
-	{ 
+	{
 		dest: './uploads/',
 		onParseEnd: function (req,next) {
 			//sanitize the name
@@ -63,10 +63,10 @@ app.use(multer(
 				owner : req.session.user_id,
 				shared : 	(req.body.shared === "true") //not too sure about this
 			}
-			
+
 			//first check to see if tileset name is already there for that owner
 			db.tilesets.find({name : save.name, owner : save.owner}, function(err,docs){
-				
+
 				if(docs.length < 1){
 					db.tilesets.insert(save, function (err, newDoc){
 						//TODO should add a callback
@@ -102,7 +102,7 @@ app.post('/save_map', ensureAuthenticated, function(req,res){
 			db.maps.insert(save, function (err, newDoc){
 				//TODO should add a callback
 				console.log('Created New Map');
-			});	
+			});
 		} else {
 			db.maps.update({id:save.id}, save,{}, function(err){
 				console.log('Updated Map');
@@ -114,7 +114,7 @@ app.post('/save_map', ensureAuthenticated, function(req,res){
 /**********************************************************
  *Default  Database items
  *******************************************************/
- 
+
 var sampleTileset = {
 	image : 'img/sampletileset.png',
 	imageheight : 1024,
@@ -124,7 +124,7 @@ var sampleTileset = {
 	tileheight : 32,
 	collision : [],
 	owner : 'admin',
-	shared : true	
+	shared : true
 }
 
 //creates sample tileset
@@ -145,7 +145,7 @@ var sampleUser = {
 
 db.users.find({username :'admin'}, function(err,docs){
 	if(docs.length < 1){
-	  var ePassword = encryptPassword(sampleUser.password);	 
+	  var ePassword = encryptPassword(sampleUser.password);
     sampleUser.password = ePassword;
 		db.users.insert(sampleUser, function (err, newDoc){
 			console.log('Created Sample User');
@@ -163,7 +163,7 @@ app.post('/login', function (req, res) {
    db.users.find({username : post.username}, function(err,docs){
 		//user has been found
 		if(docs.length > 0){
-			var ePassword = encryptPassword(post.password);      
+			var ePassword = encryptPassword(post.password);
 			if(ePassword === docs[0].password){
 				req.session.user_id = docs[0]._id;
 				req.session.username = docs[0].username;
@@ -175,7 +175,7 @@ app.post('/login', function (req, res) {
 		} else {
 			res.redirect('/login');
 		}
-	});   
+	});
 });
 
 app.get('/login', function(req,res){
@@ -187,7 +187,7 @@ app.get('/login', function(req,res){
  * **************************************************/
 app.post('/add_user', function(req,res){
 	var post = req.body;
-	db.users.find({username : post.username}, function(err,docs){		
+	db.users.find({username : post.username}, function(err,docs){
 		if(docs.length > 0){
 			res.send('Already a user with that name');
 		} else {
@@ -224,7 +224,7 @@ app.get('/add_user', function(req,res){
  app.get('/loading', ensureAuthenticated, function(req,res, next){
 	var data = {};
 	console.log(req.session.user_id);
-	db.tilesets.find({$or : [{owner : req.session.user_id}, {shared : true}]}, function(err,docs){	
+	db.tilesets.find({$or : [{owner : req.session.user_id}, {shared : true}]}, function(err,docs){
 		data.Tilesets = docs;
 		db.maps.find({owner : req.session.user_id},function(err,docs){
 			data.Maps = docs;
@@ -235,7 +235,7 @@ app.get('/add_user', function(req,res){
 
 /***********************
  * Static files
- *****************************/ 
+ *****************************/
 app.use('/',ensureAuthenticated, function(req,res,next){
    staticMiddleware(req, res, next);
 });

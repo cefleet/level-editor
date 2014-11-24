@@ -1,0 +1,29 @@
+UI.LaunchPad.prototype.launchToolPanel = function(callback){
+  var tabs = {
+    id : 'toolTabs',
+    tab : [
+    {
+      tabClass : 'active',
+      title : 'Tileset',
+      id : 'toolsTilesetContainer',
+      paneClass : 'active',
+      content :this.parent.Views.div({id:"tileset"})
+    },
+    {
+      title : 'Toolset',
+      id : 'toolsToolsetContainer',
+      content :'<div>ToolSets!</div>'
+    },
+    ]
+  };
+
+  var panel = {
+    head : 'Tools',
+    content : this.parent.Views.tabs(tabs)
+  };
+  callback(panel);
+};
+
+UI.LaunchPad.prototype._launchToolPanel = function(){
+
+};

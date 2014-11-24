@@ -1,4 +1,4 @@
-LevelEditor.Tileset = function (options) {
+MapEditor.Tileset = function (options) {
 	//With these changes
 	options = options || {};
 	this.container = options.container;
@@ -20,7 +20,7 @@ LevelEditor.Tileset = function (options) {
 		tileSelected : new Phaser.Signal(),
 		gameCreated  : new Phaser.Signal()
 	};
-	
+
 	if(!options.id) {
 	  console.log('There seems to be a problem with the option id');
 	} else {
@@ -28,40 +28,38 @@ LevelEditor.Tileset = function (options) {
 		this.id = options.id;
 	}
 
-	//this.id = options.id || $uid();
-	
 	this.game = new Phaser.Game(this.imagewidth+(this.imagewidth/this.tilewidth),this.imageheight+(this.imageheight/this.tileheight), Phaser.CANVAS,this.container, {
-		create:function(){	
+		create:function(){
 			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 			this.game.stage.backgroundColor ='#000000';
 			this.events.tilesetImageLoaded.dispatch(this);
 			this.spritesheet = this.game.load.spritesheet(this.name,this.image,this.tilewidth,this.tileheight);
-			this.setup();	
-			this.events.gameCreated.dispatch(this);		
+			this.setup();
+			this.events.gameCreated.dispatch(this);
 		}.bind(this)
-	});	
+	});
 
 	return this;
 };
 
-LevelEditor.Tileset.prototype = {
-	
+MapEditor.Tileset.prototype = {
+
 	/* creates the tilsets
 	 */
 	create : function(){
 
 		this.tileGroup = this.game.add.group();
 
-		
+
 		var rows= this.imageheight/this.tileheight;
-		var cols = this.imagewidth/this.tilewidth;  
-  
+		var cols = this.imagewidth/this.tilewidth;
+
 		var t = cols*rows;
 		var x;
 		var y;
-		var r = 0;		
+		var r = 0;
 		var c = 0;
-		for(var i = 0; i < t; i++){ 
+		for(var i = 0; i < t; i++){
 			if(c >= cols){
 				c = 0;
 				r++;
@@ -74,19 +72,19 @@ LevelEditor.Tileset.prototype = {
 			this.tileGroup.add(this.tiles[i]);
 			c++;
 		}
-		this.loaded = true;	
+		this.loaded = true;
 		this.onLoad();
 	},
-	
+
 	destroy : function(){
-		
+
 		if(this.tileGroup){
 			this.tileGroup.destroy();
-		}			
-		
+		}
+
 		this.game.destroy();
 	},
-	
+
 	/*
 	 * Selects the tile
 	 */
@@ -94,22 +92,22 @@ LevelEditor.Tileset.prototype = {
 		this.selectedTile = item;
 		this.events.tileSelected.dispatch(this);
 	},
-	
+
 	/*
 	 * run once loaded. Should be overwritten
 	 * kinda gheto hqackish
 	 */
 	onLoad : function(){
-		
+
 	},
-	
+
 	setup : function(){
 		this.spritesheet.onLoadComplete.add(function(){
-			//Don't make the tileset box until the image is loaded		
+			//Don't make the tileset box until the image is loaded
 			this.create();
 		}, this);
 		this.spritesheet.start();
 	}
 };
 
-LevelEditor.Tileset.prototype.constructor = LevelEditor.Tileset;
+MapEditor.Tileset.prototype.constructor = MapEditor.Tileset;

@@ -1,0 +1,11 @@
+<ul class='nav nav-tabs class={{class}}' role='tablist' id="{{id}}">
+{{#each tab}}
+  <li class='{{tabClass}}' role='presentation'>
+    <a href='#{{id}}' data-toggle='tab' aria-controls='{{id}}'>{{title}}</a>
+  </li>
+{{/each}}
+</ul>
+<div class='tab-content'>
+{{#each tab}}
+  <div role='tabpanel' class='tab-pane {{paneClass}}' id={{id}}>{{{content}}}</div>
+{{/each}}

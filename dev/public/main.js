@@ -4,10 +4,10 @@ document.addEventListener( "DOMContentLoaded", function(){
 	GameMaker.EventEmitter = new EventEmitter();
 
 	//creates the level editor
-	GameMaker.LE = new LevelEditor({
+	GameMaker.ME = new MapEditor({
 		main : 'gameBG',
-		grid : 'gameGrid',
-		tileset : 'gameTileset',
+		grid : 'grid',
+		tileset : 'tileset',
 		EventEmitter : GameMaker.EventEmitter
 	});
 

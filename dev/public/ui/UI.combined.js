@@ -1,3 +1,149 @@
+UI = function(options){
+	options = options || {};
+	this.EventEmitter = options.EventEmitter || new EventEmitter();
+	this.Views = UI.Views;
+	this.Actions = new UI.Actions(this);
+	this.LaunchPad = new UI.LaunchPad(this);
+
+  this.start();
+  return this;
+};
+
+UI.prototype = {
+
+  start : function(){
+		//launches always happen from actions or lauchers
+		this.Actions.loadContainers();
+  },
+
+	/*
+		This is essentially the view launcher. What it does is it looks to see if there
+		is a function with the name view in the Launchpad. If there is then it executes that and does the callback
+		the default callback simply appends the output of the view with options recived from the launchpad. After that it checks to see if
+		there is a '_' function of the view. If so then it exicutes that. The _ function of the view name
+		mainly is to setup listners.
+		the launchpad returns options (or not) for the view and then can change where the view launches into.
+		You can also launch a view using a different launcher
+	*/
+	launch : function(view,into,launcher,callback,working){
+		into = into || document.body;
+		launcher = launcher || view;
+		working = working || false; //doesn't do anything yet
+
+		//If there is no view with that name this this function shall not pass
+		if(typeof this.Views[view] !== 'function'){
+			throw "There is no view named "+view;
+		}
+
+		var launch = function(options,into){
+			if(typeof into === 'string'){
+				into = '#'+into.replace('#',''); //this seems reduntant but it removes a has if there is one and adds it back
+			}
+			$(into).append(this.Views[view](options));
+			if(typeof this.LaunchPad['_'+launcher] ==='function'){
+				this.LaunchPad['_'+launcher]();
+			}
+		}.bind(this);
+
+		callback = callback || function(options, newInto){
+			into = newInto || into;
+			launch(options, into);
+		}.bind(this);
+
+		if(typeof this.LaunchPad[launcher] === 'function'){
+			this.LaunchPad[launcher](callback,into);
+		} else {
+			launch(null,into);
+		}
+	},
+
+	//This is a helper to collect form content
+	//forms can be an array of element id or the name of the parent container
+	collect : function(forms,next,useIds){
+		var data = {};
+		var use = 'name';
+		if(useIds === true){
+			use = 'id';
+		}
+
+		if(typeof forms === 'string'){
+			$('#'+forms+' :input').each(function(){
+				data[$(this).attr(use)] = $(this).val();
+			});
+		} else if(Array.isArray(forms)){
+			//TODO I may want to check to see if it is a DOM element
+			forms.forEach(function(e){
+				data[$('#'+e).attr(use)] = $('#'+e).val();
+			});
+		}
+
+		this.Actions[next](data);
+	},
+
+	processData : function(){
+		console.log(this.data);
+	}
+};
+
+UI.prototype.constructor = UI;
+
+UI.Actions = function(parent){
+
+	this.parent = parent  || {};
+	this.Views = UI.Views;
+	return this;
+};
+
+UI.Actions.prototype.createMap = function(data){
+  this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
+  //this.parent.launch('panel','sidePanel', 'launchToolPanel');
+
+  $('#mainModal').modal('hide');
+
+  var tileset;
+  for(var i = 0; i < this.parent.data.Tilesets.length; i++){
+    if(this.parent.data.Tilesets[i]._id === data.tilesetId){
+      tileset = this.parent.data.Tilesets[i];
+    }
+  }
+  tileset.id = tileset._id;
+  tileset.container = 'tileset';
+  var send = [
+  data.name,
+  {
+    tilesx : Number(data.tilesx),
+    tilesy : Number(data.tilesy),
+    tilewidth : tileset.tilewidth, //TODO make these not needed
+    tileheight : tileset.tileheight //TODO make these not needed
+  },
+  tileset
+  ];
+
+    //This sends out the event so the editor can begin its work
+  this.parent.EventEmitter.trigger('createMap',send);
+};
+
+UI.Actions.prototype.loadContainers = function(){
+  this.parent.launch('navbar');
+  this.parent.launch('mainBody');
+};
+
+UI.Actions.prototype.loadMap = function(){
+  console.log('Launch Load Map Modal');
+};
+
+UI.Actions.prototype.newMap = function(){
+  this.parent.launch('modal', null, 'newMap');
+};
+
+UI.Actions.prototype.newTileset = function(){
+  console.log('Create New Tileset');
+};
+
+UI.Actions.prototype.saveMap = function(){
+  console.log('Save The Map');
+};
+
 Handlebars.registerPartial("attribs", Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "  "
@@ -333,3 +479,221 @@ this["UI"]["Views"]["navbar"] = Handlebars.template({"1":function(depth0,helpers
   if (stack1 != null) { buffer += stack1; }
   return buffer + "      </ul>\n    </div>\n  </div>\n</div>\n";
 },"usePartial":true,"useData":true});
+UI.LaunchPad = function(parent){
+  this.parent = parent;
+};
+
+UI.LaunchPad.prototype.constructor = UI.LaunchPad;
+
+UI.LaunchPad.prototype.launchMainPanel = function(callback){
+  //TODO I need the zoom thing as well
+  var sidebarButton = {
+    option : 'primary',
+    size : 'sm',
+    id : 'toggleSidebar',
+    text : 'Side Panel'
+  };
+
+  var panels = this.parent.Views.collapse_panel_group({
+    id : 'sidbarPanel',
+    panel :[
+    {
+      id : 'tilesetContainer',
+      title : 'Tileset',
+      content : this.parent.Views.div({
+        id : 'tileset',
+        attribs : [{
+          key :'style',
+          value:'overflow:auto'
+        }]
+      })
+    },
+    {
+      id : 'toolsContainer',
+      title : 'Tools',
+      content : this.parent.Views.div({
+        id : 'tools',
+        attribs : [{
+          key :'style',
+          value:'overflow:auto'
+        }]
+      })
+    },
+    {
+      id : 'layersContainer',
+      title : 'Layers',
+      content : this.parent.Views.div({
+        id : 'layers',
+        attribs : [{
+          key :'style',
+          value:'overflow:auto'
+        }]
+      })
+    }
+    ]
+  });
+
+  var content =
+  this.parent.Views.div({
+    id: 'sidebarPanel',
+    class:'col-xs-4',
+    attribs : [{
+      key : 'style',
+      value : 'overflow:auto'
+    }],
+    content : panels
+  })+
+  this.parent.Views.div({
+    id: 'mainContentPanel',
+    class:'col-xs-8',
+    attribs : [{
+      key : 'style',
+      value : 'overflow:auto'
+    }],
+    content : this.parent.Views.div({
+      id : 'grid'
+    })
+  });
+
+  var contentOptions = {
+    class: 'col-xs-12',
+    id : 'editorContent',
+    content : content
+  };
+
+  var panel = {
+    head :this.parent.Views.button(sidebarButton),
+    content : this.parent.Views.div(contentOptions)
+  };
+
+  callback(panel);
+};
+
+UI.LaunchPad.prototype._launchMainPanel = function(){
+  $('#toggleSidebar').on('click', function(){
+    $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
+    $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
+  });
+  $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
+  $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
+};
+
+UI.LaunchPad.prototype.navbar = function(callback){
+  var dropdowns = {
+    dropdown : {
+      file : {
+        title : 'File',
+        items : [
+        {title:'New Map',action:'newMap'},
+        {title:'Load Map',action:'loadMap'},
+        {title:'divider'},
+        {title:'Save Map',action:'saveMap', disabled:'disabled'}
+        ]
+      },
+      tilesetOption : {
+        title : 'Tilesets',
+        items : [
+        {title:'New Tileset', action :'newTileset'}
+        ]
+      }
+    }
+  };
+  callback(dropdowns);
+};
+
+//Any link that is a navlink will now trigger the action for now it is
+//setup here but that can be pulled out
+UI.LaunchPad.prototype._navbar = function(){
+  var $this = this;
+  $('.navLink a').each(function(e){
+    var action = $(this).attr('action');
+
+    if(action){
+      //this can be setup in another location
+      if($this.parent.Actions[action]) {
+        //because it launches in actions it needs to bind to it
+        $this.parent.EventEmitter.on(action,
+          $this.parent.Actions[action].bind($this.parent.Actions));
+        } else {
+          console.warn('There is no action associated with the '+action+' listener.'+
+          'If you didn\'t set one up manually this link will do nothing.');
+        }
+
+        $(this).on('click', function(){
+          $this.parent.EventEmitter.trigger(action);
+        });
+      }
+    });
+};
+
+UI.LaunchPad.prototype.newMap = function(callback){
+
+  //TODO this should be pulled from the server most likey
+  var tilesets = this.parent.data.Tilesets;
+  var tilesetOptions = [];
+  for(var i = 0; i < tilesets.length; i++){
+    tilesetOptions.push({
+      title : tilesets[i].name,
+      value : tilesets[i]._id
+    });
+  }
+
+  var formContent = {
+    form : {
+      name : [{
+        id : 'randNameId',
+        name : 'name',
+        title : 'Map Name',
+        placeholder : 'My New Map',
+        value : 'New Map',
+        cols : '6'
+      }],
+      width : [{
+        id : 'randWidthId',
+        name: 'tilesx',
+        title : 'Width(in Tiles)',
+        placeholder : 'Y',
+        value : '16',
+        cols : '2'
+      }],
+      height : [{
+        name : 'tilesy',
+        title : 'Height (In Tiles)',
+        placeholder : 'X',
+        value : '16',
+        cols : '2'
+      }],
+      tileset : [{
+        name : 'tilesetId',
+        title : 'Tileset',
+        cols : '6',
+        option : tilesetOptions
+      }]
+    }
+  };
+
+  var modalContent = {
+    title : 'Create New Map',
+    content : this.parent.Views.create_map_form(formContent),//this is unique to this modal
+    footer : this.parent.Views.button({
+      option :'primary',
+      size:'',
+      class:'',
+      id:'createMap',
+      text : 'Create Map'
+    })
+  };
+
+  callback(modalContent);
+};
+
+UI.LaunchPad.prototype._newMap = function(){
+  $('#mainModal').modal('show');
+  var $this = this;
+  $('#createMap').off('click');//turns it off so you will not have multiple clicks
+  $('#createMap').one('click', function(){
+    $this.parent.collect('createMapForm','createMap');
+  });
+};
+
+//# sourceMappingURL=UI.combined.js.map
