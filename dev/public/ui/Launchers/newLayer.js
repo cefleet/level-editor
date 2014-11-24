@@ -24,16 +24,14 @@ UI.LaunchPad.prototype.newLayer = function(callback){
     })
   };
 
-  console.log('it got to the callback');
   callback(modalContent);
 };
 
 UI.LaunchPad.prototype._newLayer = function(){
-  console.log('it got to the return for the loauncher');
   $('#mainModal').modal('show');
   var $this = this;
   $('#createLayer').off('click');//turns it off so you will not have multiple clicks
   $('#createLayer').one('click', function(){
-    $this.parent.collect('createMapForm','createLayer',false,true);
+    $this.parent.collect('createLayerForm','createLayer');
   });
 };

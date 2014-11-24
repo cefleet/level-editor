@@ -26,35 +26,35 @@ UI.prototype = {
 		the launchpad returns options (or not) for the view and then can change where the view launches into.
 		You can also launch a view using a different launcher
 	*/
-	launch : function(view,into,launcher,callback,working){
+	launch : function(view,into,launcher,data,callback){
 		into = into || document.body;
 		launcher = launcher || view;
-		working = working || false; //doesn't do anything yet
+	//	working = working || false; //doesn't do anything yet
 
 		//If there is no view with that name this this function shall not pass
 		if(typeof this.Views[view] !== 'function'){
 			throw "There is no view named "+view;
 		}
 
-		var launch = function(options,into){
+		var launch = function(options,into,data){
 			if(typeof into === 'string'){
 				into = '#'+into.replace('#',''); //this seems reduntant but it removes a has if there is one and adds it back
 			}
 			$(into).append(this.Views[view](options));
 			if(typeof this.LaunchPad['_'+launcher] ==='function'){
-				this.LaunchPad['_'+launcher]();
+				this.LaunchPad['_'+launcher](data);
 			}
 		}.bind(this);
 
-		callback = callback || function(options, newInto){
+		callback = callback || function(options, newInto,data){
 			into = newInto || into;
-			launch(options, into);
+			launch(options,into,data);
 		}.bind(this);
 
 		if(typeof this.LaunchPad[launcher] === 'function'){
-			this.LaunchPad[launcher](callback,into);
+			this.LaunchPad[launcher](callback,into,data);
 		} else {
-			launch(null,into);
+			launch(null,into,data);
 		}
 	},
 
@@ -113,9 +113,16 @@ UI.Actions = function(parent){
 };
 
 UI.Actions.prototype.addLayerToList = function(layer){
-  console.log(layer);
+  this.parent.launch('li','layers','layerListItem',layer);
 };
 
+UI.Actions.prototype.createLayer = function(data){
+  var send = [
+    data.name
+  ];
+
+  this.parent.EventEmitter.trigger('createLayer',send);
+};
 
 UI.Actions.prototype.createMap = function(data){
   this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
@@ -434,6 +441,25 @@ this["UI"]["Views"]["div"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1
 
 
 
+this["UI"]["Views"]["li"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "id='"
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
+    + "'";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='list-group-item "
+    + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
+    + "' ";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.id : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += ">\n  ";
+  stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\n</li>\n";
+},"useData":true});
+
+
+
 this["UI"]["Views"]["modal"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class=\"modal fade\" id=\"mainModal\">\n  <div class='modal-dialog'>\n    <div class='modal-content'>\n      <div class='modal-header'>\n        <h4>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
@@ -519,6 +545,15 @@ this["UI"]["Views"]["ul"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</ul>\n";
 },"usePartial":true,"useData":true});
+
+
+
+this["UI"]["Views"]["layerListItem"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<h4 class='show'><span class='label label-default layerName'>"
+    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+    + "</span></h4>\n<div class='form-group hidden'>\n  <input type='text' class='form-control layerNameFormItem' placeholder='Layer Name'>\n</div>\n<div class='btn-group'>\n  <button class='btn btn-danger deleteLayer'>\n    <span class='glyphicon glyphicon-remove-circle'></span>\n  </button>\n  <button class='btn btn-default active setVisibilityLayer' data-toggle='button' aria-pressed='true',autocomplete='off'>\n    <span class='glyphicon glyphicon-eye-open'></span>\n  </button>\n  <button class='btn btn-default makeLayerActive active'>\n    <span class='glyphicon glyphicon-pencil'></span>\n  </button>\n</div>\n";
+},"useData":true});
 
 
 
@@ -649,6 +684,24 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
   $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
 };
 
+UI.LaunchPad.prototype.layerListItem = function(callback,into,layer){
+  var content = this.parent.Views.layerListItem(
+    {
+      name:layer.name
+    }
+  );
+  callback({
+    id : layer.id,
+    content : content
+  },into,layer);
+};
+
+UI.LaunchPad.prototype._layerListItem = function(data){
+  console.log(data);
+  console.log('Hey you need to register the clicks for the layer buttons');
+  $('#mainModal').modal('hide');
+};
+
 UI.LaunchPad.prototype.navbar = function(callback){
   var dropdowns = {
     dropdown : {
@@ -723,17 +776,15 @@ UI.LaunchPad.prototype.newLayer = function(callback){
     })
   };
 
-  console.log('it got to the callback');
   callback(modalContent);
 };
 
 UI.LaunchPad.prototype._newLayer = function(){
-  console.log('it got to the return for the loauncher');
   $('#mainModal').modal('show');
   var $this = this;
   $('#createLayer').off('click');//turns it off so you will not have multiple clicks
   $('#createLayer').one('click', function(){
-    $this.parent.collect('createMapForm','createLayer',false,true);
+    $this.parent.collect('createLayerForm','createLayer');
   });
 };
 

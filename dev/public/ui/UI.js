@@ -26,35 +26,35 @@ UI.prototype = {
 		the launchpad returns options (or not) for the view and then can change where the view launches into.
 		You can also launch a view using a different launcher
 	*/
-	launch : function(view,into,launcher,callback,working){
+	launch : function(view,into,launcher,data,callback){
 		into = into || document.body;
 		launcher = launcher || view;
-		working = working || false; //doesn't do anything yet
+	//	working = working || false; //doesn't do anything yet
 
 		//If there is no view with that name this this function shall not pass
 		if(typeof this.Views[view] !== 'function'){
 			throw "There is no view named "+view;
 		}
 
-		var launch = function(options,into){
+		var launch = function(options,into,data){
 			if(typeof into === 'string'){
 				into = '#'+into.replace('#',''); //this seems reduntant but it removes a has if there is one and adds it back
 			}
 			$(into).append(this.Views[view](options));
 			if(typeof this.LaunchPad['_'+launcher] ==='function'){
-				this.LaunchPad['_'+launcher]();
+				this.LaunchPad['_'+launcher](data);
 			}
 		}.bind(this);
 
-		callback = callback || function(options, newInto){
+		callback = callback || function(options, newInto,data){
 			into = newInto || into;
-			launch(options, into);
+			launch(options,into,data);
 		}.bind(this);
 
 		if(typeof this.LaunchPad[launcher] === 'function'){
-			this.LaunchPad[launcher](callback,into);
+			this.LaunchPad[launcher](callback,into,data);
 		} else {
-			launch(null,into);
+			launch(null,into,data);
 		}
 	},
 

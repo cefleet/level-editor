@@ -117,7 +117,6 @@ MapEditor.Map.prototype = {
 	},
 
 	setActiveLayer : function(layer){
-		console.log(layer);
 		this.activeLayer = layer;
 	},
 

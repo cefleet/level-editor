@@ -258,6 +258,25 @@ this["UI"]["Views"]["div"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1
 
 
 
+this["UI"]["Views"]["li"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "id='"
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
+    + "'";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='list-group-item "
+    + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
+    + "' ";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.id : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += ">\n  ";
+  stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\n</li>\n";
+},"useData":true});
+
+
+
 this["UI"]["Views"]["modal"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class=\"modal fade\" id=\"mainModal\">\n  <div class='modal-dialog'>\n    <div class='modal-content'>\n      <div class='modal-header'>\n        <h4>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
@@ -343,6 +362,15 @@ this["UI"]["Views"]["ul"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</ul>\n";
 },"usePartial":true,"useData":true});
+
+
+
+this["UI"]["Views"]["layerListItem"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<h4 class='show'><span class='label label-default layerName'>"
+    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+    + "</span></h4>\n<div class='form-group hidden'>\n  <input type='text' class='form-control layerNameFormItem' placeholder='Layer Name'>\n</div>\n<div class='btn-group'>\n  <button class='btn btn-danger deleteLayer'>\n    <span class='glyphicon glyphicon-remove-circle'></span>\n  </button>\n  <button class='btn btn-default active setVisibilityLayer' data-toggle='button' aria-pressed='true',autocomplete='off'>\n    <span class='glyphicon glyphicon-eye-open'></span>\n  </button>\n  <button class='btn btn-default makeLayerActive active'>\n    <span class='glyphicon glyphicon-pencil'></span>\n  </button>\n</div>\n";
+},"useData":true});
 
 
 

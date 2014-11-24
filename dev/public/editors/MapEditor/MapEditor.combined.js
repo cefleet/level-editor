@@ -396,7 +396,6 @@ MapEditor.Map.prototype = {
 	},
 
 	setActiveLayer : function(layer){
-		console.log(layer);
 		this.activeLayer = layer;
 	},
 
@@ -656,6 +655,8 @@ MapEditor.LayerManager  = function(options,parent){
 MapEditor.LayerManager.prototype = {
 
   create : function(name,id){
+    console.log(name);
+
     var highest = 0;
     for(var layer in this.layers){
       if(this.layers[layer].order > highest) {
@@ -729,7 +730,6 @@ MapEditor.LayerManager.prototype = {
       layer = this.layers[layer];
     }
     this.activeLayer = layer;
-    console.log(layer);
     this.EventEmitter.trigger('activeLayerSet',[layer]);
   },
 
