@@ -178,7 +178,17 @@ UI.Actions.prototype.newTileset = function(){
 };
 
 UI.Actions.prototype.saveMap = function(){
-  console.log('Save The Map');
+  var $this = this;
+  this.parent.EventEmitter.once('mapReadyForSave',function(map){
+    $this.parent.data.Maps[map.id] = map;//saves it to memory
+
+    map.tilemap = JSON.stringify(map.tilemap);
+    console.log('I need to modify the app.js (node launcher file) so that I can get a return.');
+    $.post('save_map',map).done(function(data){
+      console.log('Map was saved. I can launch th epretty thing that says that');
+    }); //need a return here to launch the map saved or failiure thing
+  });
+
 };
 
 Handlebars.registerPartial("attribs", Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -697,8 +707,22 @@ UI.LaunchPad.prototype.layerListItem = function(callback,into,layer){
 };
 
 UI.LaunchPad.prototype._layerListItem = function(data){
-  console.log(data);
-  console.log('Hey you need to register the clicks for the layer buttons');
+  var $this = this;
+//  console.log(data);
+//  console.log('Hey you need to register the clicks for the layer buttons');
+
+  $('#'+data.id +' .setVisibilityLayer').on('click', function(){
+  //  console.log(this);
+    $this.parent.EventEmitter.trigger('toggleLayer',[data.id]);
+  });
+
+  $('#'+data.id +' .makeLayerActive').on('click', function(){
+    $('.makeLayerActive').removeClass('active');
+  //  console.log(this);
+    $(this).addClass('active');
+    $this.parent.EventEmitter.trigger('makeLayerActive',[data.id]);
+  });
+
   $('#mainModal').modal('hide');
 };
 
@@ -732,22 +756,24 @@ UI.LaunchPad.prototype._navbar = function(){
   $('.navLink a').each(function(e){
     var action = $(this).attr('action');
 
+    //WTH IS THIS?
+    //This has been replaced with the intercom
     if(action){
       //this can be setup in another location
       if($this.parent.Actions[action]) {
         //because it launches in actions it needs to bind to it
         $this.parent.EventEmitter.on(action,
           $this.parent.Actions[action].bind($this.parent.Actions));
-        } else {
+      } else {
           console.warn('There is no action associated with the '+action+' listener.'+
           'If you didn\'t set one up manually this link will do nothing.');
-        }
-
-        $(this).on('click', function(){
-          $this.parent.EventEmitter.trigger(action);
-        });
       }
-    });
+
+      $(this).on('click', function(){
+        $this.parent.EventEmitter.trigger(action);
+      });
+    }
+  });
 };
 
 UI.LaunchPad.prototype.newLayer = function(callback){

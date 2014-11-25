@@ -65,13 +65,18 @@ MapEditor.Map = function (options,parent) {
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
 	},
+	/*
 	{
 		event : 'layerCreated',
 		action : 'addLayerToMap'
-	},
+	},*/
 	{
 		event: 'activeLayerSet',
 		action : 'setActiveLayer'
+	},
+	{
+		event : 'layerVisibiltySet',
+		action : 'toggleLayer'
 	}
 	];
 
@@ -87,8 +92,8 @@ MapEditor.Map.prototype = {
 		this.marker = this.game.add.sprite(0,0,'');
 		this.marker.tilesetId = 0;
 
-		this.layersGroup =  this.game.add.group();
-		this.EventEmitter.trigger('gridReadyForLayers');
+		this.layersGroup = this.game.add.group();
+		this.EventEmitter.trigger('gridReadyForLayers', [this]);
 	},
 
 	/*
@@ -116,16 +121,30 @@ MapEditor.Map.prototype = {
 		}
 	},
 
+	toggleLayer : function(layer){
+
+	},
+
 	setActiveLayer : function(layer){
 		this.activeLayer = layer;
 	},
 
 	addLayerToMap : function(t){
+		/*
+		console.log(t);
 		if(!this.layers){
-			this.layers = {};
+			this.layers = t.parent.layers;
 		}
 
 		this.layers[t.id] = this.layersGroup.add(this.game.add.group());
+		*/
+		/*
+		this.layers[id].tiles = {};
+		this.makeTiles(this.layers[id]);
+		this.makeLayerActive(this.layers[id]);
+		this.layers[id].name = name;
+		this.layers[id].order = highest;
+		*/
 	},
 
 	/*
@@ -168,7 +187,7 @@ MapEditor.Map.prototype = {
 	 */
 	setSpriteOfActiveTileFromMarker : function(){
 		this.activeTile.sprite = this.game.add.sprite(this.marker.x,this.marker.y,this.marker.key,this.marker.frame);
-	//	this.activeLayer.add(this.activeTile.sprite);
+		this.activeLayer.add(this.activeTile.sprite);
 	},
 
 	/*

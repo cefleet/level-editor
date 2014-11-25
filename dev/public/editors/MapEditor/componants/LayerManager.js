@@ -15,6 +15,18 @@ MapEditor.LayerManager  = function(options,parent){
   {
     event : 'createLayer',
     action :'create'
+  },
+  {
+    event : 'makeLayerActive',
+    action : 'makeLayerActive'
+  },
+  {
+    event : 'toggleLayer',
+    action : 'toggleLayer'
+  },
+  {
+    event : 'gridReadyForLayers',
+    action : 'linkLayerGroup'
   }
   ];
 
@@ -24,28 +36,31 @@ MapEditor.LayerManager  = function(options,parent){
 
 MapEditor.LayerManager.prototype = {
 
+  linkLayerGroup : function(grid){
+    this.layersGroup = grid.layersGroup;
+    this.EventEmitter.trigger('LayersGroupLinked');
+  },
+
   create : function(name,id){
-    console.log(name);
+    id = id || $uid();
+    name = name || 'New Layer';
 
     var highest = 0;
     for(var layer in this.layers){
-      if(this.layers[layer].order > highest) {
+      if(this.layers[layer].order >= highest) {
         highest = this.layers[layer].order+1;
       }
     }
 
-    var options = {
-      name : name,
-      id : id,
-      order : highest
-    };
+    this.layers[id] = this.layersGroup.add(this.layersGroup.game.add.group());
+    this.layers[id].id = id;
+    this.layers[id].name = name;
+    this.layers[id].order = highest;
+    this.layers[id].tiles = {};
+    this.makeTiles(this.layers[id]);
 
-    var t = new MapEditor.Layer(options, this);
-    this.layers[t.id] = t;
-  //  console.log(t);
-
-    this.EventEmitter.trigger('layerCreated', [t]);
-    this.makeLayerActive(t);
+    this.EventEmitter.trigger('layerCreated', [this.layers[id]]);
+    this.makeLayerActive(this.layers[id]);
   },
 
   loadLayers : function(map){
@@ -114,6 +129,8 @@ MapEditor.LayerManager.prototype = {
     } else {
       layer.visible = true;
     }
+
+    this.EventEmitter.trigger('layerVisibiltySet', [layer]);
   },
 
   renameLayer : function(layer, newName){
@@ -141,11 +158,9 @@ MapEditor.LayerManager.prototype = {
   },
 
   deleteLayer : function(layer){
-    console.log(layer);
     if(typeof layer === 'string'){
       layer = this.layers[layer];
     }
-    console.log(layer);
     this.layersGroup.remove(layer,true);
   },
   /*

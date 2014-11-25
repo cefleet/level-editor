@@ -22,7 +22,10 @@ MapEditor = function (options) {
 		event:'createMap',
 		action : 'create'
 	},
-
+	{
+		event :'saveMap',
+		action : 'saveMap'
+	}
 	//FROM Editor
 	];
 
@@ -45,42 +48,19 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		grid.container = grid.container || this.gridContainer;
 		this.grid = new MapEditor.Map(grid, this);
 
-		//This tells the Layer Manager to create a layer
-		this.EventEmitter.once('gridReadyForLayers', function(){
+		//Since we are in create instead of load it just makes the base layer
+		this.EventEmitter.once('LayersGroupLinked', function(grid){
 			this.EventEmitter.trigger('createLayer', ['base']);
 		}.bind(this));
-		/*
-		this.grid.events.gameCreated.add(function(){
 
-			//TODO this goes to a new class I think Tools
-			//this.grid.events.toolChanged.add(GameMaker.UI.Actions._activateTool);
-
-			this.grid.events.layerAdded.add(function(o){
-				GameMaker.UI.Actions.createNewLayerUI(o.name,o.id);
-			});
-			*
-
-		}, this);
-		*/
 
 		//We can have a go between here so phaser events don't mesh with other events
 		this.layerManager = new MapEditor.LayerManager(grid, this);
+
+		//TODO These have not been setup yet
 		this.toolManager = new MapEditor.ToolManager(this);
 		this.triggerManager = new MapEditor.TriggerManager(this);
 		this.spriteManager = new MapEditor.SpriteManager(this);
-
-		//We need to change the whoel triggering system
-		/*
-		this.grid.events.triggerPlaced.add(function(loc){
-			GameMaker.UI.Actions.createNewTriggerPopup();
-		});
-
-		this.grid.events.spritePlaced.add(function(loc){
-			GameMaker.UI.Actions.createNewSpritePopup();
-		});
-*/
-		//this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
-
 
 		//ads in some settings
 		this.map.name =  name || 'My Map';
@@ -111,15 +91,16 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		//TODO sort by the layers z index
 		//into a temp array so they can be placed in this array in order
 		var tempArr = [];
-		for(var l in this.grid.layers){
-			tempArr.push([l,this.grid.layers[l].order]);
+		for(var l in this.layerManager.layers){
+			tempArr.push([l,this.layerManager.layers[l].order]);
 		}
 		tempArr.sort(function(a,b){return a[1]-b[1];});
+
 		var mapLayers = {};
 		//for(var l in this.grid.layers){
 		for(var i = 0; i < tempArr.length; i++){
 			//tempArr[i][0] should be the id
-			var layer = this.grid.layers[tempArr[i][0]];
+			var layer = this.layerManager.layers[tempArr[i][0]];
 			var ar = [];
 
 			for(var t in layer.tiles){
@@ -174,8 +155,7 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.map.layers = mapLayers;
 		this.map.tilesetId = this.tileset.id;
 
-	//	this.events.mapSaved.dispatch(this.map);
-		this.EventEmitter.trigger('mapSaved',[this.map]);
+		this.EventEmitter.trigger('mapReadyForSave',[this.map]);
 		//	return this.map;
 	},
 
@@ -246,33 +226,4 @@ _launchGame : function(map){
 	GameMaker.UI.Actions._playGame(options);
 },
 
-
-
-addLayer: function(name, id){
-	this.grid.createLayer(name, id);
-},
-
-activateLayer : function(id){
-	this.grid.makeLayerActive(id);
-},
-
-toggleLayerVisibility : function(id){
-	this.grid.toggleLayer(id);
-},
-
-changeLayerName : function(id,newname){
-	this.grid.renameLayer(id,newname);
-},
-
-orderLayers : function(order){
-	this.grid.orderLayers(order);
-},
-
-deleteLayer : function(id){
-	this.grid.deleteLayer(id);
-},
-
-setTool : function(tool){
-	this.grid.setToolType(tool);
-}
 });

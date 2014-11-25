@@ -28,20 +28,22 @@ UI.LaunchPad.prototype._navbar = function(){
   $('.navLink a').each(function(e){
     var action = $(this).attr('action');
 
+    //WTH IS THIS?
+    //This has been replaced with the intercom
     if(action){
       //this can be setup in another location
       if($this.parent.Actions[action]) {
         //because it launches in actions it needs to bind to it
         $this.parent.EventEmitter.on(action,
           $this.parent.Actions[action].bind($this.parent.Actions));
-        } else {
+      } else {
           console.warn('There is no action associated with the '+action+' listener.'+
           'If you didn\'t set one up manually this link will do nothing.');
-        }
-
-        $(this).on('click', function(){
-          $this.parent.EventEmitter.trigger(action);
-        });
       }
-    });
+
+      $(this).on('click', function(){
+        $this.parent.EventEmitter.trigger(action);
+      });
+    }
+  });
 };

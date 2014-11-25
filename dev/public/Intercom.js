@@ -11,18 +11,7 @@ Intercom.prototype = {
   the arguments for the function that it will be preforming.
   */
   setupListeners : function($this){
-    /*
-    DONT DELETE YET I MAY END UP USING THIS
-    var f = function(arr){
-    //apply is the key thing here
-    this.$this[this.e.action].apply(this.$this, arr);
-  };
-
-  for(var l in this.listenOutFor){
-  var e = this.listenOutFor[l];
-  var o = {$this: this,e : e};
-  this.EventEmitter.on(e.event, f.bind(o));
-}*/
+  
     for(var l in $this.listenOutFor){
       var e = $this.listenOutFor[l];
       if(typeof $this[e.action] === 'function'){

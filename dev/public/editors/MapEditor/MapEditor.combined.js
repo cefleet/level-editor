@@ -22,7 +22,10 @@ MapEditor = function (options) {
 		event:'createMap',
 		action : 'create'
 	},
-
+	{
+		event :'saveMap',
+		action : 'saveMap'
+	}
 	//FROM Editor
 	];
 
@@ -45,42 +48,19 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		grid.container = grid.container || this.gridContainer;
 		this.grid = new MapEditor.Map(grid, this);
 
-		//This tells the Layer Manager to create a layer
-		this.EventEmitter.once('gridReadyForLayers', function(){
+		//Since we are in create instead of load it just makes the base layer
+		this.EventEmitter.once('LayersGroupLinked', function(grid){
 			this.EventEmitter.trigger('createLayer', ['base']);
 		}.bind(this));
-		/*
-		this.grid.events.gameCreated.add(function(){
 
-			//TODO this goes to a new class I think Tools
-			//this.grid.events.toolChanged.add(GameMaker.UI.Actions._activateTool);
-
-			this.grid.events.layerAdded.add(function(o){
-				GameMaker.UI.Actions.createNewLayerUI(o.name,o.id);
-			});
-			*
-
-		}, this);
-		*/
 
 		//We can have a go between here so phaser events don't mesh with other events
 		this.layerManager = new MapEditor.LayerManager(grid, this);
+
+		//TODO These have not been setup yet
 		this.toolManager = new MapEditor.ToolManager(this);
 		this.triggerManager = new MapEditor.TriggerManager(this);
 		this.spriteManager = new MapEditor.SpriteManager(this);
-
-		//We need to change the whoel triggering system
-		/*
-		this.grid.events.triggerPlaced.add(function(loc){
-			GameMaker.UI.Actions.createNewTriggerPopup();
-		});
-
-		this.grid.events.spritePlaced.add(function(loc){
-			GameMaker.UI.Actions.createNewSpritePopup();
-		});
-*/
-		//this.events.mapSaved.add(GameMaker.UI.Actions._saveMap);
-
 
 		//ads in some settings
 		this.map.name =  name || 'My Map';
@@ -111,15 +91,16 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		//TODO sort by the layers z index
 		//into a temp array so they can be placed in this array in order
 		var tempArr = [];
-		for(var l in this.grid.layers){
-			tempArr.push([l,this.grid.layers[l].order]);
+		for(var l in this.layerManager.layers){
+			tempArr.push([l,this.layerManager.layers[l].order]);
 		}
 		tempArr.sort(function(a,b){return a[1]-b[1];});
+
 		var mapLayers = {};
 		//for(var l in this.grid.layers){
 		for(var i = 0; i < tempArr.length; i++){
 			//tempArr[i][0] should be the id
-			var layer = this.grid.layers[tempArr[i][0]];
+			var layer = this.layerManager.layers[tempArr[i][0]];
 			var ar = [];
 
 			for(var t in layer.tiles){
@@ -174,8 +155,7 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.map.layers = mapLayers;
 		this.map.tilesetId = this.tileset.id;
 
-	//	this.events.mapSaved.dispatch(this.map);
-		this.EventEmitter.trigger('mapSaved',[this.map]);
+		this.EventEmitter.trigger('mapReadyForSave',[this.map]);
 		//	return this.map;
 	},
 
@@ -246,35 +226,6 @@ _launchGame : function(map){
 	GameMaker.UI.Actions._playGame(options);
 },
 
-
-
-addLayer: function(name, id){
-	this.grid.createLayer(name, id);
-},
-
-activateLayer : function(id){
-	this.grid.makeLayerActive(id);
-},
-
-toggleLayerVisibility : function(id){
-	this.grid.toggleLayer(id);
-},
-
-changeLayerName : function(id,newname){
-	this.grid.renameLayer(id,newname);
-},
-
-orderLayers : function(order){
-	this.grid.orderLayers(order);
-},
-
-deleteLayer : function(id){
-	this.grid.deleteLayer(id);
-},
-
-setTool : function(tool){
-	this.grid.setToolType(tool);
-}
 });
 
 MapEditor.Map = function (options,parent) {
@@ -344,13 +295,18 @@ MapEditor.Map = function (options,parent) {
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
 	},
+	/*
 	{
 		event : 'layerCreated',
 		action : 'addLayerToMap'
-	},
+	},*/
 	{
 		event: 'activeLayerSet',
 		action : 'setActiveLayer'
+	},
+	{
+		event : 'layerVisibiltySet',
+		action : 'toggleLayer'
 	}
 	];
 
@@ -366,8 +322,8 @@ MapEditor.Map.prototype = {
 		this.marker = this.game.add.sprite(0,0,'');
 		this.marker.tilesetId = 0;
 
-		this.layersGroup =  this.game.add.group();
-		this.EventEmitter.trigger('gridReadyForLayers');
+		this.layersGroup = this.game.add.group();
+		this.EventEmitter.trigger('gridReadyForLayers', [this]);
 	},
 
 	/*
@@ -395,16 +351,30 @@ MapEditor.Map.prototype = {
 		}
 	},
 
+	toggleLayer : function(layer){
+
+	},
+
 	setActiveLayer : function(layer){
 		this.activeLayer = layer;
 	},
 
 	addLayerToMap : function(t){
+		/*
+		console.log(t);
 		if(!this.layers){
-			this.layers = {};
+			this.layers = t.parent.layers;
 		}
 
 		this.layers[t.id] = this.layersGroup.add(this.game.add.group());
+		*/
+		/*
+		this.layers[id].tiles = {};
+		this.makeTiles(this.layers[id]);
+		this.makeLayerActive(this.layers[id]);
+		this.layers[id].name = name;
+		this.layers[id].order = highest;
+		*/
 	},
 
 	/*
@@ -447,7 +417,7 @@ MapEditor.Map.prototype = {
 	 */
 	setSpriteOfActiveTileFromMarker : function(){
 		this.activeTile.sprite = this.game.add.sprite(this.marker.x,this.marker.y,this.marker.key,this.marker.frame);
-	//	this.activeLayer.add(this.activeTile.sprite);
+		this.activeLayer.add(this.activeTile.sprite);
 	},
 
 	/*
@@ -645,6 +615,18 @@ MapEditor.LayerManager  = function(options,parent){
   {
     event : 'createLayer',
     action :'create'
+  },
+  {
+    event : 'makeLayerActive',
+    action : 'makeLayerActive'
+  },
+  {
+    event : 'toggleLayer',
+    action : 'toggleLayer'
+  },
+  {
+    event : 'gridReadyForLayers',
+    action : 'linkLayerGroup'
   }
   ];
 
@@ -654,28 +636,31 @@ MapEditor.LayerManager  = function(options,parent){
 
 MapEditor.LayerManager.prototype = {
 
+  linkLayerGroup : function(grid){
+    this.layersGroup = grid.layersGroup;
+    this.EventEmitter.trigger('LayersGroupLinked');
+  },
+
   create : function(name,id){
-    console.log(name);
+    id = id || $uid();
+    name = name || 'New Layer';
 
     var highest = 0;
     for(var layer in this.layers){
-      if(this.layers[layer].order > highest) {
+      if(this.layers[layer].order >= highest) {
         highest = this.layers[layer].order+1;
       }
     }
 
-    var options = {
-      name : name,
-      id : id,
-      order : highest
-    };
+    this.layers[id] = this.layersGroup.add(this.layersGroup.game.add.group());
+    this.layers[id].id = id;
+    this.layers[id].name = name;
+    this.layers[id].order = highest;
+    this.layers[id].tiles = {};
+    this.makeTiles(this.layers[id]);
 
-    var t = new MapEditor.Layer(options, this);
-    this.layers[t.id] = t;
-  //  console.log(t);
-
-    this.EventEmitter.trigger('layerCreated', [t]);
-    this.makeLayerActive(t);
+    this.EventEmitter.trigger('layerCreated', [this.layers[id]]);
+    this.makeLayerActive(this.layers[id]);
   },
 
   loadLayers : function(map){
@@ -744,6 +729,8 @@ MapEditor.LayerManager.prototype = {
     } else {
       layer.visible = true;
     }
+
+    this.EventEmitter.trigger('layerVisibiltySet', [layer]);
   },
 
   renameLayer : function(layer, newName){
@@ -771,11 +758,9 @@ MapEditor.LayerManager.prototype = {
   },
 
   deleteLayer : function(layer){
-    console.log(layer);
     if(typeof layer === 'string'){
       layer = this.layers[layer];
     }
-    console.log(layer);
     this.layersGroup.remove(layer,true);
   },
   /*
