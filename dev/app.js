@@ -25,7 +25,7 @@ db.users = new Datastore({ filename: 'data/users.db', autoload: true });
 db.maps = new Datastore({ filename: 'data/maps.db', autoload: true });
 
 var staticMiddleware = express.static(__dirname+'/public');
-//app.use 
+//app.use
  /********************************************************
   * FUNCTIONS
   ********************************************************/
@@ -71,7 +71,7 @@ app.use(multer(
 					db.tilesets.insert(save, function (err, newDoc){
 						//TODO should add a callback
 						fs.rename(req.files[0].path, 'public/'+save.image);
-						console.log('Created New Tilese');
+						console.log('Created New Tileset');
 					});
 				} else {
 					fs.unlink(req.files[0].path);
@@ -100,12 +100,14 @@ app.post('/save_map', ensureAuthenticated, function(req,res){
 	db.maps.find({id : save.id, owner : save.owner}, function(err,docs){
 		if(docs.length < 1){
 			db.maps.insert(save, function (err, newDoc){
-				//TODO should add a callback
-				console.log('Created New Map');
+        res.contentType('json');
+        res.send({status : 'success',message: 'Map Saved'});
 			});
 		} else {
 			db.maps.update({id:save.id}, save,{}, function(err){
 				console.log('Updated Map');
+        res.contentType('json');
+        res.send({status : 'success',message: 'Map Saved'});
 			});
 		}
 	});

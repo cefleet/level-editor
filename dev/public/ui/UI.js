@@ -46,7 +46,7 @@ UI.prototype = {
 			}
 		}.bind(this);
 
-		callback = callback || function(options, newInto,data){
+		callback = callback || function(options,newInto,data){
 			into = newInto || into;
 			launch(options,into,data);
 		}.bind(this);

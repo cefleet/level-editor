@@ -57,6 +57,7 @@ UI.LaunchPad.prototype.newMap = function(callback){
   };
 
   callback(modalContent);
+  
 };
 
 UI.LaunchPad.prototype._newMap = function(){

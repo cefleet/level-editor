@@ -46,7 +46,7 @@ UI.prototype = {
 			}
 		}.bind(this);
 
-		callback = callback || function(options, newInto,data){
+		callback = callback || function(options,newInto,data){
 			into = newInto || into;
 			launch(options,into,data);
 		}.bind(this);
@@ -126,7 +126,6 @@ UI.Actions.prototype.createLayer = function(data){
 
 UI.Actions.prototype.createMap = function(data){
   this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
-  //this.parent.launch('panel','sidePanel', 'launchToolPanel');
 
   $('#mainModal').modal('hide');
 
@@ -159,8 +158,14 @@ UI.Actions.prototype.loadContainers = function(){
 };
 
 UI.Actions.prototype.loadMap = function(){
-  console.log('Launch Load Map Modal');
+  $('#mainModal').remove();
+  this.parent.launch('modal', null, 'loadMap');
 };
+
+UI.Actions.prototype.loadTheMap = function(data){
+    console.log(data);
+    console.log('I need to Emit out the map to load');
+}
 
 UI.Actions.prototype.newLayer = function(){
   $('#mainModal').remove();
@@ -183,10 +188,11 @@ UI.Actions.prototype.saveMap = function(){
     $this.parent.data.Maps[map.id] = map;//saves it to memory
 
     map.tilemap = JSON.stringify(map.tilemap);
-    console.log('I need to modify the app.js (node launcher file) so that I can get a return.');
     $.post('save_map',map).done(function(data){
-      console.log('Map was saved. I can launch th epretty thing that says that');
-    }); //need a return here to launch the map saved or failiure thing
+      data.id = 'mapSaveStatus';
+      
+      $this.parent.launch('server_msg',null, null,data);
+    });
   });
 
 };
@@ -361,6 +367,20 @@ this["UI"]["Views"]["create_layer_form"] = Handlebars.template({"1":function(dep
 
 
 
+this["UI"]["Views"]["create_load_map_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "";
+  stack1 = this.invokePartial(partials.select, '    ', 'select', depth0, undefined, helpers, partials, data);
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class='form-horizontal' role='form' id='loadMapForm'>\n  <div class='form-group'>\n";
+  stack1 = helpers.each.call(depth0, ((stack1 = (depth0 != null ? depth0.form : depth0)) != null ? stack1.map : stack1), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "  </div>\n</div>\n";
+},"usePartial":true,"useData":true});
+
+
+
 this["UI"]["Views"]["create_map_form"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
   stack1 = this.invokePartial(partials.input, '      ', 'input', depth0, undefined, helpers, partials, data);
@@ -502,6 +522,24 @@ this["UI"]["Views"]["panel"] = Handlebars.template({"1":function(depth0,helpers,
   stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
   if (stack1 != null) { buffer += stack1; }
   return buffer + "\n    </div>\n</div>\n";
+},"useData":true});
+
+
+
+this["UI"]["Views"]["server_msg"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"type","hash":{},"data":data}) : helper)));
+  },"3":function(depth0,helpers,partials,data) {
+  return "success";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div id=\""
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
+    + "\" class='alert alert-";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.type : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "'\n  role='alert' style='position:absolute;top:20px;left:20px;z-index:10000'>\n  <button type='button' class='close' data-dismiss='alert'>\n    <span class='glyphicon glyphicon-remove'></span>\n  </button>\n  "
+    + escapeExpression(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"message","hash":{},"data":data}) : helper)))
+    + "\n</div>\n";
 },"useData":true});
 
 
@@ -726,6 +764,51 @@ UI.LaunchPad.prototype._layerListItem = function(data){
   $('#mainModal').modal('hide');
 };
 
+UI.LaunchPad.prototype.loadMap = function(callback){
+  var maps = this.parent.data.Maps;
+  console.log(maps);
+  var mapOptions = [];
+  for(var i = 0; i < maps.length; i++){
+    mapOptions.push({
+      title : maps[i].name,
+      value : maps[i].id
+    });
+  };
+
+  var formContent = {
+    form : {
+      map : [{
+        name : 'id',
+        title : 'Map',
+        cols : '6',
+        option : mapOptions
+      }]
+    }
+  };
+
+  var modalContent = {
+    title : 'Create New Map',
+    content : this.parent.Views.create_load_map_form(formContent),//this is unique to this modal
+    footer : this.parent.Views.button({
+      option :'primary',
+      size:'',
+      class:'',
+      id:'loadMap',
+      text : 'Load Map'
+    })
+  };
+  callback(modalContent);
+};
+
+UI.LaunchPad.prototype._loadMap = function(){
+  $('#mainModal').modal('show');
+  var $this = this;
+  $('#loadMap').off('click');//turns it off so you will not have multiple clicks
+  $('#loadMap').one('click', function(){
+    $this.parent.collect('loadMapForm','loadTheMap');
+  });
+};
+
 UI.LaunchPad.prototype.navbar = function(callback){
   var dropdowns = {
     dropdown : {
@@ -873,6 +956,7 @@ UI.LaunchPad.prototype.newMap = function(callback){
   };
 
   callback(modalContent);
+  
 };
 
 UI.LaunchPad.prototype._newMap = function(){
@@ -881,6 +965,24 @@ UI.LaunchPad.prototype._newMap = function(){
   $('#createMap').off('click');//turns it off so you will not have multiple clicks
   $('#createMap').one('click', function(){
     $this.parent.collect('createMapForm','createMap');
+  });
+};
+
+UI.LaunchPad.prototype.server_msg = function(callback, into, data){
+  console.log(data);
+  var msgData = {
+    id: data.id,
+    type : data.status,
+    message : data.message
+  };
+
+  callback(msgData,into,data);
+};
+
+UI.LaunchPad.prototype._server_msg = function(data){
+
+  $("#"+data.id).fadeTo(2000, 500).slideUp(500, function(){
+    $("#"+data.id).alert('close');
   });
 };
 

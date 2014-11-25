@@ -1,3 +1,4 @@
 UI.Actions.prototype.loadMap = function(){
-  console.log('Launch Load Map Modal');
+  $('#mainModal').remove();
+  this.parent.launch('modal', null, 'loadMap');
 };

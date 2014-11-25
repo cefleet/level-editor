@@ -1,6 +1,5 @@
 UI.Actions.prototype.createMap = function(data){
   this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
-  //this.parent.launch('panel','sidePanel', 'launchToolPanel');
 
   $('#mainModal').modal('hide');
 
