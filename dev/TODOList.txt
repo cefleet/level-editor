@@ -1,0 +1,13 @@
+//TODO: Fix Layer Ordering - DONE!
+//TODO: toggle layer view - DONE!
+//TODO: Correctly tell active later _ DONE!
+//TODO: Add Add Tileset Back
+//TODO: Add Tools
+//TODO: Add Eraser
+//TODO: Add Play Game Back
+//TODO: Fix loading new map
+
+//The above makes it where I have completed all that was working before
+//TODO: Add Sprite
+//TODO: Add Trigger
+//TODO: Uniform naming and follow conventions

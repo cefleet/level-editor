@@ -27,6 +27,14 @@ MapEditor.LayerManager  = function(options,parent){
   {
     event : 'gridReadyForLayers',
     action : 'linkLayerGroup'
+  },
+  {
+    event : 'loadLayers',
+    action : 'loadLayers'
+  },
+  {
+    event : 'orderLayers',
+    action : 'orderLayers'
   }
   ];
 
@@ -68,7 +76,7 @@ MapEditor.LayerManager.prototype = {
     var len = map.tilemap.layers.length;
     var layers = map.tilemap.layers;
     for(var j = 0; j < len; j++){
-      this.loadLayer(layers[j], map.layers[layers[j].name]);
+      this.loadLayer(layers[j], map);
     }
     //set the order
     var tempArr = [];
@@ -88,8 +96,9 @@ MapEditor.LayerManager.prototype = {
     this.makeLayerActive(layers[0].name);
   },
 
-  loadLayer : function(layer, layerinfo){
-    this.createLayer(layerinfo.name,layerinfo.id);
+  loadLayer : function(layer, map){
+    var layerinfo = map.layers[layer.name];
+    this.create(layerinfo.name,layerinfo.id);
     this.layers[layerinfo.id].order = layerinfo.order;
     var data = layer.data;
     for(var i = 0; i < data.length; i++){
@@ -101,8 +110,8 @@ MapEditor.LayerManager.prototype = {
         /*******
         * WRONG DO NOT CALL LE FROM INSIDE
         */
-        if(GameMaker.LE.tileset.tiles[id-1]){
-          t.sprite = this.game.add.sprite(t.x,t.y,GameMaker.LE.tileset.name, GameMaker.LE.tileset.tiles[id-1].frame);
+        if(this.parent.tileset.tiles[id-1]){
+          t.sprite = this.parent.grid.game.add.sprite(t.x,t.y,this.parent.tileset.name, this.parent.tileset.tiles[id-1].frame);
           this.layers[layerinfo.id].add(t.sprite);
         }
       }
@@ -155,6 +164,8 @@ MapEditor.LayerManager.prototype = {
         o--;
       }
     }
+
+    this.EventEmitter.trigger('layerOrderSet');
   },
 
   deleteLayer : function(layer){

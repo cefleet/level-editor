@@ -25,6 +25,10 @@ MapEditor = function (options) {
 	{
 		event :'saveMap',
 		action : 'saveMap'
+	},
+	{
+		event : 'loadMap',
+		action : 'load'
 	}
 	//FROM Editor
 	];
@@ -35,10 +39,12 @@ MapEditor = function (options) {
 MapEditor.prototype.constructor = MapEditor;
 
 Phaser.Utils.extend(MapEditor.prototype , {
-
-	create : function(name,grid,tileset,id){
+	setup : function(name,grid,tileset,id){
 		this.destroy();
+
 		this.map = {};
+		this.map.name =  name || 'My Map';
+		this.map.id = id || $uid();
 
 		tileset = tileset || {};
 		tileset.container = tileset.container || this.tilesetContainer;
@@ -48,119 +54,29 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		grid.container = grid.container || this.gridContainer;
 		this.grid = new MapEditor.Map(grid, this);
 
-		//Since we are in create instead of load it just makes the base layer
-		this.EventEmitter.once('LayersGroupLinked', function(grid){
-			this.EventEmitter.trigger('createLayer', ['base']);
-		}.bind(this));
-
-
 		//We can have a go between here so phaser events don't mesh with other events
 		this.layerManager = new MapEditor.LayerManager(grid, this);
 
-		//TODO These have not been setup yet
+		//TODO: These have not been setup yet
 		this.toolManager = new MapEditor.ToolManager(this);
 		this.triggerManager = new MapEditor.TriggerManager(this);
 		this.spriteManager = new MapEditor.SpriteManager(this);
 
 		//ads in some settings
-		this.map.name =  name || 'My Map';
-		this.map.id = id || $uid();
+
 	},
 
-	destroy : function(){
-		delete this.map;
+	create : function(name,grid,tileset,id){
+		this.setup(name,grid,tileset,id);
+		//Since we are in create instead of load it just makes the base layer
+		this.EventEmitter.once('LayersGroupLinked', function(grid){
+			this.EventEmitter.trigger('createLayer', ['base']);
+		}.bind(this));
 
-		if(this.grid) {
-			this.grid.destroy();
-			delete this.grid;
-		}
-
-		if(this.tileset){
-			this.tileset.destroy();
-			delete this.tileset;
-		}
 	},
-
-	/*
-	* Saves the Map
-	*/
-	saveMap : function(){
-
-		var layers = [];
-
-		//TODO sort by the layers z index
-		//into a temp array so they can be placed in this array in order
-		var tempArr = [];
-		for(var l in this.layerManager.layers){
-			tempArr.push([l,this.layerManager.layers[l].order]);
-		}
-		tempArr.sort(function(a,b){return a[1]-b[1];});
-
-		var mapLayers = {};
-		//for(var l in this.grid.layers){
-		for(var i = 0; i < tempArr.length; i++){
-			//tempArr[i][0] should be the id
-			var layer = this.layerManager.layers[tempArr[i][0]];
-			var ar = [];
-
-			for(var t in layer.tiles){
-				ar.push(layer.tiles[t].tilesetId);
-			}
-
-			layers.push({
-				data : ar,
-				height : Number(this.grid.tilesy),
-				name : l,
-				opacity : 1,
-				type : 'tilelayer',
-				visible : true,
-				width: Number(this.grid.tilesx),
-				x : 0,
-				y: 0
-			});
-
-			mapLayers[l] = {
-				id : l,
-				name : layer.name,
-				order : layer.order
-			};
-		}
-
-		var json = {
-			height : Number(this.grid.tilesy),
-			width: Number(this.grid.tilesx),
-			layers  : layers,
-
-			//TODO possibly of combining tilesets
-			tilesets : [
-			{
-				firstgid : 1,
-				image : this.tileset.image,
-				imageheight : Number(this.tileset.imageheight),
-				imagewidth : Number(this.tileset.imagewidth),
-				margin : 0,
-				name : this.tileset.name,
-				spacing : 0,
-				tileheight: Number(this.tileset.tileheight),
-				tilewidth : Number(this.tileset.tilewidth)
-			}
-			],
-			orientation:"orthogonal",
-			tileheight : Number(this.tileset.tileheight),
-			tilewidth:Number(this.tileset.tilewidth),
-			version :1
-		};
-
-		this.map.tilemap = json;
-		this.map.layers = mapLayers;
-		this.map.tilesetId = this.tileset.id;
-
-		this.EventEmitter.trigger('mapReadyForSave',[this.map]);
-		//	return this.map;
-	},
-
 
 	load : function(map){
+
 		if(typeof map.tilemap === 'string'){
 			map.tilemap = JSON.parse(map.tilemap);
 		}
@@ -184,15 +100,20 @@ Phaser.Utils.extend(MapEditor.prototype , {
 			tilesy : map.tilemap.height
 		};
 
-		this.create(map.name,grid,tileset,map.id);
+		this.setup(map.name,grid,tileset,map.id);
 
+		this.EventEmitter.once('LayersGroupLinked', function(grid){
+			this.EventEmitter.trigger('loadLayers',[map]);
+		}.bind(this));
+
+		/*
 		//the create has already made the grid
 		this.grid.events.tilesetLoaded.add(function(){
 			this.grid.loadLayers(map);
 		}, this);
 		//this.loadMapData = map;
 
-		//TODO this is waiting o nthe wrong thing
+		//TODO: this is waiting o nthe wrong thing
 		/*
 		if(this.tileset.loaded === false	){
 		this.tileset.onLoad = this._load.bind(this);
@@ -202,6 +123,96 @@ Phaser.Utils.extend(MapEditor.prototype , {
 */
 },
 
+	destroy : function(){
+		delete this.map;
+
+		if(this.grid) {
+			this.grid.destroy();
+			delete this.grid;
+		}
+
+		if(this.tileset){
+			this.tileset.destroy();
+			delete this.tileset;
+		}
+	},
+
+	/*
+	* Saves the Map
+	*/
+	saveMap : function(){
+
+		var layers = [];
+
+		//TODO: sort by the layers z index
+		//into a temp array so they can be placed in this array in order
+		var tempArr = [];
+		for(var l in this.layerManager.layers){
+			tempArr.push([l,this.layerManager.layers[l].order]);
+		}
+
+		tempArr.sort(function(a,b){return a[1]-b[1];});
+		var mapLayers = {};
+
+		for(var i = 0; i < tempArr.length; i++){
+			var layer = this.layerManager.layers[tempArr[i][0]];
+			var ar = [];
+
+			for(var t in layer.tiles){
+				ar.push(layer.tiles[t].tilesetId);
+			}
+
+			layers.push({
+				data : ar,
+				height : Number(this.grid.tilesy),
+				name : layer.id,
+				opacity : 1,
+				type : 'tilelayer',
+				visible : true,
+				width: Number(this.grid.tilesx),
+				x : 0,
+				y: 0
+			});
+
+			mapLayers[layer.id] = {
+				id : layer.id,
+				name : layer.name,
+				order : layer.order
+			};
+		}
+
+		var json = {
+			height : Number(this.grid.tilesy),
+			width: Number(this.grid.tilesx),
+			layers  : layers,
+
+			//TODO: possibly of combining tilesets
+			tilesets : [
+			{
+				firstgid : 1,
+				image : this.tileset.image,
+				imageheight : Number(this.tileset.imageheight),
+				imagewidth : Number(this.tileset.imagewidth),
+				margin : 0,
+				name : this.tileset.name,
+				spacing : 0,
+				tileheight: Number(this.tileset.tileheight),
+				tilewidth : Number(this.tileset.tilewidth)
+			}
+			],
+			orientation:"orthogonal",
+			tileheight : Number(this.tileset.tileheight),
+			tilewidth:Number(this.tileset.tilewidth),
+			version :1
+		};
+
+		this.map.tilemap = json;
+		this.map.layers = mapLayers;
+		this.map.tilesetId = this.tileset.id;
+		console.log(this.map.layers);
+		this.EventEmitter.trigger('mapReadyForSave',[this.map]);
+		//	return this.map;
+	},
 
 changeSettings : function(){},
 
@@ -260,7 +271,7 @@ MapEditor.Map = function (options,parent) {
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 
 		preload : function(){
-			//TODO this needs to be gotten from the tools section
+			//TODO: this needs to be gotten from the tools section
 
 			//this is a little funky but it's fine for now
 			this.game.load.image('eraser', 'img/ui/erase.png');
@@ -295,11 +306,6 @@ MapEditor.Map = function (options,parent) {
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
 	},
-	/*
-	{
-		event : 'layerCreated',
-		action : 'addLayerToMap'
-	},*/
 	{
 		event: 'activeLayerSet',
 		action : 'setActiveLayer'
@@ -359,24 +365,7 @@ MapEditor.Map.prototype = {
 		this.activeLayer = layer;
 	},
 
-	addLayerToMap : function(t){
-		/*
-		console.log(t);
-		if(!this.layers){
-			this.layers = t.parent.layers;
-		}
-
-		this.layers[t.id] = this.layersGroup.add(this.game.add.group());
-		*/
-		/*
-		this.layers[id].tiles = {};
-		this.makeTiles(this.layers[id]);
-		this.makeLayerActive(this.layers[id]);
-		this.layers[id].name = name;
-		this.layers[id].order = highest;
-		*/
-	},
-
+	
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
 	 */
@@ -569,7 +558,7 @@ MapEditor.Map.prototype = {
 		var loc = '';//get active tile location
 		this.events.triggerPlaced.dispatch(loc);
 
-		//TODO this may need to be moved at some point in time
+		//TODO: this may need to be moved at some point in time
 		//this.triggers.create();
 	},
 
@@ -578,7 +567,7 @@ MapEditor.Map.prototype = {
 		var loc = '';//get active tile location
 		this.events.spritePlaced.dispatch(loc);
 
-		//TODO this may need to be moved at some point in time
+		//TODO: this may need to be moved at some point in time
 		//this.triggers.create();
 	},
 };
@@ -627,6 +616,14 @@ MapEditor.LayerManager  = function(options,parent){
   {
     event : 'gridReadyForLayers',
     action : 'linkLayerGroup'
+  },
+  {
+    event : 'loadLayers',
+    action : 'loadLayers'
+  },
+  {
+    event : 'orderLayers',
+    action : 'orderLayers'
   }
   ];
 
@@ -668,7 +665,7 @@ MapEditor.LayerManager.prototype = {
     var len = map.tilemap.layers.length;
     var layers = map.tilemap.layers;
     for(var j = 0; j < len; j++){
-      this.loadLayer(layers[j], map.layers[layers[j].name]);
+      this.loadLayer(layers[j], map);
     }
     //set the order
     var tempArr = [];
@@ -688,8 +685,9 @@ MapEditor.LayerManager.prototype = {
     this.makeLayerActive(layers[0].name);
   },
 
-  loadLayer : function(layer, layerinfo){
-    this.createLayer(layerinfo.name,layerinfo.id);
+  loadLayer : function(layer, map){
+    var layerinfo = map.layers[layer.name];
+    this.create(layerinfo.name,layerinfo.id);
     this.layers[layerinfo.id].order = layerinfo.order;
     var data = layer.data;
     for(var i = 0; i < data.length; i++){
@@ -701,8 +699,8 @@ MapEditor.LayerManager.prototype = {
         /*******
         * WRONG DO NOT CALL LE FROM INSIDE
         */
-        if(GameMaker.LE.tileset.tiles[id-1]){
-          t.sprite = this.game.add.sprite(t.x,t.y,GameMaker.LE.tileset.name, GameMaker.LE.tileset.tiles[id-1].frame);
+        if(this.parent.tileset.tiles[id-1]){
+          t.sprite = this.parent.grid.game.add.sprite(t.x,t.y,this.parent.tileset.name, this.parent.tileset.tiles[id-1].frame);
           this.layers[layerinfo.id].add(t.sprite);
         }
       }
@@ -755,6 +753,8 @@ MapEditor.LayerManager.prototype = {
         o--;
       }
     }
+
+    this.EventEmitter.trigger('layerOrderSet');
   },
 
   deleteLayer : function(layer){

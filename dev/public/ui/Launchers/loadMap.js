@@ -1,13 +1,13 @@
 UI.LaunchPad.prototype.loadMap = function(callback){
   var maps = this.parent.data.Maps;
-  console.log(maps);
   var mapOptions = [];
+
   for(var i = 0; i < maps.length; i++){
     mapOptions.push({
       title : maps[i].name,
       value : maps[i].id
     });
-  };
+  }
 
   var formContent = {
     form : {

@@ -68,15 +68,15 @@ Handlebars.registerPartial("dropdown_content", Handlebars.template({"1":function
   return buffer;
 },"2":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <li class='disabled navLink'><a action='"
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
+  return "    <li class='disabled navLink'><a class='ui-action' ui-action='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
     + "'>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
     + "</a></li>\n";
 },"4":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <li class='navLink'><a action='"
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
+  return "    <li class='navLink'><a class='ui-action' ui-action='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
     + "'>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
     + "</a></li>\n";
@@ -84,7 +84,7 @@ Handlebars.registerPartial("dropdown_content", Handlebars.template({"1":function
   return "  <li class='divider'></li>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.action : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(6, data),"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0['ui-action'] : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(6, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer;
 },"useData":true}));

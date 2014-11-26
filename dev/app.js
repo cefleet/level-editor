@@ -69,7 +69,7 @@ app.use(multer(
 
 				if(docs.length < 1){
 					db.tilesets.insert(save, function (err, newDoc){
-						//TODO should add a callback
+						//TODO: should add a callback
 						fs.rename(req.files[0].path, 'public/'+save.image);
 						console.log('Created New Tileset');
 					});
@@ -159,7 +159,7 @@ db.users.find({username :'admin'}, function(err,docs){
 /*********************************************************
  * LOGIN Scripts
  *********************************************************/
-//TODO need a create user
+//TODO: need a create user
 app.post('/login', function (req, res) {
   var post = req.body;
    db.users.find({username : post.username}, function(err,docs){
@@ -193,7 +193,7 @@ app.post('/add_user', function(req,res){
 		if(docs.length > 0){
 			res.send('Already a user with that name');
 		} else {
-			//TODO make some password requirement here
+			//TODO: make some password requirement here
 			var enabled = true;
 			if(!post.enabled){
 				enabled = false;

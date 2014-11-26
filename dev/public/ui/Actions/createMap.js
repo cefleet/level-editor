@@ -16,11 +16,13 @@ UI.Actions.prototype.createMap = function(data){
   {
     tilesx : Number(data.tilesx),
     tilesy : Number(data.tilesy),
-    tilewidth : tileset.tilewidth, //TODO make these not needed
-    tileheight : tileset.tileheight //TODO make these not needed
+    tilewidth : tileset.tilewidth, //TODO: make these not needed
+    tileheight : tileset.tileheight //TODO: make these not needed
   },
   tileset
   ];
+
+  console.log(send);
 
     //This sends out the event so the editor can begin its work
   this.parent.EventEmitter.trigger('createMap',send);

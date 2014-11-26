@@ -30,7 +30,7 @@ MapEditor.Map = function (options,parent) {
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 
 		preload : function(){
-			//TODO this needs to be gotten from the tools section
+			//TODO: this needs to be gotten from the tools section
 
 			//this is a little funky but it's fine for now
 			this.game.load.image('eraser', 'img/ui/erase.png');
@@ -65,11 +65,6 @@ MapEditor.Map = function (options,parent) {
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
 	},
-	/*
-	{
-		event : 'layerCreated',
-		action : 'addLayerToMap'
-	},*/
 	{
 		event: 'activeLayerSet',
 		action : 'setActiveLayer'
@@ -129,24 +124,7 @@ MapEditor.Map.prototype = {
 		this.activeLayer = layer;
 	},
 
-	addLayerToMap : function(t){
-		/*
-		console.log(t);
-		if(!this.layers){
-			this.layers = t.parent.layers;
-		}
-
-		this.layers[t.id] = this.layersGroup.add(this.game.add.group());
-		*/
-		/*
-		this.layers[id].tiles = {};
-		this.makeTiles(this.layers[id]);
-		this.makeLayerActive(this.layers[id]);
-		this.layers[id].name = name;
-		this.layers[id].order = highest;
-		*/
-	},
-
+	
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
 	 */
@@ -339,7 +317,7 @@ MapEditor.Map.prototype = {
 		var loc = '';//get active tile location
 		this.events.triggerPlaced.dispatch(loc);
 
-		//TODO this may need to be moved at some point in time
+		//TODO: this may need to be moved at some point in time
 		//this.triggers.create();
 	},
 
@@ -348,7 +326,7 @@ MapEditor.Map.prototype = {
 		var loc = '';//get active tile location
 		this.events.spritePlaced.dispatch(loc);
 
-		//TODO this may need to be moved at some point in time
+		//TODO: this may need to be moved at some point in time
 		//this.triggers.create();
 	},
 };

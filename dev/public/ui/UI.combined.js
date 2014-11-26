@@ -7,6 +7,22 @@ UI = function(options){
 	this.LaunchPad = new UI.LaunchPad(this);
 
   this.start();
+
+	//setup some elements for jquery
+	var $this = this;
+	$(document.body).delegate('.ui-action', 'click', function(){
+		var action = $(this).attr('ui-action');
+		console.log(action);
+
+		//TODO: seperating hte launch vs collect in the future would be good
+		//if(action.indexOf('launch') === 0){
+
+	//	} else {
+			$this.Actions[action]();
+	//	}
+
+	});
+
   return this;
 };
 
@@ -42,7 +58,7 @@ UI.prototype = {
 			}
 			$(into).append(this.Views[view](options));
 			if(typeof this.LaunchPad['_'+launcher] ==='function'){
-				this.LaunchPad['_'+launcher](data);
+				this.LaunchPad['_'+launcher](data,into);
 			}
 		}.bind(this);
 
@@ -60,7 +76,7 @@ UI.prototype = {
 
 	//This is a helper to collect form content
 	//forms can be an array of element id or the name of the parent container
-	collect : function(forms,next,useIds, emit){
+	collect : function(forms,next,useIds,emit){
 		var data = {};
 		var use = 'name';
 		if(useIds === true){
@@ -72,7 +88,7 @@ UI.prototype = {
 				data[$(this).attr(use)] = $(this).val();
 			});
 		} else if(Array.isArray(forms)){
-			//TODO I may want to check to see if it is a DOM element
+			//TODO: I may want to check to see if it is a DOM element
 			forms.forEach(function(e){
 				data[$('#'+e).attr(use)] = $('#'+e).val();
 			});
@@ -142,11 +158,13 @@ UI.Actions.prototype.createMap = function(data){
   {
     tilesx : Number(data.tilesx),
     tilesy : Number(data.tilesy),
-    tilewidth : tileset.tilewidth, //TODO make these not needed
-    tileheight : tileset.tileheight //TODO make these not needed
+    tilewidth : tileset.tilewidth, //TODO: make these not needed
+    tileheight : tileset.tileheight //TODO: make these not needed
   },
   tileset
   ];
+
+  console.log(send);
 
     //This sends out the event so the editor can begin its work
   this.parent.EventEmitter.trigger('createMap',send);
@@ -164,8 +182,24 @@ UI.Actions.prototype.loadMap = function(){
 
 UI.Actions.prototype.loadTheMap = function(data){
     console.log(data);
+    var map;
+    for(var i = 0; i < this.parent.data.Maps.length; i++){
+      if(this.parent.data.Maps[i].id == data.id){
+        map = this.parent.data.Maps[i];
+      }
+    }
+    console.log(map);
+    for(i = 0; i < this.parent.data.Tilesets.length; i++){
+      if(this.parent.data.Tilesets[i]._id == map.tilesetId){
+        map.tileset = this.parent.data.Tilesets[i];
+      }
+    }
     console.log('I need to Emit out the map to load');
-}
+    this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
+    $('#mainModal').modal('hide');
+
+    this.parent.EventEmitter.trigger('loadMap',[map]);
+};
 
 UI.Actions.prototype.newLayer = function(){
   $('#mainModal').remove();
@@ -186,14 +220,15 @@ UI.Actions.prototype.saveMap = function(){
   var $this = this;
   this.parent.EventEmitter.once('mapReadyForSave',function(map){
     $this.parent.data.Maps[map.id] = map;//saves it to memory
-
     map.tilemap = JSON.stringify(map.tilemap);
     $.post('save_map',map).done(function(data){
       data.id = 'mapSaveStatus';
-      
+
       $this.parent.launch('server_msg',null, null,data);
     });
   });
+
+  this.parent.EventEmitter.trigger('saveMap');
 
 };
 
@@ -267,15 +302,15 @@ Handlebars.registerPartial("dropdown_content", Handlebars.template({"1":function
   return buffer;
 },"2":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <li class='disabled navLink'><a action='"
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
+  return "    <li class='disabled navLink'><a class='ui-action' ui-action='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
     + "'>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
     + "</a></li>\n";
 },"4":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "    <li class='navLink'><a action='"
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
+  return "    <li class='navLink'><a class='ui-action' ui-action='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
     + "'>"
     + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
     + "</a></li>\n";
@@ -283,7 +318,7 @@ Handlebars.registerPartial("dropdown_content", Handlebars.template({"1":function
   return "  <li class='divider'></li>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.action : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(6, data),"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0['ui-action'] : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(6, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer;
 },"useData":true}));
@@ -629,7 +664,7 @@ UI.LaunchPad = function(parent){
 UI.LaunchPad.prototype.constructor = UI.LaunchPad;
 
 UI.LaunchPad.prototype.launchMainPanel = function(callback){
-  //TODO I need the zoom thing as well
+  //TODO: I need the zoom thing as well
   var sidebarButton = {
     option : 'primary',
     size : 'sm',
@@ -719,6 +754,29 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
 };
 
 UI.LaunchPad.prototype._launchMainPanel = function(){
+  var $this = this;
+
+  //This makes sorting the layers possible
+  $('#layers').sortable({
+    update: function( event, ui) {
+      var layers = $('#layers').children();
+      var order = [];
+
+      $(layers).each(function(index,layer){
+        order.push($(layer).attr('id'));
+      });
+
+      $this.parent.EventEmitter.trigger('orderLayers',[order]);
+    }
+  });
+
+  //listens for layer to be set this solutions reflects what the game is telling it
+  this.parent.EventEmitter.on('activeLayerSet', function(layer){
+    $('.makeLayerActive').removeClass('active');
+    $('#'+layer.id+' .makeLayerActive').addClass('active');
+  });
+
+
   $('#toggleSidebar').on('click', function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
@@ -744,20 +802,21 @@ UI.LaunchPad.prototype.layerListItem = function(callback,into,layer){
   },into,layer);
 };
 
-UI.LaunchPad.prototype._layerListItem = function(data){
+UI.LaunchPad.prototype._layerListItem = function(data,into){
   var $this = this;
-//  console.log(data);
-//  console.log('Hey you need to register the clicks for the layer buttons');
 
+  $('#'+data.id).prependTo(into);
   $('#'+data.id +' .setVisibilityLayer').on('click', function(){
-  //  console.log(this);
+
     $this.parent.EventEmitter.trigger('toggleLayer',[data.id]);
+
   });
 
   $('#'+data.id +' .makeLayerActive').on('click', function(){
-    $('.makeLayerActive').removeClass('active');
-  //  console.log(this);
-    $(this).addClass('active');
+
+  //  $('.makeLayerActive').removeClass('active');
+  //  $(this).addClass('active');
+
     $this.parent.EventEmitter.trigger('makeLayerActive',[data.id]);
   });
 
@@ -766,14 +825,14 @@ UI.LaunchPad.prototype._layerListItem = function(data){
 
 UI.LaunchPad.prototype.loadMap = function(callback){
   var maps = this.parent.data.Maps;
-  console.log(maps);
   var mapOptions = [];
+
   for(var i = 0; i < maps.length; i++){
     mapOptions.push({
       title : maps[i].name,
       value : maps[i].id
     });
-  };
+  }
 
   var formContent = {
     form : {
@@ -815,16 +874,17 @@ UI.LaunchPad.prototype.navbar = function(callback){
       file : {
         title : 'File',
         items : [
-        {title:'New Map',action:'newMap'},
-        {title:'Load Map',action:'loadMap'},
+        {title:'New Map','ui-action':'newMap'},
+        {title:'Load Map','ui-action':'loadMap'},
         {title:'divider'},
-        {title:'Save Map',action:'saveMap', disabled:'disabled'}
+      //  {title:'Save Map','ui-action':'saveMap', disabled:'disabled'}
+        {title:'Save Map','ui-action':'saveMap'}
         ]
       },
       tilesetOption : {
         title : 'Tilesets',
         items : [
-        {title:'New Tileset', action :'newTileset'}
+        {title:'New Tileset', 'ui-action' :'newTileset'}
         ]
       }
     }
@@ -835,28 +895,24 @@ UI.LaunchPad.prototype.navbar = function(callback){
 //Any link that is a navlink will now trigger the action for now it is
 //setup here but that can be pulled out
 UI.LaunchPad.prototype._navbar = function(){
+  /*
   var $this = this;
   $('.navLink a').each(function(e){
-    var action = $(this).attr('action');
+    var action = $(this).attr('ui-action');
 
     //WTH IS THIS?
     //This has been replaced with the intercom
-    if(action){
-      //this can be setup in another location
-      if($this.parent.Actions[action]) {
-        //because it launches in actions it needs to bind to it
-        $this.parent.EventEmitter.on(action,
-          $this.parent.Actions[action].bind($this.parent.Actions));
-      } else {
+    if(!action || !$this.parent.Actions[action]) {
           console.warn('There is no action associated with the '+action+' listener.'+
           'If you didn\'t set one up manually this link will do nothing.');
-      }
-
+    } else {
       $(this).on('click', function(){
-        $this.parent.EventEmitter.trigger(action);
+        $this.parent.Actions[action]();
       });
     }
   });
+  */
+
 };
 
 UI.LaunchPad.prototype.newLayer = function(callback){
@@ -899,7 +955,7 @@ UI.LaunchPad.prototype._newLayer = function(){
 
 UI.LaunchPad.prototype.newMap = function(callback){
 
-  //TODO this should be pulled from the server most likey
+  //TODO: this should be pulled from the server most likey
   var tilesets = this.parent.data.Tilesets;
   var tilesetOptions = [];
   for(var i = 0; i < tilesets.length; i++){
@@ -956,7 +1012,7 @@ UI.LaunchPad.prototype.newMap = function(callback){
   };
 
   callback(modalContent);
-  
+
 };
 
 UI.LaunchPad.prototype._newMap = function(){

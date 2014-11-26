@@ -1,5 +1,5 @@
 UI.LaunchPad.prototype.launchMainPanel = function(callback){
-  //TODO I need the zoom thing as well
+  //TODO: I need the zoom thing as well
   var sidebarButton = {
     option : 'primary',
     size : 'sm',
@@ -89,6 +89,29 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
 };
 
 UI.LaunchPad.prototype._launchMainPanel = function(){
+  var $this = this;
+
+  //This makes sorting the layers possible
+  $('#layers').sortable({
+    update: function( event, ui) {
+      var layers = $('#layers').children();
+      var order = [];
+
+      $(layers).each(function(index,layer){
+        order.push($(layer).attr('id'));
+      });
+
+      $this.parent.EventEmitter.trigger('orderLayers',[order]);
+    }
+  });
+
+  //listens for layer to be set this solutions reflects what the game is telling it
+  this.parent.EventEmitter.on('activeLayerSet', function(layer){
+    $('.makeLayerActive').removeClass('active');
+    $('#'+layer.id+' .makeLayerActive').addClass('active');
+  });
+
+
   $('#toggleSidebar').on('click', function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');

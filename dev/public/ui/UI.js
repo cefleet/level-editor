@@ -7,6 +7,22 @@ UI = function(options){
 	this.LaunchPad = new UI.LaunchPad(this);
 
   this.start();
+
+	//setup some elements for jquery
+	var $this = this;
+	$(document.body).delegate('.ui-action', 'click', function(){
+		var action = $(this).attr('ui-action');
+		console.log(action);
+
+		//TODO: seperating hte launch vs collect in the future would be good
+		//if(action.indexOf('launch') === 0){
+
+	//	} else {
+			$this.Actions[action]();
+	//	}
+
+	});
+
   return this;
 };
 
@@ -42,7 +58,7 @@ UI.prototype = {
 			}
 			$(into).append(this.Views[view](options));
 			if(typeof this.LaunchPad['_'+launcher] ==='function'){
-				this.LaunchPad['_'+launcher](data);
+				this.LaunchPad['_'+launcher](data,into);
 			}
 		}.bind(this);
 
@@ -60,7 +76,7 @@ UI.prototype = {
 
 	//This is a helper to collect form content
 	//forms can be an array of element id or the name of the parent container
-	collect : function(forms,next,useIds, emit){
+	collect : function(forms,next,useIds,emit){
 		var data = {};
 		var use = 'name';
 		if(useIds === true){
@@ -72,7 +88,7 @@ UI.prototype = {
 				data[$(this).attr(use)] = $(this).val();
 			});
 		} else if(Array.isArray(forms)){
-			//TODO I may want to check to see if it is a DOM element
+			//TODO: I may want to check to see if it is a DOM element
 			forms.forEach(function(e){
 				data[$('#'+e).attr(use)] = $('#'+e).val();
 			});

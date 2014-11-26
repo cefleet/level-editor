@@ -29,7 +29,7 @@ Game.GameTester = function (options) {
 			this.tilemap = this.game.add.tilemap('tilemap');
 			this.tilemap.addTilesetImage(this.map.tilemap.tilesets[0].name);
 		
-			//TODO multiple layers
+			//TODO: multiple layers
 			this.layers = [];
 			for(var i = 0; i < this.map.tilemap.layers.length; i++){
 

@@ -1,6 +1,6 @@
 UI.LaunchPad.prototype.newMap = function(callback){
 
-  //TODO this should be pulled from the server most likey
+  //TODO: this should be pulled from the server most likey
   var tilesets = this.parent.data.Tilesets;
   var tilesetOptions = [];
   for(var i = 0; i < tilesets.length; i++){
@@ -57,7 +57,7 @@ UI.LaunchPad.prototype.newMap = function(callback){
   };
 
   callback(modalContent);
-  
+
 };
 
 UI.LaunchPad.prototype._newMap = function(){

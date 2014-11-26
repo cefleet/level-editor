@@ -1,9 +1,9 @@
 {{!if there is an action }}
-{{#if action}}
+{{#if ui-action}}
   {{#if disabled}}
-    <li class='disabled navLink'><a action='{{action}}'>{{title}}</a></li>
+    <li class='disabled navLink'><a class='ui-action' ui-action='{{ui-action}}'>{{title}}</a></li>
   {{else}}
-    <li class='navLink'><a action='{{action}}'>{{title}}</a></li>
+    <li class='navLink'><a class='ui-action' ui-action='{{ui-action}}'>{{title}}</a></li>
   {{/if}}
 {{else}}
   <li class='divider'></li>
