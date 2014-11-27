@@ -6,7 +6,8 @@ UI.LaunchPad.prototype.layerListItem = function(callback,into,layer){
   );
   callback({
     id : layer.id,
-    content : content
+    content : content,
+    class : 'list-group-item'
   },into,layer);
 };
 

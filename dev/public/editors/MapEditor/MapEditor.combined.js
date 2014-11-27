@@ -8,13 +8,21 @@ MapEditor = function (options) {
 
 	this.Intercom = options.Intercom || new Intercom();
 	this.EventEmitter = this.Intercom.EventEmitter;
-
-	this.map = {};
-/*
-	this.events = {
-	  mapSaved : new Phaser.Signal()
+	this.tools = {
+		single  : {
+			name : 'single',
+			title : 'Single',
+			image : '/img/ui/single.png'
+		},
+		eraser : {
+			name : 'eraser',
+			title : 'Eraser',
+			image : '/img/ui/erase.png'
+		}
 	};
-*/
+	var tools = options.tools || {};
+	Phaser.Utils.extend(this.tools , tools);
+	this.map = {};
 
 	this.listenOutFor = [
 	//FROM UI
@@ -63,6 +71,9 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.spriteManager = new MapEditor.SpriteManager(this);
 
 		//ads in some settings
+		this.EventEmitter.once('ToolsLinked', function(grid){
+			this.loadTools();
+		}.bind(this));
 
 	},
 
@@ -72,7 +83,6 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.EventEmitter.once('LayersGroupLinked', function(grid){
 			this.EventEmitter.trigger('createLayer', ['base']);
 		}.bind(this));
-
 	},
 
 	load : function(map){
@@ -122,6 +132,12 @@ Phaser.Utils.extend(MapEditor.prototype , {
 }
 */
 },
+
+	loadTools : function(){
+		for(var tool in this.tools){
+			this.toolManager.create(this.tools[tool]);
+		}
+	},
 
 	destroy : function(){
 		delete this.map;
@@ -259,14 +275,8 @@ MapEditor.Map = function (options,parent) {
 	this.scale = 1;
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
-	this.toolType = 'single';
+	this.activeTool = 'single';
 
-	/*
-	this.events = {
-		toolChanged : new Phaser.Signal(),
-		layerAdded : new Phaser.Signal(),
-	};
-*/
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 
@@ -299,20 +309,8 @@ MapEditor.Map = function (options,parent) {
 		action :'setMarkerFromTile'
 	},
 	{
-		event : 'toolChnaged',
-		action : 'setToolType'
-	},
-	{
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
-	},
-	{
-		event: 'activeLayerSet',
-		action : 'setActiveLayer'
-	},
-	{
-		event : 'layerVisibiltySet',
-		action : 'toggleLayer'
 	}
 	];
 
@@ -329,7 +327,7 @@ MapEditor.Map.prototype = {
 		this.marker.tilesetId = 0;
 
 		this.layersGroup = this.game.add.group();
-		this.EventEmitter.trigger('gridReadyForLayers', [this]);
+		this.EventEmitter.trigger('gridReady', [this]);
 	},
 
 	/*
@@ -357,15 +355,10 @@ MapEditor.Map.prototype = {
 		}
 	},
 
-	toggleLayer : function(layer){
-
+	setActiveTool  : function(tool){
+		this.EventEmitter.trigger('setActiveTool',[tool]);
 	},
 
-	setActiveLayer : function(layer){
-		this.activeLayer = layer;
-	},
-
-	
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
 	 */
@@ -443,9 +436,9 @@ MapEditor.Map.prototype = {
 
 					if(c.which === 1){
 
-						if(this.toolType === 'eraser'){
+						if(this.activeTool === 'eraser'){
 							this.unsetActiveTile();
-						} else if(this.toolType === 'single') {
+						} else if(this.activeTool === 'single') {
 							this.setActiveTileFromMarker();
 						}
 
@@ -464,15 +457,14 @@ MapEditor.Map.prototype = {
 
 				if(c.which === 1){
 
-						if(this.toolType === 'eraser'){
-							this.unsetActiveTile();
-						} else if(this.toolType === 'single') {
-							this.setActiveTileFromMarker();
-						} else if (this.toolType === 'trigger'){
-							this.placeTrigger();
-						} else if(this.toolType === 'sprite'){
-							this.placeSprite();
-						}
+					//Single and eraser are intrinsiclly a part of the grid Even though they are grouped wit hthe tools they are a function of the grid
+					if(this.activeTool === 'eraser'){
+						this.unsetActiveTile();
+					} else if(this.activeTool === 'single') {
+						this.setActiveTileFromMarker();
+					}  else {
+						this.EventEmitter.trigger('placeOnGrid'+this.activeTool);
+					}
 				}
 			}
 		}.bind(this);
@@ -504,34 +496,12 @@ MapEditor.Map.prototype = {
 		this.spritesheet.start();
 	},
 
-	setToolType : function(t){
-		/*
-		 * t will be
-		 * 'single' -single tile
-		 * 'eraser'= erases tiles only.
-		 * 'fill' = fills the whole layer with one tile
-		 * 'sprite' = adds a sprite popup or it is a sprite image .. that's probaby the one
-		 * 'selector' = will select information like if a sprite is in the grid or
-		 * "trigger" = will add a trigger popup
-		 */
 
-		this.toolType = t;
-		this.marker.destroy();
-		if(this.toolType !== 'single'){
-			this.marker = this.game.add.sprite(0,0, t);
-		} else {
-			this.marker = this.game.add.sprite(0,0, '');
-		}
-		this.marker.width = this.tilewidth;
-		this.marker.height = this.tileheight;
-
-		//this.events.toolChanged.dispatch(this.toolType);
-	},
 
 	setMarkerFromTile : function(t){
 
-		if(this.toolType !== 'fill'){
-			this.setToolType('single');
+		if(this.activeTool !== 'fill'){
+			this.setActiveTool('single');
 		}
 
 		//only fill will keep the marker
@@ -550,25 +520,6 @@ MapEditor.Map.prototype = {
 		} else {
 			return false;
 		}
-	},
-
-	//Places the trigger
-	placeTrigger : function(){
-		console.log(this.activeTile);
-		var loc = '';//get active tile location
-		this.events.triggerPlaced.dispatch(loc);
-
-		//TODO: this may need to be moved at some point in time
-		//this.triggers.create();
-	},
-
-	placeSprite : function(){
-		console.log(this.activeTile);
-		var loc = '';//get active tile location
-		this.events.spritePlaced.dispatch(loc);
-
-		//TODO: this may need to be moved at some point in time
-		//this.triggers.create();
 	},
 };
 
@@ -614,7 +565,7 @@ MapEditor.LayerManager  = function(options,parent){
     action : 'toggleLayer'
   },
   {
-    event : 'gridReadyForLayers',
+    event : 'gridReady',
     action : 'linkLayerGroup'
   },
   {
@@ -695,10 +646,6 @@ MapEditor.LayerManager.prototype = {
       var t = this.layers[layer.name].tiles[i];
       t.tilesetId = id;
       if(id !== 0){
-        //frame starts with 0 first item
-        /*******
-        * WRONG DO NOT CALL LE FROM INSIDE
-        */
         if(this.parent.tileset.tiles[id-1]){
           t.sprite = this.parent.grid.game.add.sprite(t.x,t.y,this.parent.tileset.name, this.parent.tileset.tiles[id-1].frame);
           this.layers[layerinfo.id].add(t.sprite);
@@ -713,7 +660,7 @@ MapEditor.LayerManager.prototype = {
       layer = this.layers[layer];
     }
     this.activeLayer = layer;
-    this.EventEmitter.trigger('activeLayerSet',[layer]);
+    this.parent.grid.activeLayer = this.activeLayer;
   },
 
   //Show Hid layer
@@ -938,11 +885,13 @@ MapEditor.Tileset.prototype = {
 
 MapEditor.Tileset.prototype.constructor = MapEditor.Tileset;
 
-MapEditor.Trigger = function(options){
+MapEditor.Tool = function(options,parent){
   options = options || {};
+  this.parent = parent;
   this.name = options.name || 'tool';
-  this.image = options.image || 'tool.png';
-
+  this.image = options.image || 'img/ui/tool.png';
+  this.title = options.title || 'Tool';
+  this.parent.parent.grid.game.load.image(this.name, this.image);
   return this;
 };
 
@@ -950,19 +899,59 @@ MapEditor.ToolManager  = function(parent){
   this.parent = parent;
   this.EventEmitter = this.parent.EventEmitter;
   this.tools = {};
+  this.activeTool = '';
+
+  this.listenOutFor = [
+  {
+    event : 'gridReady',
+    action : 'linkToolsToGrid'
+  },
+  {
+    event : 'setActiveTool',
+    action : 'setActiveTool'
+  }
+  ];
+
+  this.parent.Intercom.setupListeners(this);
 
   return this;
 };
 
 MapEditor.ToolManager.prototype = {
 
+  linkToolsToGrid : function(grid){
+    grid.tools = this.tools;
+    this.EventEmitter.trigger('ToolsLinked');
+  },
+
   create : function(options){
-    console.log(this);
-    var t = new MapEditor.Tool(options);
+    var t = new MapEditor.Tool(options,this);
     this.tools[t.id] = t;
-    //this.events.triggerCreated.dispatch(t);
-    this.EventEmitter.trigger('toolCreated', t);
+    this.EventEmitter.trigger('toolCreated', [t]);
+  },
+
+  setActiveTool : function(t){
+    var tool;
+    if(t instanceof MapEditor.Tool){
+      tool = t.name;
+    } else if(typeof t === 'string') {
+      tool = t;
+    }
+
+    this.activeTool = tool;
+    this.parent.grid.activeTool = this.activeTool;
+    this.parent.grid.marker.destroy();
+    if(this.activeTool !== 'single'){
+      this.parent.grid.marker = this.parent.grid.game.add.sprite(0,0, t);
+    } else {
+      this.parent.grid.marker = this.parent.grid.game.add.sprite(0,0, '');
+    }
+    this.parent.grid.marker.width = this.parent.grid.tilewidth;
+    this.parent.grid.marker.height = this.parent.grid.tileheight;
+
+    this.EventEmitter.trigger('activeToolSet', [tool]);
   }
+
 };
 
 MapEditor.ToolManager.prototype.constructor = MapEditor.ToolManager;

@@ -18,14 +18,8 @@ MapEditor.Map = function (options,parent) {
 	this.scale = 1;
 	this.baseHeight = this.tilesy*this.tileheight;
 	this.baseWidth = this.tilesx*this.tilewidth;
-	this.toolType = 'single';
+	this.activeTool = 'single';
 
-	/*
-	this.events = {
-		toolChanged : new Phaser.Signal(),
-		layerAdded : new Phaser.Signal(),
-	};
-*/
     //setup
     this.game = new Phaser.Game(this.tilewidth*this.tilesx,this.tileheight*this.tilesy, Phaser.CANVAS,this.container, {
 
@@ -58,20 +52,8 @@ MapEditor.Map = function (options,parent) {
 		action :'setMarkerFromTile'
 	},
 	{
-		event : 'toolChnaged',
-		action : 'setToolType'
-	},
-	{
 		event : 'tilesetLoaded',
 		action : 'loadTilesetImage'
-	},
-	{
-		event: 'activeLayerSet',
-		action : 'setActiveLayer'
-	},
-	{
-		event : 'layerVisibiltySet',
-		action : 'toggleLayer'
 	}
 	];
 
@@ -88,7 +70,7 @@ MapEditor.Map.prototype = {
 		this.marker.tilesetId = 0;
 
 		this.layersGroup = this.game.add.group();
-		this.EventEmitter.trigger('gridReadyForLayers', [this]);
+		this.EventEmitter.trigger('gridReady', [this]);
 	},
 
 	/*
@@ -116,15 +98,10 @@ MapEditor.Map.prototype = {
 		}
 	},
 
-	toggleLayer : function(layer){
-
+	setActiveTool  : function(tool){
+		this.EventEmitter.trigger('setActiveTool',[tool]);
 	},
 
-	setActiveLayer : function(layer){
-		this.activeLayer = layer;
-	},
-
-	
 	/*
 	 * Returns the tile under the point (Point does not haveto be a real point it just an object with properties of x, y)
 	 */
@@ -202,9 +179,9 @@ MapEditor.Map.prototype = {
 
 					if(c.which === 1){
 
-						if(this.toolType === 'eraser'){
+						if(this.activeTool === 'eraser'){
 							this.unsetActiveTile();
-						} else if(this.toolType === 'single') {
+						} else if(this.activeTool === 'single') {
 							this.setActiveTileFromMarker();
 						}
 
@@ -223,15 +200,14 @@ MapEditor.Map.prototype = {
 
 				if(c.which === 1){
 
-						if(this.toolType === 'eraser'){
-							this.unsetActiveTile();
-						} else if(this.toolType === 'single') {
-							this.setActiveTileFromMarker();
-						} else if (this.toolType === 'trigger'){
-							this.placeTrigger();
-						} else if(this.toolType === 'sprite'){
-							this.placeSprite();
-						}
+					//Single and eraser are intrinsiclly a part of the grid Even though they are grouped wit hthe tools they are a function of the grid
+					if(this.activeTool === 'eraser'){
+						this.unsetActiveTile();
+					} else if(this.activeTool === 'single') {
+						this.setActiveTileFromMarker();
+					}  else {
+						this.EventEmitter.trigger('placeOnGrid'+this.activeTool);
+					}
 				}
 			}
 		}.bind(this);
@@ -263,34 +239,12 @@ MapEditor.Map.prototype = {
 		this.spritesheet.start();
 	},
 
-	setToolType : function(t){
-		/*
-		 * t will be
-		 * 'single' -single tile
-		 * 'eraser'= erases tiles only.
-		 * 'fill' = fills the whole layer with one tile
-		 * 'sprite' = adds a sprite popup or it is a sprite image .. that's probaby the one
-		 * 'selector' = will select information like if a sprite is in the grid or
-		 * "trigger" = will add a trigger popup
-		 */
 
-		this.toolType = t;
-		this.marker.destroy();
-		if(this.toolType !== 'single'){
-			this.marker = this.game.add.sprite(0,0, t);
-		} else {
-			this.marker = this.game.add.sprite(0,0, '');
-		}
-		this.marker.width = this.tilewidth;
-		this.marker.height = this.tileheight;
-
-		//this.events.toolChanged.dispatch(this.toolType);
-	},
 
 	setMarkerFromTile : function(t){
 
-		if(this.toolType !== 'fill'){
-			this.setToolType('single');
+		if(this.activeTool !== 'fill'){
+			this.setActiveTool('single');
 		}
 
 		//only fill will keep the marker
@@ -309,25 +263,6 @@ MapEditor.Map.prototype = {
 		} else {
 			return false;
 		}
-	},
-
-	//Places the trigger
-	placeTrigger : function(){
-		console.log(this.activeTile);
-		var loc = '';//get active tile location
-		this.events.triggerPlaced.dispatch(loc);
-
-		//TODO: this may need to be moved at some point in time
-		//this.triggers.create();
-	},
-
-	placeSprite : function(){
-		console.log(this.activeTile);
-		var loc = '';//get active tile location
-		this.events.spritePlaced.dispatch(loc);
-
-		//TODO: this may need to be moved at some point in time
-		//this.triggers.create();
 	},
 };
 

@@ -8,13 +8,21 @@ MapEditor = function (options) {
 
 	this.Intercom = options.Intercom || new Intercom();
 	this.EventEmitter = this.Intercom.EventEmitter;
-
-	this.map = {};
-/*
-	this.events = {
-	  mapSaved : new Phaser.Signal()
+	this.tools = {
+		single  : {
+			name : 'single',
+			title : 'Single',
+			image : '/img/ui/single.png'
+		},
+		eraser : {
+			name : 'eraser',
+			title : 'Eraser',
+			image : '/img/ui/erase.png'
+		}
 	};
-*/
+	var tools = options.tools || {};
+	Phaser.Utils.extend(this.tools , tools);
+	this.map = {};
 
 	this.listenOutFor = [
 	//FROM UI
@@ -63,6 +71,9 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.spriteManager = new MapEditor.SpriteManager(this);
 
 		//ads in some settings
+		this.EventEmitter.once('ToolsLinked', function(grid){
+			this.loadTools();
+		}.bind(this));
 
 	},
 
@@ -72,7 +83,6 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.EventEmitter.once('LayersGroupLinked', function(grid){
 			this.EventEmitter.trigger('createLayer', ['base']);
 		}.bind(this));
-
 	},
 
 	load : function(map){
@@ -122,6 +132,12 @@ Phaser.Utils.extend(MapEditor.prototype , {
 }
 */
 },
+
+	loadTools : function(){
+		for(var tool in this.tools){
+			this.toolManager.create(this.tools[tool]);
+		}
+	},
 
 	destroy : function(){
 		delete this.map;

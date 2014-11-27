@@ -25,22 +25,5 @@ UI.LaunchPad.prototype.navbar = function(callback){
 //Any link that is a navlink will now trigger the action for now it is
 //setup here but that can be pulled out
 UI.LaunchPad.prototype._navbar = function(){
-  /*
-  var $this = this;
-  $('.navLink a').each(function(e){
-    var action = $(this).attr('ui-action');
-
-    //WTH IS THIS?
-    //This has been replaced with the intercom
-    if(!action || !$this.parent.Actions[action]) {
-          console.warn('There is no action associated with the '+action+' listener.'+
-          'If you didn\'t set one up manually this link will do nothing.');
-    } else {
-      $(this).on('click', function(){
-        $this.parent.Actions[action]();
-      });
-    }
-  });
-  */
-
+  
 };

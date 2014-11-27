@@ -12,7 +12,6 @@ UI = function(options){
 	var $this = this;
 	$(document.body).delegate('.ui-action', 'click', function(){
 		var action = $(this).attr('ui-action');
-		console.log(action);
 
 		//TODO: seperating hte launch vs collect in the future would be good
 		//if(action.indexOf('launch') === 0){

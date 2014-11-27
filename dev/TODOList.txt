@@ -1,11 +1,13 @@
 //TODO: Fix Layer Ordering - DONE!
 //TODO: toggle layer view - DONE!
-//TODO: Correctly tell active later _ DONE!
-//TODO: Add Add Tileset Back
-//TODO: Add Tools
-//TODO: Add Eraser
+//TODO: Add Tools - DONE!
+//TODO: Add Eraser - DONE!
+
 //TODO: Add Play Game Back
-//TODO: Fix loading new map
+//TODO: Rename layer
+//TODO: Correctly tell active later
+//TODO: Fix loading new map when one is already loaded
+//TODO: Add Add Tileset Back
 
 //The above makes it where I have completed all that was working before
 //TODO: Add Sprite

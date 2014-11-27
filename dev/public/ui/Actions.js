@@ -11,6 +11,10 @@ UI.Actions = function(parent){
 	{
 		event : 'newLayer',
 		action : 'newLayer'
+	},
+	{
+		event : 'toolCreated',
+		action : 'addToolToList'
 	}
 	];
 

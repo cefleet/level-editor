@@ -25,7 +25,7 @@ MapEditor.LayerManager  = function(options,parent){
     action : 'toggleLayer'
   },
   {
-    event : 'gridReadyForLayers',
+    event : 'gridReady',
     action : 'linkLayerGroup'
   },
   {
@@ -106,10 +106,6 @@ MapEditor.LayerManager.prototype = {
       var t = this.layers[layer.name].tiles[i];
       t.tilesetId = id;
       if(id !== 0){
-        //frame starts with 0 first item
-        /*******
-        * WRONG DO NOT CALL LE FROM INSIDE
-        */
         if(this.parent.tileset.tiles[id-1]){
           t.sprite = this.parent.grid.game.add.sprite(t.x,t.y,this.parent.tileset.name, this.parent.tileset.tiles[id-1].frame);
           this.layers[layerinfo.id].add(t.sprite);
@@ -124,7 +120,7 @@ MapEditor.LayerManager.prototype = {
       layer = this.layers[layer];
     }
     this.activeLayer = layer;
-    this.EventEmitter.trigger('activeLayerSet',[layer]);
+    this.parent.grid.activeLayer = this.activeLayer;
   },
 
   //Show Hid layer

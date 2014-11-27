@@ -233,9 +233,10 @@ this["UI"]["Views"]["button"] = Handlebars.template({"1":function(depth0,helpers
     + "' ";
   stack1 = this.invokePartial(partials.attribs, '', 'attribs', depth0, undefined, helpers, partials, data);
   if (stack1 != null) { buffer += stack1; }
-  return buffer + " >"
-    + escapeExpression(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"text","hash":{},"data":data}) : helper)))
-    + "</a>\n";
+  buffer += " >";
+  stack1 = ((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"text","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</a>\n";
 },"usePartial":true,"useData":true});
 
 
@@ -278,7 +279,7 @@ this["UI"]["Views"]["li"] = Handlebars.template({"1":function(depth0,helpers,par
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "'";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='list-group-item "
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='"
     + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
     + "' ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.id : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
@@ -423,3 +424,16 @@ this["UI"]["Views"]["navbar"] = Handlebars.template({"1":function(depth0,helpers
   if (stack1 != null) { buffer += stack1; }
   return buffer + "      </ul>\n    </div>\n  </div>\n</div>\n";
 },"usePartial":true,"useData":true});
+
+
+
+this["UI"]["Views"]["toolListItem"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<button class='btn btn-default tool' ui-action ='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
+    + "'>\n  <img class='center-block' src='"
+    + escapeExpression(((helper = (helper = helpers.image || (depth0 != null ? depth0.image : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"image","hash":{},"data":data}) : helper)))
+    + "' width='50px' height='50px'>\n  "
+    + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
+    + "\n</button>\n";
+},"useData":true});

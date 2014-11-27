@@ -12,7 +12,6 @@ UI = function(options){
 	var $this = this;
 	$(document.body).delegate('.ui-action', 'click', function(){
 		var action = $(this).attr('ui-action');
-		console.log(action);
 
 		//TODO: seperating hte launch vs collect in the future would be good
 		//if(action.indexOf('launch') === 0){
@@ -120,6 +119,10 @@ UI.Actions = function(parent){
 	{
 		event : 'newLayer',
 		action : 'newLayer'
+	},
+	{
+		event : 'toolCreated',
+		action : 'addToolToList'
 	}
 	];
 
@@ -130,6 +133,10 @@ UI.Actions = function(parent){
 
 UI.Actions.prototype.addLayerToList = function(layer){
   this.parent.launch('li','layers','layerListItem',layer);
+};
+
+UI.Actions.prototype.addToolToList = function(tool){
+  this.parent.launch('div','tools','toolListItem',tool);
 };
 
 UI.Actions.prototype.createLayer = function(data){
@@ -467,9 +474,10 @@ this["UI"]["Views"]["button"] = Handlebars.template({"1":function(depth0,helpers
     + "' ";
   stack1 = this.invokePartial(partials.attribs, '', 'attribs', depth0, undefined, helpers, partials, data);
   if (stack1 != null) { buffer += stack1; }
-  return buffer + " >"
-    + escapeExpression(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"text","hash":{},"data":data}) : helper)))
-    + "</a>\n";
+  buffer += " >";
+  stack1 = ((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"text","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</a>\n";
 },"usePartial":true,"useData":true});
 
 
@@ -512,7 +520,7 @@ this["UI"]["Views"]["li"] = Handlebars.template({"1":function(depth0,helpers,par
     + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "'";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='list-group-item "
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<li class='"
     + escapeExpression(((helper = (helper = helpers['class'] || (depth0 != null ? depth0['class'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"class","hash":{},"data":data}) : helper)))
     + "' ";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.id : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
@@ -657,6 +665,19 @@ this["UI"]["Views"]["navbar"] = Handlebars.template({"1":function(depth0,helpers
   if (stack1 != null) { buffer += stack1; }
   return buffer + "      </ul>\n    </div>\n  </div>\n</div>\n";
 },"usePartial":true,"useData":true});
+
+
+
+this["UI"]["Views"]["toolListItem"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<button class='btn btn-default tool' ui-action ='"
+    + escapeExpression(((helper = (helper = helpers['ui-action'] || (depth0 != null ? depth0['ui-action'] : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"ui-action","hash":{},"data":data}) : helper)))
+    + "'>\n  <img class='center-block' src='"
+    + escapeExpression(((helper = (helper = helpers.image || (depth0 != null ? depth0.image : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"image","hash":{},"data":data}) : helper)))
+    + "' width='50px' height='50px'>\n  "
+    + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
+    + "\n</button>\n";
+},"useData":true});
 UI.LaunchPad = function(parent){
   this.parent = parent;
 };
@@ -666,10 +687,22 @@ UI.LaunchPad.prototype.constructor = UI.LaunchPad;
 UI.LaunchPad.prototype.launchMainPanel = function(callback){
   //TODO: I need the zoom thing as well
   var sidebarButton = {
-    option : 'primary',
-    size : 'sm',
+    option : 'default',
+    size : 'lg',
     id : 'toggleSidebar',
-    text : 'Side Panel'
+    text : ' <span class="glyphicon glyphicon-th-list"></span>Side Panel'//the handlebars boss would be mad
+  };
+
+  var playGameButton = {
+    option : 'success',
+    size : 'lg',
+    id : 'playGame',
+    text : 'Play Game',
+    attribs : [{
+      key : 'ui-action',
+      value: 'playGame'
+    }],
+    class: 'pull-right'
   };
 
   var panels = this.parent.Views.collapse_panel_group({
@@ -746,7 +779,7 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
   };
 
   var panel = {
-    head :this.parent.Views.button(sidebarButton),
+    head :this.parent.Views.button(sidebarButton)+this.parent.Views.button(playGameButton),
     content : this.parent.Views.div(contentOptions)
   };
 
@@ -756,6 +789,7 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
 UI.LaunchPad.prototype._launchMainPanel = function(){
   var $this = this;
 
+  /* Layer Actions */
   //This makes sorting the layers possible
   $('#layers').sortable({
     update: function( event, ui) {
@@ -776,16 +810,36 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#'+layer.id+' .makeLayerActive').addClass('active');
   });
 
+  $('#newLayer').on('click', function(){
+    this.parent.EventEmitter.trigger('newLayer');
+  }.bind(this));
 
+
+  /*Tools*/
+  $('#tools').delegate('.tool','click', function(){
+    var action = $(this).attr('ui-action');
+    console.log(action);
+    $this.parent.EventEmitter.trigger('setActiveTool',[action]);
+  });
+
+  this.parent.EventEmitter.on('activeToolSet', function(tool){
+    var tools = $('#tools .tool');
+    tools.removeClass('active');
+    tools.each(function(index,_tool){
+      if($(_tool).attr('ui-action') === tool){
+        $(_tool).addClass('active');
+      }
+    });
+  });
+
+  /* Side Bar Toggle */
   $('#toggleSidebar').on('click', function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
 
-  $('#newLayer').on('click', function(){
-    this.parent.EventEmitter.trigger('newLayer');
-  }.bind(this));
 
+//Other
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
   $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
 };
@@ -798,7 +852,8 @@ UI.LaunchPad.prototype.layerListItem = function(callback,into,layer){
   );
   callback({
     id : layer.id,
-    content : content
+    content : content,
+    class : 'list-group-item'
   },into,layer);
 };
 
@@ -895,24 +950,7 @@ UI.LaunchPad.prototype.navbar = function(callback){
 //Any link that is a navlink will now trigger the action for now it is
 //setup here but that can be pulled out
 UI.LaunchPad.prototype._navbar = function(){
-  /*
-  var $this = this;
-  $('.navLink a').each(function(e){
-    var action = $(this).attr('ui-action');
-
-    //WTH IS THIS?
-    //This has been replaced with the intercom
-    if(!action || !$this.parent.Actions[action]) {
-          console.warn('There is no action associated with the '+action+' listener.'+
-          'If you didn\'t set one up manually this link will do nothing.');
-    } else {
-      $(this).on('click', function(){
-        $this.parent.Actions[action]();
-      });
-    }
-  });
-  */
-
+  
 };
 
 UI.LaunchPad.prototype.newLayer = function(callback){
@@ -1040,6 +1078,26 @@ UI.LaunchPad.prototype._server_msg = function(data){
   $("#"+data.id).fadeTo(2000, 500).slideUp(500, function(){
     $("#"+data.id).alert('close');
   });
+};
+
+UI.LaunchPad.prototype.toolListItem = function(callback,into,tool){
+  var content = this.parent.Views.toolListItem(
+    {
+      name:tool.name,
+      'ui-action' : tool.name,
+      image : tool.image,
+      title : tool.title
+    }
+  );
+  callback({
+    id : tool.id,
+    content : content,
+    class : 'pull-left'
+  },into,tool);
+};
+
+UI.LaunchPad.prototype._toolListItem = function(data,into){
+
 };
 
 //# sourceMappingURL=UI.combined.js.map

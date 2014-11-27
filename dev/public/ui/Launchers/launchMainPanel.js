@@ -1,10 +1,22 @@
 UI.LaunchPad.prototype.launchMainPanel = function(callback){
   //TODO: I need the zoom thing as well
   var sidebarButton = {
-    option : 'primary',
-    size : 'sm',
+    option : 'default',
+    size : 'lg',
     id : 'toggleSidebar',
-    text : 'Side Panel'
+    text : ' <span class="glyphicon glyphicon-th-list"></span>Side Panel'//the handlebars boss would be mad
+  };
+
+  var playGameButton = {
+    option : 'success',
+    size : 'lg',
+    id : 'playGame',
+    text : 'Play Game',
+    attribs : [{
+      key : 'ui-action',
+      value: 'playGame'
+    }],
+    class: 'pull-right'
   };
 
   var panels = this.parent.Views.collapse_panel_group({
@@ -81,7 +93,7 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
   };
 
   var panel = {
-    head :this.parent.Views.button(sidebarButton),
+    head :this.parent.Views.button(sidebarButton)+this.parent.Views.button(playGameButton),
     content : this.parent.Views.div(contentOptions)
   };
 
@@ -91,6 +103,7 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
 UI.LaunchPad.prototype._launchMainPanel = function(){
   var $this = this;
 
+  /* Layer Actions */
   //This makes sorting the layers possible
   $('#layers').sortable({
     update: function( event, ui) {
@@ -111,16 +124,36 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#'+layer.id+' .makeLayerActive').addClass('active');
   });
 
+  $('#newLayer').on('click', function(){
+    this.parent.EventEmitter.trigger('newLayer');
+  }.bind(this));
 
+
+  /*Tools*/
+  $('#tools').delegate('.tool','click', function(){
+    var action = $(this).attr('ui-action');
+    console.log(action);
+    $this.parent.EventEmitter.trigger('setActiveTool',[action]);
+  });
+
+  this.parent.EventEmitter.on('activeToolSet', function(tool){
+    var tools = $('#tools .tool');
+    tools.removeClass('active');
+    tools.each(function(index,_tool){
+      if($(_tool).attr('ui-action') === tool){
+        $(_tool).addClass('active');
+      }
+    });
+  });
+
+  /* Side Bar Toggle */
   $('#toggleSidebar').on('click', function(){
     $('#sidebarPanel').toggleClass('col-xs-4').toggleClass('hidden');
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
 
-  $('#newLayer').on('click', function(){
-    this.parent.EventEmitter.trigger('newLayer');
-  }.bind(this));
 
+//Other
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
   $('#mainContentPanel').css('max-height',(window.innerHeight-180)+'px');
 };
