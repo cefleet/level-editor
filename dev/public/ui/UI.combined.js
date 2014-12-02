@@ -643,7 +643,9 @@ this["UI"]["Views"]["layerListItem"] = Handlebars.template({"compiler":[6,">= 2.
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<h4 class='show'><span class='label label-default layerName'>"
     + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
-    + "</span></h4>\n<div class='form-group hidden'>\n  <input type='text' class='form-control layerNameFormItem' placeholder='Layer Name'>\n</div>\n<div class='btn-group'>\n  <button class='btn btn-danger deleteLayer'>\n    <span class='glyphicon glyphicon-remove-circle'></span>\n  </button>\n  <button class='btn btn-default active setVisibilityLayer' data-toggle='button' aria-pressed='true',autocomplete='off'>\n    <span class='glyphicon glyphicon-eye-open'></span>\n  </button>\n  <button class='btn btn-default makeLayerActive active'>\n    <span class='glyphicon glyphicon-pencil'></span>\n  </button>\n</div>\n";
+    + "</span></h4>\n<div class='form-group hidden'>\n  <input type='text' class='form-control layerNameFormItem' placeholder='Layer Name' value='"
+    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+    + "'>\n</div>\n<div class='btn-group'>\n  <button class='btn btn-danger deleteLayer'>\n    <span class='glyphicon glyphicon-remove-circle'></span>\n  </button>\n  <button class='btn btn-default active setVisibilityLayer' data-toggle='button' aria-pressed='true',autocomplete='off'>\n    <span class='glyphicon glyphicon-eye-open'></span>\n  </button>\n  <button class='btn btn-default makeLayerActive active'>\n    <span class='glyphicon glyphicon-pencil'></span>\n  </button>\n</div>\n";
 },"useData":true});
 
 
@@ -873,6 +875,21 @@ UI.LaunchPad.prototype._layerListItem = function(data,into){
   //  $(this).addClass('active');
 
     $this.parent.EventEmitter.trigger('makeLayerActive',[data.id]);
+  });
+
+  $('#'+data.id +' .layerName').on('click', function(){
+    $(this).parent().removeClass('show');
+    $(this).parent().addClass('hidden');
+
+    $(this).parent().next().removeClass('hidden');
+    $(this).parent().next().find(">:first-child").focusout(function(){
+      var name = $(this).val();
+      $(this).parent().addClass('hidden');
+      $(this).parent().parent().find(">:first-child").find(">:first-child").html(name);
+      $(this).parent().parent().find(">:first-child").removeClass('hidden');
+
+      $this.parent.EventEmitter.trigger('layerNameChanged',[data.id,name]);
+    });
   });
 
   $('#mainModal').modal('hide');

@@ -575,6 +575,10 @@ MapEditor.LayerManager  = function(options,parent){
   {
     event : 'orderLayers',
     action : 'orderLayers'
+  },
+  {
+    event : 'layerNameChanged',
+    action : 'renameLayer'
   }
   ];
 
@@ -682,7 +686,6 @@ MapEditor.LayerManager.prototype = {
     if(typeof layer === 'string'){
       layer = this.layers[layer];
     }
-
     layer.name = newName;
   },
 

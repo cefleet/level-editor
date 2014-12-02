@@ -4,7 +4,7 @@
 //TODO: Add Eraser - DONE!
 
 //TODO: Add Play Game Back
-//TODO: Rename layer
+//TODO: Rename layer - DONE!
 //TODO: Correctly tell active later
 //TODO: Fix loading new map when one is already loaded
 //TODO: Add Add Tileset Back
