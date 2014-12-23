@@ -49,7 +49,6 @@ MapEditor.prototype.constructor = MapEditor;
 Phaser.Utils.extend(MapEditor.prototype , {
 	setup : function(name,grid,tileset,id){
 		this.destroy();
-
 		this.map = {};
 		this.map.name =  name || 'My Map';
 		this.map.id = id || $uid();
@@ -92,7 +91,7 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		}
 
 
-		tileset = {
+		var tileset = {
 			image : map.tileset.image,
 			imageheight : Number(map.tileset.imageheight),
 			imagewidth : Number(map.tileset.imagewidth),
@@ -109,7 +108,7 @@ Phaser.Utils.extend(MapEditor.prototype , {
 			tilesx : map.tilemap.width,
 			tilesy : map.tilemap.height
 		};
-
+		this.destroy();
 		this.setup(map.name,grid,tileset,map.id);
 
 		this.EventEmitter.once('LayersGroupLinked', function(grid){
@@ -143,13 +142,22 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		delete this.map;
 
 		if(this.grid) {
+			this.Intercom.stopListening(this.grid);
 			this.grid.destroy();
 			delete this.grid;
 		}
 
 		if(this.tileset){
+			console.log(this.tileset);
+			this.Intercom.stopListening(this.tileset);
 			this.tileset.destroy();
 			delete this.tileset;
+		}
+
+		if(this.layerManager){
+			console.log(this.layerManager);
+			this.Intercom.stopListening(this.layerManager);
+			delete this.layerManager;
 		}
 	},
 
@@ -225,7 +233,6 @@ Phaser.Utils.extend(MapEditor.prototype , {
 		this.map.tilemap = json;
 		this.map.layers = mapLayers;
 		this.map.tilesetId = this.tileset.id;
-		console.log(this.map.layers);
 		this.EventEmitter.trigger('mapReadyForSave',[this.map]);
 		//	return this.map;
 	},

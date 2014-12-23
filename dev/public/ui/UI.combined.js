@@ -188,20 +188,20 @@ UI.Actions.prototype.loadMap = function(){
 };
 
 UI.Actions.prototype.loadTheMap = function(data){
-    console.log(data);
     var map;
     for(var i = 0; i < this.parent.data.Maps.length; i++){
       if(this.parent.data.Maps[i].id == data.id){
         map = this.parent.data.Maps[i];
       }
     }
-    console.log(map);
+
     for(i = 0; i < this.parent.data.Tilesets.length; i++){
       if(this.parent.data.Tilesets[i]._id == map.tilesetId){
         map.tileset = this.parent.data.Tilesets[i];
       }
     }
-    console.log('I need to Emit out the map to load');
+    //empties out the panel
+    $('#mainPanel').empty();
     this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
     $('#mainModal').modal('hide');
 
@@ -870,11 +870,17 @@ UI.LaunchPad.prototype._layerListItem = function(data,into){
   });
 
   $('#'+data.id +' .makeLayerActive').on('click', function(){
+    $('.makeLayerActive').removeClass('active');
 
-  //  $('.makeLayerActive').removeClass('active');
-  //  $(this).addClass('active');
-
+    //This is all it needed. I do not know why.
     $this.parent.EventEmitter.trigger('makeLayerActive',[data.id]);
+    /*
+    leave this here just in case there is some lag.
+    $this.parent.EventEmitter.once('activeLayerSet', function(){
+
+    });
+    */
+
   });
 
   $('#'+data.id +' .layerName').on('click', function(){

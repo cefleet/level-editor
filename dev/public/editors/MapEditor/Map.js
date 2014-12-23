@@ -229,6 +229,7 @@ MapEditor.Map.prototype = {
 
 
 	loadTilesetImage : function(t){
+		console.log('It was called');
 		this.spritesheet = this.game.load.spritesheet(t.name,t.image,t.tilewidth,t.tileheight);
 
 		this.spritesheet.onLoadComplete.add(function(){

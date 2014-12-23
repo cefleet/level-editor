@@ -125,6 +125,8 @@ MapEditor.LayerManager.prototype = {
     }
     this.activeLayer = layer;
     this.parent.grid.activeLayer = this.activeLayer;
+    console.log(layer);
+    this.EventEmitter.trigger('activeLayerSet', [layer]);
   },
 
   //Show Hid layer

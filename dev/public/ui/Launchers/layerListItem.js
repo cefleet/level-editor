@@ -22,11 +22,17 @@ UI.LaunchPad.prototype._layerListItem = function(data,into){
   });
 
   $('#'+data.id +' .makeLayerActive').on('click', function(){
+    $('.makeLayerActive').removeClass('active');
 
-  //  $('.makeLayerActive').removeClass('active');
-  //  $(this).addClass('active');
-
+    //This is all it needed. I do not know why.
     $this.parent.EventEmitter.trigger('makeLayerActive',[data.id]);
+    /*
+    leave this here just in case there is some lag.
+    $this.parent.EventEmitter.once('activeLayerSet', function(){
+
+    });
+    */
+
   });
 
   $('#'+data.id +' .layerName').on('click', function(){
