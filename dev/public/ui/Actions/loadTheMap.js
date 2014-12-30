@@ -13,7 +13,7 @@ UI.Actions.prototype.loadTheMap = function(data){
     }
     //empties out the panel
     $('#mainPanel').empty();
-    this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
+    this.parent.launch('panel', 'mainPanel', 'launchMainPanel', map);
     $('#mainModal').modal('hide');
 
     this.parent.EventEmitter.trigger('loadMap',[map]);

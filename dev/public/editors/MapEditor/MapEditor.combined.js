@@ -302,8 +302,8 @@ MapEditor.Map = function (options,parent) {
 
 		create:function(){
 			this.game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
-			this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-			this.game.scale.setScreenSize();
+		//	this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		//	this.game.scale.setScreenSize();
 			this.game.stage.backgroundColor ='#545454'; //''
 			this.setup();
 

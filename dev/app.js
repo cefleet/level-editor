@@ -8,8 +8,6 @@ var crypto = require('crypto');
 var sanitize = require("sanitize-filename");
 var fs = require('fs');
 
-
-
 /********************************************
  * Setup Items
  ********************************************/

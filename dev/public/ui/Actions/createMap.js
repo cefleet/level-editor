@@ -1,5 +1,5 @@
 UI.Actions.prototype.createMap = function(data){
-  this.parent.launch('panel', 'mainPanel', 'launchMainPanel');
+  this.parent.launch('panel', 'mainPanel', 'launchMainPanel',data);
 
   $('#mainModal').modal('hide');
 
@@ -22,8 +22,6 @@ UI.Actions.prototype.createMap = function(data){
   tileset
   ];
 
-  console.log(send);
-
-    //This sends out the event so the editor can begin its work
+  //This sends out the event so the editor can begin its work
   this.parent.EventEmitter.trigger('createMap',send);
 };

@@ -1,4 +1,4 @@
-UI.LaunchPad.prototype.launchMainPanel = function(callback){
+UI.LaunchPad.prototype.launchMainPanel = function(callback,into,data){
   //TODO: I need the zoom thing as well
   var sidebarButton = {
     option : 'default',
@@ -92,8 +92,20 @@ UI.LaunchPad.prototype.launchMainPanel = function(callback){
     content : content
   };
 
+  var title = this.parent.Views.h2({
+    id : 'gameTitle',
+    attribs : [
+      {
+        key: 'style',
+        value : 'display:inline;padding-left : 20px'
+      }
+    ],
+    content : data.name
+  });
+
   var panel = {
-    head :this.parent.Views.button(sidebarButton)+this.parent.Views.button(playGameButton),
+
+    head :this.parent.Views.button(sidebarButton)+title+this.parent.Views.button(playGameButton),
     content : this.parent.Views.div(contentOptions)
   };
 

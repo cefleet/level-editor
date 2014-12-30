@@ -4,12 +4,12 @@
 //TODO: Add Eraser - DONE!
 //TODO: Rename layer - DONE!
 //TODO: Fix loading new map when one is already loaded - DONE!
+//TODO: Correctly tell active later - DONE!
+//TODO: Some funky stuff with the map res-zing - DONE! (need to add back zoom levels somehow)
+//TODO: Name of map in title (workin on it) - DONE!
 
-//TODO: Name of map in title
-//TODO: Correctly tell active later
 //TODO: Add Play Game Back
-//TODO: Add Add Tileset Back
-//TODO: Some funky stuff with the map res-zing
+//TODO: Add Add Tile Set Back
 
 //The above makes it where I have completed all that was working before
 //TODO: Add Sprite
