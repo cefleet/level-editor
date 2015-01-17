@@ -144,7 +144,6 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
   /*Tools*/
   $('#tools').delegate('.tool','click', function(){
     var action = $(this).attr('ui-action');
-    console.log(action);
     $this.parent.EventEmitter.trigger('setActiveTool',[action]);
   });
 
@@ -164,6 +163,11 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
 
+  /* Play Map */
+  $('#playGame').on('click', function(){
+    $('#lgModal').remove();
+    this.parent.launch('modalLg',null,'loadPlayGame');
+  }.bind(this));
 
 //Other
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');

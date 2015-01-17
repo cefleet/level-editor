@@ -7,6 +7,7 @@ UI.Actions.prototype.saveMap = function(){
       data.id = 'mapSaveStatus';
 
       $this.parent.launch('server_msg',null, null,data);
+      $this.parent.EventEmitter.trigger('mapSaved',[map]);
     });
   });
 

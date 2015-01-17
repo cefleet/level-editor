@@ -15,6 +15,11 @@ UI.Actions = function(parent){
 	{
 		event : 'toolCreated',
 		action : 'addToolToList'
+	},
+	//don't know if this is good or really bad
+	{
+		event : 'playGame',
+		action: 'saveMap'
 	}
 	];
 

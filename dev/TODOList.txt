@@ -1,4 +1,4 @@
-//TODO: Fix Layer Ordering - DONE!
++//TODO: Fix Layer Ordering - DONE!
 //TODO: toggle layer view - DONE!
 //TODO: Add Tools - DONE!
 //TODO: Add Eraser - DONE!

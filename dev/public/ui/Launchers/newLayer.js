@@ -1,5 +1,4 @@
 UI.LaunchPad.prototype.newLayer = function(callback){
-  console.log('It got to the launcher');
   var formContent = {
     form : {
       name : [{

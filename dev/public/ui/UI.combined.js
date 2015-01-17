@@ -123,6 +123,11 @@ UI.Actions = function(parent){
 	{
 		event : 'toolCreated',
 		action : 'addToolToList'
+	},
+	//don't know if this is good or really bad
+	{
+		event : 'playGame',
+		action: 'saveMap'
 	}
 	];
 
@@ -230,6 +235,7 @@ UI.Actions.prototype.saveMap = function(){
       data.id = 'mapSaveStatus';
 
       $this.parent.launch('server_msg',null, null,data);
+      $this.parent.EventEmitter.trigger('mapSaved',[map]);
     });
   });
 
@@ -561,6 +567,20 @@ this["UI"]["Views"]["modal"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta
 
 
 
+this["UI"]["Views"]["modalLg"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class=\"modal fade\" id=\"lgModal\">\n  <div class='modal-dialog modal-lg'>\n    <div class='modal-content'>\n      <div class='modal-header'>\n        <h4>"
+    + escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"title","hash":{},"data":data}) : helper)))
+    + "</h4>\n      </div>\n      <div class='modal-body' id='modalBody'>\n        ";
+  stack1 = ((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"content","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "\n      </div>\n      <div class='modal-footer' id='modalFooter'>\n        ";
+  stack1 = ((helper = (helper = helpers.footer || (depth0 != null ? depth0.footer : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"footer","hash":{},"data":data}) : helper));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "\n      </div>\n    </div>\n  </div>\n</div>\n";
+},"useData":true});
+
+
+
 this["UI"]["Views"]["panel"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"type","hash":{},"data":data}) : helper)));
@@ -846,7 +866,6 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
   /*Tools*/
   $('#tools').delegate('.tool','click', function(){
     var action = $(this).attr('ui-action');
-    console.log(action);
     $this.parent.EventEmitter.trigger('setActiveTool',[action]);
   });
 
@@ -866,6 +885,11 @@ UI.LaunchPad.prototype._launchMainPanel = function(){
     $('#mainContentPanel').toggleClass('col-xs-8').toggleClass('col-xs-12');
   });
 
+  /* Play Map */
+  $('#playGame').on('click', function(){
+    $('#lgModal').remove();
+    this.parent.launch('modalLg',null,'loadPlayGame');
+  }.bind(this));
 
 //Other
   $('#sidebarPanel').css('max-height',(window.innerHeight-180)+'px');
@@ -972,6 +996,30 @@ UI.LaunchPad.prototype._loadMap = function(){
   });
 };
 
+UI.LaunchPad.prototype.loadPlayGame = function(callback){
+  var modalContent = {
+    title : '',
+    content : this.parent.Views.div({id:'gameContainer'})
+  };
+
+  callback(modalContent);
+};
+
+
+UI.LaunchPad.prototype._loadPlayGame = function(){
+  //TODO
+  this.parent.EventEmitter.trigger('playGame');
+
+  //Listen out for the modal to close
+  $('#lgModal').on('hidden.bs.modal', function(){
+    this.parent.EventEmitter.trigger('endGame');
+  }.bind(this));
+
+  //open up the modal
+  $('#lgModal').modal('show');
+
+};
+
 UI.LaunchPad.prototype.navbar = function(callback){
   var dropdowns = {
     dropdown : {
@@ -1003,7 +1051,6 @@ UI.LaunchPad.prototype._navbar = function(){
 };
 
 UI.LaunchPad.prototype.newLayer = function(callback){
-  console.log('It got to the launcher');
   var formContent = {
     form : {
       name : [{
