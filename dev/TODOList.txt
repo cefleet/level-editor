@@ -7,8 +7,8 @@
 //TODO: Correctly tell active later - DONE!
 //TODO: Some funky stuff with the map res-zing - DONE! (need to add back zoom levels somehow)
 //TODO: Name of map in title (workin on it) - DONE!
+//TODO: Add Play Game Back - DONE! (TODO need to fix some of the issues)
 
-//TODO: Add Play Game Back
 //TODO: Add Add Tile Set Back
 
 //The above makes it where I have completed all that was working before

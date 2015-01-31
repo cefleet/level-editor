@@ -117,7 +117,7 @@ app.post('/save_map', ensureAuthenticated, function(req,res){
 
 var sampleTileset = {
 	image : 'img/sampletileset.png',
-	imageheight : 1024,
+	imageheight : 732,
 	imagewidth : 1024,
 	name : 'sample',
 	tilewidth : 32,
